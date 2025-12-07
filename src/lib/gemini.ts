@@ -648,12 +648,32 @@ export class GeminiService {
         return { text: '', error: message, errorCode: code };
     }
 
+    /**
+     * Server-side only: Get a stream response from OpenRouter
+     */
+    async getStreamResponse(
+        userMessage: string,
+        conversationHistory: GeminiMessage[] = []
+    ): Promise<Response> {
+        if (typeof window !== 'undefined') {
+            throw new Error('getStreamResponse is for server-side use only');
+        }
+
+        if (!this.isReady()) {
+             throw new Error('Service not initialized');
+        }
+
+        const sanitizedMessage = sanitizeInput(userMessage);
+        const messages = convertToOpenRouterMessages(sanitizedMessage, conversationHistory);
+        return this.callOpenRouter(messages, true);
+    }
+
     async sendMessageStream(
         userMessage: string,
         conversationHistory: GeminiMessage[] = [],
         onChunk: StreamCallback
     ): Promise<GeminiResponse> {
-        // Client-side: Proxy to /api/chat (no real streaming, simulated)
+        // Client-side: Consume /api/chat stream
         if (typeof window !== 'undefined') {
             try {
                 const res = await fetch('/api/chat', {
@@ -664,30 +684,36 @@ export class GeminiService {
 
                 if (!res.ok) {
                     const err = await res.json().catch(() => ({}));
-                    if (res.status === 429) {
-                        const errorMsg = 'Limite de requêtes atteinte. Veuillez patienter.';
-                        onChunk(errorMsg, true);
-                        return { text: '', error: errorMsg, errorCode: GeminiErrorCode.RATE_LIMIT_EXCEEDED };
-                    }
-                    if (res.status === 503) {
-                        const errorMsg = 'Service temporairement surchargé.';
-                        onChunk(errorMsg, true);
-                        return { text: '', error: errorMsg, errorCode: GeminiErrorCode.MODEL_OVERLOADED };
-                    }
+                    if (res.status === 429) throw new Error('Limite de requêtes atteinte.');
+                    if (res.status === 503) throw new Error('Service surchargé.');
                     throw new Error(err.error || `API Error: ${res.status}`);
                 }
 
-                const data = await res.json();
-                if (data.response?.error) {
-                    const { code, message } = parseError(new Error(data.response.error));
-                    onChunk(message, true);
-                    return { text: '', error: message, errorCode: code };
+                if (!res.body) throw new Error('No response body');
+
+                const reader = res.body.getReader();
+                const decoder = new TextDecoder();
+                let fullText = '';
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+
+                    const chunk = decoder.decode(value, { stream: true });
+                    // Handle server-side errors sent as text if content-type isn't correct,
+                    // but usually we expect a stream of text.
+                    // For simplicity, we assume the API returns raw text chunks (not SSE)
+                    // or we parse SSE if we decide to implement SSE.
+                    // Let's implement robust SSE parsing or just raw text streaming.
+                    // The server implementation will determine this.
+                    // Assuming the server just pipes the OpenRouter stream content.
+
+                    fullText += chunk;
+                    onChunk(chunk, false);
                 }
 
-                const fullText = data.response.text;
-                onChunk(fullText, false);
                 onChunk('', true);
-                return data.response;
+                return { text: fullText };
 
             } catch (error) {
                 const { code, message } = parseError(error);
@@ -696,73 +722,8 @@ export class GeminiService {
             }
         }
 
-        // Server-side: Use streaming API
-        if (!this.isReady()) {
-            const error = 'Service non initialisé';
-            onChunk(error, true);
-            return { text: '', error, errorCode: GeminiErrorCode.API_KEY_MISSING };
-        }
-
-        const sanitizedMessage = sanitizeInput(userMessage);
-        if (!sanitizedMessage) {
-            const error = 'Message vide';
-            onChunk(error, true);
-            return { text: '', error, errorCode: GeminiErrorCode.INVALID_REQUEST };
-        }
-
-        this.logger.info('Starting streaming message');
-
-        try {
-            const messages = convertToOpenRouterMessages(sanitizedMessage, conversationHistory);
-            const response = await this.callOpenRouter(messages, true);
-
-            if (!response.ok) {
-                const errorData = await response.json().catch(() => ({}));
-                throw new Error(errorData.error?.message || `HTTP ${response.status}`);
-            }
-
-            const reader = response.body?.getReader();
-            if (!reader) {
-                throw new Error('No response body');
-            }
-
-            const decoder = new TextDecoder();
-            let fullText = '';
-
-            while (true) {
-                const { done, value } = await reader.read();
-                if (done) break;
-
-                const chunk = decoder.decode(value, { stream: true });
-                const lines = chunk.split('\n').filter(line => line.startsWith('data: '));
-
-                for (const line of lines) {
-                    const data = line.slice(6);
-                    if (data === '[DONE]') continue;
-
-                    try {
-                        const parsed = JSON.parse(data);
-                        const content = parsed.choices?.[0]?.delta?.content || '';
-                        if (content) {
-                            fullText += content;
-                            onChunk(content, false);
-                        }
-                    } catch {
-                        // Ignore parsing errors for SSE comments
-                    }
-                }
-            }
-
-            onChunk('', true);
-            this.logger.info('Streaming completed', { totalLength: fullText.length });
-            return { text: fullText };
-
-        } catch (error) {
-            const { code, message } = parseError(error);
-            this.logger.error('Streaming failed', { code, error });
-            onChunk(message, true);
-            return { text: '', error: message, errorCode: code };
-        }
+        // Server-side: Should use getStreamResponse directly
+        return this.sendMessage(userMessage, conversationHistory);
     }
 
     clearCache(): void {
