@@ -67,6 +67,7 @@ const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
 // Free models from OpenRouter (in order of preference)
 const FREE_MODELS = [
     'google/gemini-2.0-flash-exp:free',      // Primary: Gemini 2.0 Flash
+    'z-ai/glm-4.5-air:free',                 // Fallback: GLM 4.5 Air
     'meta-llama/llama-3.3-70b-instruct:free', // Fallback: Llama 3.3 70B
     'google/gemma-3-27b-it:free',             // Fallback: Gemma 3 27B
     'mistralai/mistral-7b-instruct:free',     // Fallback: Mistral 7B

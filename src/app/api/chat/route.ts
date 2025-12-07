@@ -1,7 +1,7 @@
 import { GeminiService } from "@/lib/gemini";
 import { enforceRateLimit } from "@/lib/rate-limit";
 import { NextRequest, NextResponse } from "next/server";
-import { createParser } from "eventsource-parser";
+import { createParser, type EventSourceMessage } from "eventsource-parser";
 
 // Using Edge Runtime for better streaming performance
 export const runtime = 'edge';
@@ -75,7 +75,7 @@ export async function POST(req: NextRequest) {
             async start(controller) {
                 // Use eventsource-parser to handle SSE chunks correctly
                 const parser = createParser({
-                    onEvent: (event) => {
+                    onEvent: (event: EventSourceMessage) => {
                         // event is EventSourceMessage { data: string, event?: string, id?: string }
                         const data = event.data;
                         if (data === '[DONE]') {
