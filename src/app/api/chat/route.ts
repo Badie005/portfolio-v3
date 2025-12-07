@@ -76,7 +76,6 @@ export async function POST(req: NextRequest) {
                 // Use eventsource-parser to handle SSE chunks correctly
                 const parser = createParser({
                     onEvent: (event: EventSourceMessage) => {
-                        // event is EventSourceMessage { data: string, event?: string, id?: string }
                         const data = event.data;
                         if (data === '[DONE]') {
                             controller.close();
@@ -84,7 +83,11 @@ export async function POST(req: NextRequest) {
                         }
                         try {
                             const parsed = JSON.parse(data);
-                            const content = parsed.choices?.[0]?.delta?.content;
+                            // Support both Google AI format and OpenRouter format
+                            const content =
+                                parsed.candidates?.[0]?.content?.parts?.[0]?.text || // Google AI format
+                                parsed.choices?.[0]?.delta?.content ||                // OpenRouter format
+                                '';
                             if (content) {
                                 controller.enqueue(encoder.encode(content));
                             }

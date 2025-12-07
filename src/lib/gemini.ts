@@ -62,26 +62,25 @@ export type StreamCallback = (chunk: string, done: boolean) => void;
 // CONSTANTS & DEFAULTS
 // ============================================================
 
-const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
+// Google AI Studio API (Primary)
+const GOOGLE_AI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models';
+const GOOGLE_AI_MODEL = 'gemini-2.5-pro-exp-03-25';
 
-// Free models from OpenRouter (in order of preference)
-const FREE_MODELS = [
-    'google/gemini-2.0-flash-exp:free',      // Primary: Gemini 2.0 Flash
-    'z-ai/glm-4.5-air:free',                 // Fallback: GLM 4.5 Air
-    'meta-llama/llama-3.3-70b-instruct:free', // Fallback: Llama 3.3 70B
-    'google/gemma-3-27b-it:free',             // Fallback: Gemma 3 27B
-    'mistralai/mistral-7b-instruct:free',     // Fallback: Mistral 7B
+// OpenRouter fallback (if Google AI fails)
+const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
+const OPENROUTER_MODELS = [
+    'google/gemini-2.0-flash-exp:free',
+    'z-ai/glm-4.5-air:free',
+    'meta-llama/llama-3.3-70b-instruct:free',
 ];
 
-const DEFAULT_MODEL = FREE_MODELS[0];
-
 const DEFAULT_CONFIG: Omit<GeminiConfig, 'apiKey'> = {
-    model: DEFAULT_MODEL,
-    temperature: 0.5,
-    maxTokens: 4096,
+    model: GOOGLE_AI_MODEL,
+    temperature: 0.7,
+    maxTokens: 8192,
     maxRetries: 3,
     retryDelay: 1000,
-    timeout: 45000,
+    timeout: 60000,
     enableCache: true,
     cacheMaxAge: 5 * 60 * 1000,
     enableLogging: process.env.NODE_ENV === 'development',
@@ -504,18 +503,90 @@ export class GeminiService {
         return rest;
     }
 
-    // Server-side API call to OpenRouter with fallback models
-    private async callOpenRouter(
-        messages: OpenRouterMessage[],
+    // Server-side API call to Google AI Studio (Primary)
+    private async callGoogleAI(
+        userMessage: string,
+        conversationHistory: GeminiMessage[],
+        stream: boolean = false
+    ): Promise<Response> {
+        const googleApiKey = process.env.GOOGLE_AI_API_KEY;
+
+        if (!googleApiKey) {
+            this.logger.warn('Google AI API key not found, falling back to OpenRouter');
+            return this.callOpenRouterFallback(userMessage, conversationHistory, stream);
+        }
+
+        // Build contents array for Google AI format
+        const contents: Array<{ role: string; parts: Array<{ text: string }> }> = [];
+
+        // Add conversation history
+        for (const msg of conversationHistory.slice(-this.config.maxHistoryMessages)) {
+            contents.push({
+                role: msg.role === 'user' ? 'user' : 'model',
+                parts: [{ text: msg.parts[0]?.text || '' }]
+            });
+        }
+
+        // Add current user message
+        contents.push({
+            role: 'user',
+            parts: [{ text: userMessage }]
+        });
+
+        const endpoint = stream ? 'streamGenerateContent?alt=sse' : 'generateContent';
+        const url = `${GOOGLE_AI_API_URL}/${GOOGLE_AI_MODEL}:${endpoint}`;
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'x-goog-api-key': googleApiKey,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    contents,
+                    systemInstruction: {
+                        parts: [{ text: SYSTEM_PROMPT }]
+                    },
+                    generationConfig: {
+                        temperature: this.config.temperature,
+                        maxOutputTokens: this.config.maxTokens,
+                    }
+                })
+            });
+
+            // If Google AI fails, fallback to OpenRouter
+            if (!response.ok && response.status >= 500) {
+                this.logger.warn(`Google AI error ${response.status}, falling back to OpenRouter`);
+                return this.callOpenRouterFallback(userMessage, conversationHistory, stream);
+            }
+
+            return response;
+        } catch (error) {
+            this.logger.error('Google AI request failed', error);
+            return this.callOpenRouterFallback(userMessage, conversationHistory, stream);
+        }
+    }
+
+    // Fallback to OpenRouter if Google AI fails
+    private async callOpenRouterFallback(
+        userMessage: string,
+        conversationHistory: GeminiMessage[],
         stream: boolean = false,
         modelIndex: number = 0
     ): Promise<Response> {
-        const model = FREE_MODELS[modelIndex] || FREE_MODELS[0];
+        const openRouterKey = process.env.OPENROUTER_API_KEY;
+        if (!openRouterKey) {
+            throw new Error('No API keys available');
+        }
+
+        const model = OPENROUTER_MODELS[modelIndex] || OPENROUTER_MODELS[0];
+        const messages = convertToOpenRouterMessages(userMessage, conversationHistory);
 
         const response = await fetch(OPENROUTER_API_URL, {
             method: 'POST',
             headers: {
-                'Authorization': `Bearer ${this.config.apiKey}`,
+                'Authorization': `Bearer ${openRouterKey}`,
                 'Content-Type': 'application/json',
                 'HTTP-Referer': 'https://bdev.dev',
                 'X-Title': 'B.DEV Portfolio'
@@ -529,15 +600,16 @@ export class GeminiService {
             })
         });
 
-        // Si rate limit (429), essayer le modèle suivant après un court délai
-        if (response.status === 429 && modelIndex < FREE_MODELS.length - 1) {
-            this.logger.warn(`Rate limit on ${model}, waiting 2s then trying fallback...`);
-            await sleep(2000); // Attendre 2 secondes avant le fallback
-            return this.callOpenRouter(messages, stream, modelIndex + 1);
+        // If rate limit, try next model
+        if (response.status === 429 && modelIndex < OPENROUTER_MODELS.length - 1) {
+            this.logger.warn(`Rate limit on ${model}, trying next fallback...`);
+            await sleep(2000);
+            return this.callOpenRouterFallback(userMessage, conversationHistory, stream, modelIndex + 1);
         }
 
         return response;
     }
+
 
     async sendMessage(
         userMessage: string,
@@ -616,8 +688,7 @@ export class GeminiService {
         let lastError: unknown;
         for (let attempt = 0; attempt < this.config.maxRetries; attempt++) {
             try {
-                const messages = convertToOpenRouterMessages(sanitizedMessage, conversationHistory);
-                const response = await this.callOpenRouter(messages);
+                const response = await this.callGoogleAI(sanitizedMessage, conversationHistory, false);
 
                 if (!response.ok) {
                     const errorData = await response.json().catch(() => ({}));
@@ -625,15 +696,17 @@ export class GeminiService {
                 }
 
                 const data = await response.json();
-                const text = data.choices?.[0]?.message?.content || '';
+                // Google AI format: candidates[0].content.parts[0].text
+                const text = data.candidates?.[0]?.content?.parts?.[0]?.text ||
+                    data.choices?.[0]?.message?.content || '';
 
                 const geminiResponse: GeminiResponse = {
                     text,
-                    finishReason: data.choices?.[0]?.finish_reason,
+                    finishReason: data.candidates?.[0]?.finishReason || data.choices?.[0]?.finish_reason,
                     usage: {
-                        promptTokens: data.usage?.prompt_tokens,
-                        completionTokens: data.usage?.completion_tokens,
-                        totalTokens: data.usage?.total_tokens,
+                        promptTokens: data.usageMetadata?.promptTokenCount || data.usage?.prompt_tokens,
+                        completionTokens: data.usageMetadata?.candidatesTokenCount || data.usage?.completion_tokens,
+                        totalTokens: data.usageMetadata?.totalTokenCount || data.usage?.total_tokens,
                     },
                 };
 
@@ -660,7 +733,7 @@ export class GeminiService {
     }
 
     /**
-     * Server-side only: Get a stream response from OpenRouter
+     * Server-side only: Get a stream response from Google AI Studio
      */
     async getStreamResponse(
         userMessage: string,
@@ -670,13 +743,8 @@ export class GeminiService {
             throw new Error('getStreamResponse is for server-side use only');
         }
 
-        if (!this.isReady()) {
-            throw new Error('Service not initialized');
-        }
-
         const sanitizedMessage = sanitizeInput(userMessage);
-        const messages = convertToOpenRouterMessages(sanitizedMessage, conversationHistory);
-        return this.callOpenRouter(messages, true);
+        return this.callGoogleAI(sanitizedMessage, conversationHistory || [], true);
     }
 
     async sendMessageStream(
