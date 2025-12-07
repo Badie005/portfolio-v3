@@ -528,9 +528,10 @@ export class GeminiService {
             })
         });
 
-        // Si rate limit (429), essayer le modèle suivant
+        // Si rate limit (429), essayer le modèle suivant après un court délai
         if (response.status === 429 && modelIndex < FREE_MODELS.length - 1) {
-            this.logger.warn(`Rate limit on ${model}, trying fallback model...`);
+            this.logger.warn(`Rate limit on ${model}, waiting 2s then trying fallback...`);
+            await sleep(2000); // Attendre 2 secondes avant le fallback
             return this.callOpenRouter(messages, stream, modelIndex + 1);
         }
 
