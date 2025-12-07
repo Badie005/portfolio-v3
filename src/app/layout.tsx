@@ -24,8 +24,8 @@ const cormorant = Cormorant_Garamond({
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
   title: {
-    default: "Abdelbadie Khoubiza - Full-Stack Developer",
-    template: "%s | Abdelbadie Khoubiza",
+    default: "B.DEV - Abdelbadie Khoubiza | Full-Stack Developer",
+    template: "%s | B.DEV",
   },
   description:
     "Full-Stack Developer spécialisé en React, Node.js et Laravel. Portfolio de projets professionnels incluant plateformes e-learning, systèmes de gestion et infrastructure DevOps.",
@@ -40,31 +40,43 @@ export const metadata: Metadata = {
     "Fès",
     "USMBA",
     "Développeur Web",
+    "B.DEV",
+    "B.411",
   ],
   authors: [{ name: "Abdelbadie Khoubiza" }],
   creator: "Abdelbadie Khoubiza",
+  icons: {
+    icon: [
+      { url: "/logo/Mini-Logo-B.png", sizes: "32x32", type: "image/png" },
+      { url: "/logo/Mini-Logo-B.png", sizes: "16x16", type: "image/png" },
+    ],
+    apple: [
+      { url: "/logo/Logo-B.png", sizes: "180x180", type: "image/png" },
+    ],
+    shortcut: "/logo/Mini-Logo-B.png",
+  },
   openGraph: {
     type: "website",
     locale: "fr_FR",
     url: process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
-    siteName: "Abdelbadie Khoubiza Portfolio",
-    title: "Abdelbadie Khoubiza - Full-Stack Developer",
+    siteName: "B.DEV × B.411 Portfolio",
+    title: "B.DEV - Full-Stack Developer",
     description:
       "Portfolio professionnel d'un développeur Full-Stack basé à Fès, Maroc",
     images: [
       {
-        url: "/profile.jpg",
+        url: "/logo/Logo-B.png",
         width: 1200,
         height: 630,
-        alt: "Abdelbadie Khoubiza Portfolio",
+        alt: "B.DEV × B.411 Portfolio",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Abdelbadie Khoubiza - Full-Stack Developer",
+    title: "B.DEV - Full-Stack Developer",
     description: "Portfolio professionnel d'un développeur Full-Stack",
-    images: ["/profile.jpg"],
+    images: ["/logo/Logo-B.png"],
   },
   robots: {
     index: true,
