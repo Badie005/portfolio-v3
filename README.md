@@ -1,36 +1,159 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🎨 Portfolio Abdelbadie Khoubiza
 
-## Getting Started
+Portfolio professionnel moderne développé avec Next.js 16, React 19, TypeScript et Tailwind CSS v4.
 
-First, run the development server:
+## 🚀 Technologies utilisées
+
+- **Framework** : Next.js 16.0.7 (App Router)
+- **UI** : React 19.2.0
+- **Styling** : Tailwind CSS v4
+- **Langage** : TypeScript 5
+- **Animations** : Framer Motion (motion)
+- **Formulaires** : React Hook Form
+- **Validation** : Zod
+- **Emails** : Resend API
+- **Icônes** : Lucide React
+- **UI Components** : Radix UI, shadcn/ui
+- **Notifications** : Sonner
+
+## 📦 Installation
 
 ```bash
+# Installer les dépendances
+npm install
+
+# Configurer les variables d'environnement
+# Créer un fichier .env.local à la racine :
+RESEND_API_KEY=votre_clé_resend
+FROM_EMAIL=onboarding@resend.dev
+TO_EMAIL=badiekhoubiza05@gmail.com
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+
+# Lancer le serveur de développement
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Le site sera accessible sur [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🎯 Fonctionnalités
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### ✅ Implémentées
+- 🎨 Design minimaliste noir et blanc
+- 📱 Responsive (mobile, tablet, desktop)
+- ⚡ Navigation sticky avec menu mobile
+- 🎭 Animations fluides avec Framer Motion
+- 📝 Formulaire de contact fonctionnel avec Resend
+- ✉️ Rate limiting sur l'API (5 emails/heure)
+- 🔍 SEO optimisé (metadata, Open Graph, Twitter Cards)
+- 📄 Sitemap.xml et robots.txt automatiques
+- 🌐 JSON-LD structured data (Schema.org)
+- 🎪 PWA Support (manifest.json)
+- ♿ Accessibilité (WCAG 2.1)
+- 🚀 Performance optimisée (Next.js Image)
 
-## Learn More
+### 📄 Pages
+- **/** - Page d'accueil avec toutes les sections
+  - Hero avec appel à l'action
+  - À propos avec principes et statistiques
+  - 3 projets mis en avant
+  - Expérience professionnelle
+  - Compétences techniques
+  - Formulaire de contact
+- **/projects** - Page dédiée aux projets
 
-To learn more about Next.js, take a look at the following resources:
+## 📁 Structure du projet
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+portfolio-v.3.02/
+├── src/
+│   ├── app/
+│   │   ├── api/contact/         # API Route Resend
+│   │   ├── projects/            # Page projets
+│   │   ├── layout.tsx           # Layout global
+│   │   ├── page.tsx             # Homepage
+│   │   ├── globals.css          # Styles Tailwind
+│   │   ├── sitemap.ts           # Génération sitemap
+│   │   └── robots.ts            # Génération robots.txt
+│   ├── components/
+│   │   ├── sections/            # Sections homepage
+│   │   │   ├── HeroSection.tsx
+│   │   │   ├── AboutSection.tsx
+│   │   │   ├── ProjectsSection.tsx
+│   │   │   ├── ExperienceSection.tsx
+│   │   │   ├── SkillsSection.tsx
+│   │   │   └── ContactSection.tsx
+│   │   ├── ui/                  # Composants UI réutilisables
+│   │   ├── Navigation.tsx
+│   │   ├── Footer.tsx
+│   │   ├── ProjectCard.tsx
+│   │   └── ProjectDetailCard.tsx
+│   ├── data/
+│   │   └── projects.ts          # Données des projets
+│   ├── lib/
+│   │   └── utils.ts             # Fonctions utilitaires
+│   └── types/
+│       └── index.ts             # Types TypeScript
+├── public/
+│   └── manifest.json            # PWA manifest
+├── .env.local                   # Variables d'environnement
+├── next.config.ts               # Configuration Next.js
+├── tailwind.config.ts           # Configuration Tailwind
+└── tsconfig.json                # Configuration TypeScript
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🔧 Scripts disponibles
 
-## Deploy on Vercel
+```bash
+# Développement
+npm run dev
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+# Build production
+npm run build
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+# Démarrer le serveur production
+npm start
+
+# Linter
+npm run lint
+```
+
+## 📧 Configuration du formulaire de contact
+
+1. Créer un compte sur [Resend](https://resend.com)
+2. Générer une clé API
+3. Ajouter la clé dans `.env.local`
+4. Tester le formulaire sur la page d'accueil
+
+Le formulaire inclut :
+- Validation en temps réel
+- Messages d'erreur clairs
+- Rate limiting (5 messages/heure par IP)
+- Compteur de caractères
+- States de chargement
+- Notifications toast
+
+## 🚀 Déploiement sur Vercel
+
+```bash
+# Installer Vercel CLI
+npm i -g vercel
+
+# Déployer
+vercel
+
+# Déployer en production
+vercel --prod
+```
+
+N'oubliez pas d'ajouter les variables d'environnement dans les paramètres Vercel.
+
+## 👨‍💻 Auteur
+
+**Abdelbadie Khoubiza**
+- GitHub : [@Badie005](https://github.com/Badie005)
+- LinkedIn : [abdelbadie-khoubiza](https://linkedin.com/in/abdelbadie-khoubiza)
+- Email : badiekhoubiza05@gmail.com
+
+## 📝 License
+
+Ce projet est sous licence MIT.

@@ -9,9 +9,13 @@
 !.yarn/plugins
 !.yarn/releases
 !.yarn/versions
+/base-design
 
 # testing
 /coverage
+/test-results
+/playwright-report
+playwright-results.json
 
 # next.js
 /.next/
@@ -35,7 +39,14 @@ yarn-error.log*
 
 # vercel
 .vercel
+PRD.md
 
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# AI / Dev tools context (local only)
+.gemini/
+GEMINI.md
+claude/
+CLEANUP_PLAN.md
