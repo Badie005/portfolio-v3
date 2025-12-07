@@ -503,11 +503,14 @@ export class GeminiService {
         return rest;
     }
 
-    // Server-side API call to OpenRouter
+    // Server-side API call to OpenRouter with fallback models
     private async callOpenRouter(
         messages: OpenRouterMessage[],
-        stream: boolean = false
+        stream: boolean = false,
+        modelIndex: number = 0
     ): Promise<Response> {
+        const model = FREE_MODELS[modelIndex] || FREE_MODELS[0];
+
         const response = await fetch(OPENROUTER_API_URL, {
             method: 'POST',
             headers: {
@@ -517,13 +520,19 @@ export class GeminiService {
                 'X-Title': 'B.DEV Portfolio'
             },
             body: JSON.stringify({
-                model: this.config.model,
+                model,
                 messages,
                 temperature: this.config.temperature,
                 max_tokens: this.config.maxTokens,
                 stream
             })
         });
+
+        // Si rate limit (429), essayer le modèle suivant
+        if (response.status === 429 && modelIndex < FREE_MODELS.length - 1) {
+            this.logger.warn(`Rate limit on ${model}, trying fallback model...`);
+            return this.callOpenRouter(messages, stream, modelIndex + 1);
+        }
 
         return response;
     }
@@ -660,7 +669,7 @@ export class GeminiService {
         }
 
         if (!this.isReady()) {
-             throw new Error('Service not initialized');
+            throw new Error('Service not initialized');
         }
 
         const sanitizedMessage = sanitizeInput(userMessage);
