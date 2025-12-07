@@ -1,11 +1,11 @@
 // hooks/useGemini.ts
 // ============================================================
 // React Hook for Gemini AI Service (Client Side)
-// Uses /api/chat to protect API Key
+// Uses /api/chat which returns a streaming text response
 // ============================================================
 
 import { useState, useCallback, useRef } from 'react';
-import { GeminiMessage, GeminiResponse } from '@/lib/gemini';
+import { GeminiMessage } from '@/lib/gemini';
 
 export interface UseGeminiState {
     messages: GeminiMessage[];
@@ -35,63 +35,10 @@ export function useGemini(): UseGeminiReturn {
     const lastMessageRef = useRef<string>('');
     const abortControllerRef = useRef<AbortController | null>(null);
 
-    const callApi = async (message: string, history: GeminiMessage[]) => {
-        const response = await fetch("/api/chat", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ message, history }),
-            signal: abortControllerRef.current?.signal,
-        });
-
-        if (!response.ok) {
-            const data = await response.json().catch(() => ({}));
-            throw new Error(data.error || `Error ${response.status}`);
-        }
-
-        const data = await response.json();
-        return data.response as GeminiResponse;
-    };
-
-    const sendMessage = useCallback(async (message: string) => {
-        if (!message.trim()) return;
-
-        lastMessageRef.current = message;
-        abortControllerRef.current = new AbortController();
-
-        const userMessage: GeminiMessage = {
-            role: 'user',
-            parts: [{ text: message }],
-            timestamp: Date.now(),
-        };
-
-        setMessages(prev => [...prev, userMessage]);
-        setIsLoading(true);
-        setError(null);
-
-        try {
-            const response = await callApi(message, messages);
-
-            if (response.error) {
-                setError(response.error);
-            } else {
-                const assistantMessage: GeminiMessage = {
-                    role: 'model',
-                    parts: [{ text: response.text }],
-                    timestamp: Date.now(),
-                };
-                setMessages(prev => [...prev, assistantMessage]);
-            }
-        } catch (err) {
-            if (err instanceof Error && err.name === 'AbortError') return;
-            setError(err instanceof Error ? err.message : 'Une erreur est survenue');
-        } finally {
-            setIsLoading(false);
-        }
-    }, [messages]);
-
+    /**
+     * Send a message and read the streaming response
+     */
     const sendMessageStreaming = useCallback(async (message: string) => {
-        // Note: The current API route does not support streaming yet.
-        // We fallback to standard sendMessage but simulate the interface.
         if (!message.trim()) return;
 
         lastMessageRef.current = message;
@@ -106,32 +53,75 @@ export function useGemini(): UseGeminiReturn {
         setMessages(prev => [...prev, userMessage]);
         setIsLoading(true);
         setError(null);
-        setStreamingText(''); // Reset streaming text
+        setStreamingText('');
 
         try {
-            // Simulate "thinking" or waiting state
-            const response = await callApi(message, messages);
+            const response = await fetch("/api/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message, history: messages }),
+                signal: abortControllerRef.current?.signal,
+            });
 
-            if (response.error) {
-                setError(response.error);
-            } else {
-                // Since we don't have real streaming, we just set the full text at the end
-                // Ideally we would stream the response from the API
+            // Check if it's an error response (JSON)
+            const contentType = response.headers.get("Content-Type") || "";
+
+            if (!response.ok) {
+                // Error responses are JSON
+                if (contentType.includes("application/json")) {
+                    const data = await response.json().catch(() => ({}));
+                    throw new Error(data.error || `Erreur ${response.status}`);
+                } else {
+                    throw new Error(`Erreur ${response.status}`);
+                }
+            }
+
+            // Check if we have a body to read
+            if (!response.body) {
+                throw new Error("Pas de réponse du serveur");
+            }
+
+            // Read the streaming response
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            let fullText = '';
+
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+
+                const chunk = decoder.decode(value, { stream: true });
+                fullText += chunk;
+                setStreamingText(fullText);
+            }
+
+            // Add the complete message to history
+            if (fullText.trim()) {
                 const assistantMessage: GeminiMessage = {
                     role: 'model',
-                    parts: [{ text: response.text }],
+                    parts: [{ text: fullText }],
                     timestamp: Date.now(),
                 };
                 setMessages(prev => [...prev, assistantMessage]);
+            } else {
+                setError("Réponse vide du serveur");
             }
+
         } catch (err) {
             if (err instanceof Error && err.name === 'AbortError') return;
-            setError(err instanceof Error ? err.message : 'Une erreur est survenue');
+            const errorMessage = err instanceof Error ? err.message : 'Une erreur est survenue';
+            setError(errorMessage);
+            console.error('[useGemini] Error:', err);
         } finally {
             setIsLoading(false);
             setStreamingText('');
         }
     }, [messages]);
+
+    /**
+     * Alias for sendMessageStreaming (backward compatibility)
+     */
+    const sendMessage = sendMessageStreaming;
 
     const clearMessages = useCallback(() => {
         abortControllerRef.current?.abort();
@@ -153,9 +143,9 @@ export function useGemini(): UseGeminiReturn {
                 }
                 return prev;
             });
-            await sendMessage(lastMessageRef.current);
+            await sendMessageStreaming(lastMessageRef.current);
         }
-    }, [sendMessage]);
+    }, [sendMessageStreaming]);
 
     return {
         messages,
@@ -172,3 +162,4 @@ export function useGemini(): UseGeminiReturn {
 }
 
 export default useGemini;
+
