@@ -46,8 +46,10 @@ export function parseAnsi(input: string): React.ReactNode {
     let currentClasses: Set<string> = new Set();
     let lastIndex = 0;
     let match;
+    let hasAnsi = false;
 
     while ((match = regex.exec(input)) !== null) {
+        hasAnsi = true;
         // Ajouter le texte avant le code ANSI
         const textBefore = input.slice(lastIndex, match.index);
         if (textBefore) {
@@ -79,6 +81,11 @@ export function parseAnsi(input: string): React.ReactNode {
         lastIndex = regex.lastIndex;
     }
 
+    // Si aucun code ANSI n'a été trouvé, retourner la chaîne brute
+    if (!hasAnsi) {
+        return input;
+    }
+
     // Ajouter le reste du texte
     const textAfter = input.slice(lastIndex);
     if (textAfter) {
@@ -86,11 +93,6 @@ export function parseAnsi(input: string): React.ReactNode {
             text: textAfter,
             classes: Array.from(currentClasses)
         });
-    }
-
-    // Si aucun code ANSI n'a été trouvé, retourner la chaîne brute
-    if (parts.length === 0) {
-        return input;
     }
 
     return (

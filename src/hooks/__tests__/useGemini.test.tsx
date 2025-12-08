@@ -1,13 +1,35 @@
 /**
  * @vitest-environment jsdom
  */
-import { renderHook, act } from '@testing-library/react';
+import { renderHook, act, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import useGemini from '../useGemini';
 
 // Mock fetch global
 const mockFetch = vi.fn();
 global.fetch = mockFetch;
+
+// Helper to create a streaming response
+const createStreamResponse = (text: string) => {
+    const encoder = new TextEncoder();
+    const stream = new ReadableStream({
+        start(controller) {
+            controller.enqueue(encoder.encode(text));
+            controller.close();
+        },
+    });
+
+    return {
+        ok: true,
+        headers: {
+            get: (name: string) => {
+                if (name === 'Content-Type') return 'text/plain';
+                return null;
+            }
+        },
+        body: stream,
+    };
+};
 
 describe('useGemini Hook', () => {
     beforeEach(() => {
@@ -27,16 +49,8 @@ describe('useGemini Hook', () => {
     it('should send a message and update state successfully', async () => {
         const { result } = renderHook(() => useGemini());
 
-        // Mock successful API response
-        mockFetch.mockResolvedValueOnce({
-            ok: true,
-            json: async () => ({
-                response: {
-                    text: 'Response from AI',
-                    usage: { totalTokens: 10 }
-                }
-            })
-        });
+        // Mock successful streaming response
+        mockFetch.mockResolvedValueOnce(createStreamResponse('Response from AI'));
 
         await act(async () => {
             await result.current.sendMessage('Hello AI');
@@ -74,6 +88,9 @@ describe('useGemini Hook', () => {
         mockFetch.mockResolvedValueOnce({
             ok: false,
             status: 500,
+            headers: {
+                get: () => 'application/json'
+            },
             json: async () => ({ error: 'Internal Server Error' })
         });
 
@@ -92,10 +109,7 @@ describe('useGemini Hook', () => {
         const { result } = renderHook(() => useGemini());
 
         // Add some state first
-        mockFetch.mockResolvedValueOnce({
-            ok: true,
-            json: async () => ({ response: { text: 'Hi' } })
-        });
+        mockFetch.mockResolvedValueOnce(createStreamResponse('Hi'));
 
         await act(async () => {
             await result.current.sendMessage('Hi');
