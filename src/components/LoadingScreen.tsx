@@ -15,8 +15,22 @@ export function LoadingScreen({
     minDisplayTime = 4000
 }: LoadingScreenProps) {
     const [isExiting, setIsExiting] = useState(false);
+    const [shouldShow, setShouldShow] = useState(false);
 
     useEffect(() => {
+        // Check if this is the first visit in this session
+        const hasVisited = sessionStorage.getItem('portfolio-visited');
+
+        if (hasVisited) {
+            // Already visited, skip loading screen
+            onLoadComplete?.();
+            return;
+        }
+
+        // First visit - show loading screen
+        setShouldShow(true);
+        sessionStorage.setItem('portfolio-visited', 'true');
+
         const timer = setTimeout(() => {
             setIsExiting(true);
             setTimeout(() => {
@@ -29,7 +43,7 @@ export function LoadingScreen({
 
     return (
         <AnimatePresence>
-            {!isExiting && (
+            {shouldShow && !isExiting && (
                 <motion.div
                     initial={{ opacity: 1 }}
                     exit={{ opacity: 0, scale: 1.1, filter: "blur(10px)" }}
