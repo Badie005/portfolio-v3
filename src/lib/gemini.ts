@@ -555,8 +555,8 @@ export class GeminiService {
                 })
             });
 
-            // If Google AI fails, fallback to OpenRouter
-            if (!response.ok && response.status >= 500) {
+            // If Google AI fails (any error), fallback to OpenRouter
+            if (!response.ok) {
                 this.logger.warn(`Google AI error ${response.status}, falling back to OpenRouter`);
                 return this.callOpenRouterFallback(userMessage, conversationHistory, stream);
             }
