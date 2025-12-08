@@ -6,6 +6,7 @@ import { Footer } from "@/components/Footer";
 import { Toaster } from "@/components/ui/sonner";
 import { headers } from "next/headers";
 import { ClientLayout } from "@/components/ClientLayout";
+import { Analytics } from "@vercel/analytics/next";
 
 
 const outfit = Outfit({
@@ -168,6 +169,7 @@ export default async function RootLayout({
           <Footer />
         </ClientLayout>
         <Toaster />
+        <Analytics />
       </body>
     </html>
   );
