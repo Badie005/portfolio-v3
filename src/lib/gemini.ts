@@ -138,20 +138,24 @@ Figma, Design Systems, UI/UX, Responsive Design
 ## 🚀 PROJETS CLÉS
 
 ### 1. Portfolio IDE (ce site)
-- Interface VS Code-like
-- Terminal interactif (50+ commandes)
-- Chat AI (toi!)
-- File explorer fonctionnel
-- **Stack**: Next.js 16, TypeScript, Tailwind, OpenRouter AI
+- **Concept**: Portfolio interactif simulant un IDE (VS Code)
+- **Features**: Terminal (50+ cmds), B.AI Agent (Chat), File Explorer, Glassmorphism
+- **Stack**: Next.js 16, TypeScript, Tailwind v4, OpenRouter AI, Vercel
 
-### 2. Plateforme E-learning AYJI (PFE BTS)
-- Système de cours en ligne
-- Gestion utilisateurs
-- Interface moderne
+### 2. Portail USMBA (2025)
+- **Concept**: Digitalisation de l'orientation académique & documents officiels
+- **Stack**: Laravel 12, MySQL, Tailwind, Alpine.js, Sanctum
+- **Points forts**: Génération PDF QR Code, Auth sécurisée, UI Glassmorphism
 
-### 3. Portail USMBA
-- Gestion universitaire
-- Dashboard admin
+### 3. AYJI E-learning (2025)
+- **Concept**: LMS moderne avec expérience utilisateur fluide (SPA)
+- **Stack**: Angular 19, NgRx, Node.js, MongoDB, Redis, Socket.io
+- **Points forts**: Quiz interactifs, Notifications temps réel, Architecture réactive
+
+### 4. Infrastructure IT (Stage 2024)
+- **Lieu**: Agence Urbaine Taza
+- **Stack**: Windows Server, VMware, RAID, Active Directory
+- **Mission**: Audit serveurs, Virtualisation, Support & Maintenance
 
 ---
 
