@@ -47,13 +47,13 @@ export const metadata: Metadata = {
   creator: "Abdelbadie Khoubiza",
   icons: {
     icon: [
-      { url: "/logo/Mini-Logo-B.png", sizes: "32x32", type: "image/png" },
-      { url: "/logo/Mini-Logo-B.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon-dark.svg", type: "image/svg+xml", media: "(prefers-color-scheme: dark)" },
+      { url: "/favicon-light.svg", type: "image/svg+xml", media: "(prefers-color-scheme: light)" },
     ],
     apple: [
-      { url: "/logo/Logo-B.png", sizes: "180x180", type: "image/png" },
+      { url: "/logo/SVG/Logo-B.svg", type: "image/svg+xml" },
     ],
-    shortcut: "/logo/Mini-Logo-B.png",
+    shortcut: "/favicon-dark.svg",
   },
   openGraph: {
     type: "website",
@@ -65,7 +65,7 @@ export const metadata: Metadata = {
       "Portfolio professionnel d'un développeur Full-Stack basé à Fès, Maroc",
     images: [
       {
-        url: "/logo/Logo-B.png",
+        url: "/logo/SVG/Logo-B.svg",
         width: 1200,
         height: 630,
         alt: "B.DEV × B.411 Portfolio",
@@ -76,7 +76,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "B.DEV - Full-Stack Developer",
     description: "Portfolio professionnel d'un développeur Full-Stack",
-    images: ["/logo/Logo-B.png"],
+    images: ["/logo/SVG/Logo-B.svg"],
   },
   robots: {
     index: true,
