@@ -1,9 +1,50 @@
 /**
  * @vitest-environment jsdom
  */
-import { renderHook, act } from '@testing-library/react';
+import { renderHook, act, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import useGemini from '../useGemini';
+
+// Helper to create a mock streaming response
+function createStreamingResponse(text: string): Response {
+    const encoder = new TextEncoder();
+    const chunks = [encoder.encode(text)];
+    let chunkIndex = 0;
+
+    const mockReader: ReadableStreamDefaultReader<Uint8Array> = {
+        read: vi.fn().mockImplementation(() => {
+            if (chunkIndex < chunks.length) {
+                return Promise.resolve({ done: false, value: chunks[chunkIndex++] });
+            }
+            return Promise.resolve({ done: true, value: undefined });
+        }),
+        releaseLock: vi.fn(),
+        cancel: vi.fn().mockResolvedValue(undefined),
+        closed: Promise.resolve(undefined),
+    } as unknown as ReadableStreamDefaultReader<Uint8Array>;
+
+    const mockBody = {
+        getReader: () => mockReader,
+    } as unknown as ReadableStream<Uint8Array>;
+
+    return {
+        ok: true,
+        status: 200,
+        headers: new Headers({ 'Content-Type': 'text/event-stream' }),
+        body: mockBody,
+        json: vi.fn(),
+    } as unknown as Response;
+}
+
+function createErrorResponse(status: number, error: string): Response {
+    return {
+        ok: false,
+        status,
+        headers: new Headers({ 'Content-Type': 'application/json' }),
+        body: null,
+        json: vi.fn().mockResolvedValue({ error }),
+    } as unknown as Response;
+}
 
 // Mock fetch global
 const mockFetch = vi.fn();
@@ -24,26 +65,21 @@ describe('useGemini Hook', () => {
         expect(result.current.isReady).toBe(true);
     });
 
-    it('should send a message and update state successfully', async () => {
+    it('should send a message and update state successfully with streaming', async () => {
         const { result } = renderHook(() => useGemini());
 
-        // Mock successful API response
-        mockFetch.mockResolvedValueOnce({
-            ok: true,
-            json: async () => ({
-                response: {
-                    text: 'Response from AI',
-                    usage: { totalTokens: 10 }
-                }
-            })
-        });
+        // Mock successful streaming API response
+        mockFetch.mockResolvedValueOnce(createStreamingResponse('Response from AI'));
 
         await act(async () => {
             await result.current.sendMessage('Hello AI');
         });
 
-        // Check loading state
-        expect(result.current.isLoading).toBe(false);
+        // Wait for state to update
+        await waitFor(() => {
+            expect(result.current.isLoading).toBe(false);
+        });
+
         expect(result.current.error).toBeNull();
 
         // Check messages
@@ -71,17 +107,16 @@ describe('useGemini Hook', () => {
         const { result } = renderHook(() => useGemini());
 
         // Mock error API response
-        mockFetch.mockResolvedValueOnce({
-            ok: false,
-            status: 500,
-            json: async () => ({ error: 'Internal Server Error' })
-        });
+        mockFetch.mockResolvedValueOnce(createErrorResponse(500, 'Internal Server Error'));
 
         await act(async () => {
             await result.current.sendMessage('Crash me');
         });
 
-        expect(result.current.isLoading).toBe(false);
+        await waitFor(() => {
+            expect(result.current.isLoading).toBe(false);
+        });
+
         expect(result.current.error).toBe('Internal Server Error');
         // Should still have the user message
         expect(result.current.messages).toHaveLength(1);
@@ -92,16 +127,15 @@ describe('useGemini Hook', () => {
         const { result } = renderHook(() => useGemini());
 
         // Add some state first
-        mockFetch.mockResolvedValueOnce({
-            ok: true,
-            json: async () => ({ response: { text: 'Hi' } })
-        });
+        mockFetch.mockResolvedValueOnce(createStreamingResponse('Hi'));
 
         await act(async () => {
             await result.current.sendMessage('Hi');
         });
 
-        expect(result.current.messages).toHaveLength(2);
+        await waitFor(() => {
+            expect(result.current.messages).toHaveLength(2);
+        });
 
         // Clear
         act(() => {
@@ -110,5 +144,27 @@ describe('useGemini Hook', () => {
 
         expect(result.current.messages).toEqual([]);
         expect(result.current.error).toBeNull();
+    });
+
+    it('should handle empty response body', async () => {
+        const { result } = renderHook(() => useGemini());
+
+        // Mock response without body
+        mockFetch.mockResolvedValueOnce({
+            ok: true,
+            status: 200,
+            headers: new Headers({ 'Content-Type': 'text/event-stream' }),
+            body: null,
+        } as unknown as Response);
+
+        await act(async () => {
+            await result.current.sendMessage('Test');
+        });
+
+        await waitFor(() => {
+            expect(result.current.isLoading).toBe(false);
+        });
+
+        expect(result.current.error).toBeTruthy();
     });
 });
