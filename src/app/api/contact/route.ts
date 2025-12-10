@@ -3,8 +3,17 @@ import { Resend } from "resend";
 import { z, ZodError } from "zod";
 import { enforceRateLimit } from "@/lib/rate-limit";
 
-// Initialize Resend
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Lazy initialize Resend - only create instance when actually needed
+let resend: Resend | null = null;
+function getResend(): Resend {
+  if (!resend) {
+    if (!process.env.RESEND_API_KEY) {
+      throw new Error("RESEND_API_KEY is not configured");
+    }
+    resend = new Resend(process.env.RESEND_API_KEY);
+  }
+  return resend;
+}
 
 // Validation schema
 const contactSchema = z.object({
@@ -42,7 +51,7 @@ export async function POST(request: Request) {
     const validatedData = contactSchema.parse(body);
 
     // Send email using Resend
-    const { data, error } = await resend.emails.send({
+    const { data, error } = await getResend().emails.send({
       from: process.env.FROM_EMAIL || "onboarding@resend.dev",
       to: process.env.TO_EMAIL || "a.khoubiza.dev@gmail.com",
       subject: `Portfolio - ${validatedData.subject}`,
