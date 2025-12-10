@@ -505,7 +505,7 @@ export class GeminiService {
         stream: boolean = false,
         modelIndex: number = 0
     ): Promise<Response> {
-        const openRouterKey = process.env.OPENROUTER_API_KEY;
+        const openRouterKey = this.config.apiKey;
         if (!openRouterKey) {
             throw new Error('No API keys available');
         }
