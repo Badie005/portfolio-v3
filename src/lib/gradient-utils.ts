@@ -74,12 +74,12 @@ export function isValidHexColor(color: string): boolean {
 export function sanitizeColorInput(color: string): string {
   // Remove any potentially harmful characters
   const sanitized = color.replace(/[<>"'&]/g, '');
-  
+
   // Ensure it's a valid hex color
   if (!isValidHexColor(sanitized)) {
     throw new Error(`Invalid color format: ${color}. Expected hex color (e.g., #ff0000)`);
   }
-  
+
   return sanitized;
 }
 
@@ -92,12 +92,12 @@ export function getLuminance(hexColor: string): number {
   const r = (rgb >> 16) & 0xff;
   const g = (rgb >> 8) & 0xff;
   const b = rgb & 0xff;
-  
+
   const [rs, gs, bs] = [r, g, b].map(c => {
     c = c / 255;
     return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
   });
-  
+
   return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
 }
 
@@ -116,16 +116,16 @@ export function getContrastRatio(color1: string, color2: string): number {
  * Check if gradient meets accessibility standards
  */
 export function checkAccessibility(
-  colors: string[], 
+  colors: string[],
   minContrastRatio: number = 4.5
 ): { isAccessible: boolean; issues: string[] } {
   const issues: string[] = [];
-  
+
   if (colors.length < 2) {
     issues.push('At least 2 colors are required for a gradient');
     return { isAccessible: false, issues };
   }
-  
+
   // Sanitize colors
   const sanitizedColors = colors.map(color => {
     const sanitized = sanitizeColorInput(color);
@@ -149,7 +149,7 @@ export function checkAccessibility(
       console.warn('Accessibility issues found:', issues);
     }
   }
-  
+
   return {
     isAccessible: issues.length === 0,
     issues
@@ -163,9 +163,9 @@ export function validateGradientConfig(
   config: Partial<GradientConfig> = {},
   options: ValidationOptions = {}
 ): GradientConfig {
-  const { 
+  const {
     minContrastRatio = 3, // WCAG AA minimum
-    checkAccessibility: shouldCheckAccessibility = true 
+    checkAccessibility: shouldCheckAccessibility = true
   } = options;
 
   // Destructure with defaults
@@ -178,22 +178,22 @@ export function validateGradientConfig(
   if (!colors || colors.length === 0) {
     throw new Error('Gradient configuration must include at least one color');
   }
-  
+
   // Sanitize all colors
   const sanitizedColors = colors.map(sanitizeColorInput);
-  
+
   // Check accessibility if enabled
   if (shouldCheckAccessibility) {
     const accessibility = checkAccessibility(
-      sanitizedColors, 
+      sanitizedColors,
       minContrastRatio
     );
-    
+
     if (!accessibility.isAccessible) {
       console.warn('Accessibility issues detected:', accessibility.issues);
     }
   }
-  
+
   return {
     colors: sanitizedColors,
     speed: Math.max(1, Math.min(60, speed)), // Limit between 1-60 seconds
@@ -209,11 +209,16 @@ export function validateGradientConfig(
  */
 export function generateGradientCSS(config: GradientConfig): string {
   const { colors, direction } = config;
-  
+
   // Create gradient string
   const gradientStops = colors.join(', ');
-  
-  // Determine gradient direction
+
+  // Handle radial gradient separately
+  if (direction === 'radial') {
+    return `radial-gradient(circle, ${gradientStops})`;
+  }
+
+  // Determine linear gradient direction
   let gradientDirection;
   switch (direction) {
     case 'horizontal':
@@ -225,12 +230,11 @@ export function generateGradientCSS(config: GradientConfig): string {
     case 'diagonal':
       gradientDirection = 'to bottom right';
       break;
-    case 'radial':
     default:
-      gradientDirection = 'circle';
+      gradientDirection = 'to right';
       break;
   }
-  
+
   return `linear-gradient(${gradientDirection}, ${gradientStops})`;
 }
 
@@ -243,18 +247,18 @@ const gradientCache = new Map<string, GradientConfig>();
  * Get or create cached gradient configuration
  */
 export function getCachedGradientConfig(
-  key: string, 
+  key: string,
   config: Partial<GradientConfig>
 ): GradientConfig {
   const cacheKey = JSON.stringify({ key, ...config });
-  
+
   if (gradientCache.has(cacheKey)) {
     return gradientCache.get(cacheKey)!;
   }
-  
+
   const validatedConfig = validateGradientConfig(config);
   gradientCache.set(cacheKey, validatedConfig);
-  
+
   return validatedConfig;
 }
 
