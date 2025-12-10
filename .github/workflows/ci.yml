@@ -87,7 +87,7 @@ jobs:
       - name: Build application
         run: npm run build
         env:
-          NEXT_PUBLIC_SITE_URL: ${{ secrets.NEXT_PUBLIC_SITE_URL }}
+          NEXT_PUBLIC_SITE_URL: ${{ secrets.NEXT_PUBLIC_SITE_URL || 'https://bdev.dev' }}
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
@@ -95,6 +95,7 @@ jobs:
           name: build
           path: .next
           retention-days: 1
+          if-no-files-found: error
 
   # ============================================
   # E2E TESTS
