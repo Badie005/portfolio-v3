@@ -43,7 +43,7 @@ export function parseAnsi(input: string): React.ReactNode {
     const regex = /\x1b\[([0-9;]*)m/g;
 
     const parts: AnsiSpan[] = [];
-    let currentClasses: Set<string> = new Set();
+    const currentClasses: Set<string> = new Set();
     let lastIndex = 0;
     let match;
 
