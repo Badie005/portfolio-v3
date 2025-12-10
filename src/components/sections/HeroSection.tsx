@@ -46,7 +46,7 @@ export function HeroSection() {
 
             {/* Name & Role as Code Comment */}
             <div className="font-mono text-sm text-ide-muted" style={{ fontFamily: "'Fira Code', 'Roboto Mono', monospace" }}>
-              <span className="text-ide-accent">//</span> Abdelbadie Khoubiza <span className="text-neutral-300">|</span> Full-Stack Developer
+              <span className="text-ide-accent">{"//"}</span> Abdelbadie Khoubiza <span className="text-neutral-300">|</span> Full-Stack Developer
             </div>
           </motion.div>
 

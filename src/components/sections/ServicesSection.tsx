@@ -48,7 +48,7 @@ export function ServicesSection() {
                         Mes Expertises
                     </h2>
                     <p className="text-lg text-ide-muted leading-relaxed font-body animate-fade-in animation-delay-100">
-                        J'accompagne mes clients de la conception à la mise en ligne, avec une approche technique rigoureuse et un sens aigu du détail.
+                        J&apos;accompagne mes clients de la conception à la mise en ligne, avec une approche technique rigoureuse et un sens aigu du détail.
                     </p>
                 </div>
 
@@ -62,13 +62,13 @@ export function ServicesSection() {
                         >
                             {/* Top accent border - subtle */}
                             <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-ide-accent/40 to-transparent" />
-                            
+
                             {/* Animated bottom border on hover */}
                             <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-ide-accent/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                            
+
                             {/* Glass shine effect */}
                             <div className="absolute inset-0 bg-gradient-to-br from-white/30 via-transparent to-transparent opacity-60 pointer-events-none" />
-                            
+
                             {/* Hover glow */}
                             <div className="absolute -inset-1 bg-gradient-to-r from-ide-accent/0 via-ide-accent/10 to-ide-accent/0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl pointer-events-none" />
 

@@ -108,13 +108,13 @@ export function ExperienceSection() {
                   <div className="group relative rounded-xl border border-white/30 overflow-hidden transition-all duration-500 hover:border-ide-accent/40 hover:shadow-xl backdrop-blur-md bg-white/40 hover:bg-white/50 shadow-sm">
                     {/* Top accent border - subtle */}
                     <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-ide-accent/40 to-transparent" />
-                    
+
                     {/* Animated bottom border on hover */}
                     <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-ide-accent/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                    
+
                     {/* Glass shine effect */}
                     <div className="absolute inset-0 bg-gradient-to-br from-white/30 via-transparent to-transparent opacity-60 pointer-events-none" />
-                    
+
                     {/* Hover glow */}
                     <div className="absolute -inset-1 bg-gradient-to-r from-ide-accent/0 via-ide-accent/10 to-ide-accent/0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl pointer-events-none" />
 
@@ -192,7 +192,7 @@ export function ExperienceSection() {
               <div className="w-8 h-8 rounded-full backdrop-blur-md bg-white/50 border-2 border-white/30 flex items-center justify-center -translate-x-1/2 md:translate-x-0">
                 <div className="w-2 h-2 bg-ide-accent/50 rounded-full" />
               </div>
-              <span className="font-mono text-xs text-ide-muted md:hidden">La suite s'écrit...</span>
+              <span className="font-mono text-xs text-ide-muted md:hidden">La suite s&apos;écrit...</span>
             </div>
           </div>
         </div>
