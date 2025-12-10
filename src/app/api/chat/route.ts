@@ -91,7 +91,7 @@ export async function POST(req: NextRequest) {
                             if (content) {
                                 controller.enqueue(encoder.encode(content));
                             }
-                        } catch (e) {
+                        } catch {
                             // ignore json parse errors
                         }
                     }
