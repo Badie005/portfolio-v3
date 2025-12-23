@@ -124,7 +124,7 @@ export function Navigation() {
             }}
           />
 
-          <div className="relative px-6 py-3 max-w-7xl mx-auto z-10">
+          <div className="relative px-4 sm:px-6 py-3 max-w-7xl mx-auto z-10">
             <div className="flex items-center justify-between">
               <motion.div
                 initial={{ opacity: 0 }}
@@ -137,7 +137,7 @@ export function Navigation() {
               </motion.div>
 
               {/* Desktop Navigation */}
-              <div className="hidden md:flex items-center gap-1">
+              <div className="hidden lg:flex items-center gap-1">
                 {navItems.map((item, index) => (
                   <motion.div
                     key={item.name}
@@ -177,7 +177,7 @@ export function Navigation() {
 
               {/* Mobile Menu Button */}
               <button
-                className="md:hidden text-brand"
+                className="lg:hidden text-brand"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 aria-label={isMobileMenuOpen ? "Fermer le menu" : "Ouvrir le menu"}
                 aria-expanded={isMobileMenuOpen}
@@ -192,7 +192,7 @@ export function Navigation() {
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
-                className="md:hidden mt-4 pb-4 border-t border-white/30 pt-4"
+                className="lg:hidden mt-4 pb-4 border-t border-white/30 pt-4"
               >
                 <div className="flex flex-col gap-2">
                   {navItems.map((item) => (

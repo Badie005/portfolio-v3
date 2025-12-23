@@ -23,17 +23,17 @@ const CodeWindow = dynamic(
 
 export function HeroSection() {
   return (
-    <section className="min-h-screen flex items-center justify-center relative px-6 pt-20 overflow-hidden">
+    <section className="min-h-screen flex items-center justify-center relative px-4 sm:px-6 pt-20 overflow-x-hidden overflow-y-visible">
 
 
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
-        className="max-w-[1600px] w-full grid grid-cols-1 lg:grid-cols-[25%_75%] gap-12 lg:gap-x-20 items-center hero-grid relative z-10"
+        className="max-w-[1600px] max-w-[100vw] w-full grid grid-cols-1 xl:grid-cols-[38%_1fr] gap-8 xl:gap-x-8 items-center hero-grid relative z-10"
       >
         {/* Left Column - Text Content */}
-        <div className="flex flex-col justify-center h-full gap-8 lg:gap-10">
+        <div className="flex flex-col justify-center h-full gap-8 xl:gap-10">
           {/* Status & Identity */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -52,7 +52,7 @@ export function HeroSection() {
 
           {/* Main Title - Line-by-line Reveal */}
           <div>
-            <h1 className="text-6xl lg:text-7xl font-medium leading-[1.1] tracking-tight font-heading text-brand">
+            <h1 className="text-3xl min-[400px]:text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-medium leading-[1.1] tracking-tight font-heading text-brand break-words hyphens-auto">
               <GrainyTextLines
                 lines={[
                   { text: "Code with Passion,", highlightWords: ["Passion,"] },
@@ -123,10 +123,10 @@ export function HeroSection() {
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.5, duration: 0.8, ease: "easeOut" }}
-          className="relative mx-auto lg:mx-0 lg:ml-auto w-full"
+          className="relative mx-auto xl:mx-0 xl:ml-auto w-full max-w-full overflow-hidden"
         >
           <div
-            className="relative w-full h-[700px] lg:h-[800px] lg:-mr-40"
+            className="relative w-full h-[350px] sm:h-[450px] md:h-[600px] lg:h-[750px] xl:h-[800px]"
             style={{
               perspective: '1000px'
             }}
@@ -145,7 +145,7 @@ export function HeroSection() {
               />
 
               {/* IDE with padding to show background around edges */}
-              <div className="relative w-full h-full p-6">
+              <div className="relative w-full h-full p-2 sm:p-4 md:p-6 overflow-hidden">
                 <CodeWindow />
               </div>
             </motion.div>

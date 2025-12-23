@@ -44,13 +44,13 @@ export function ProjectsSection() {
           viewport={{ once: true }}
           className="mt-16 flex items-center justify-center gap-4 flex-wrap"
         >
-          <Button asChild size="lg" className="w-[220px]">
+          <Button asChild size="lg" className="w-full sm:w-[220px]">
             <Link href="/projects">
               Voir tous mes projets
               <ArrowRight size={16} />
             </Link>
           </Button>
-          <Button asChild variant="glass" size="lg" className="w-[220px]">
+          <Button asChild variant="glass" size="lg" className="w-full sm:w-[220px]">
             <a
               href="https://github.com/Badie005"
               target="_blank"

@@ -112,7 +112,7 @@ export function AboutSection() {
               {/* Glass shine effect */}
               <div className="absolute inset-0 bg-gradient-to-br from-white/30 via-transparent to-transparent opacity-60 pointer-events-none" />
 
-              <div className="relative z-10 grid grid-cols-2 gap-y-8 gap-x-6">
+              <div className="relative z-10 grid grid-cols-1 min-[360px]:grid-cols-2 gap-y-6 gap-x-4 sm:gap-y-8 sm:gap-x-6">
                 <div className="flex flex-col">
                   <span className="text-3xl lg:text-4xl font-medium font-heading text-brand mb-1">3</span>
                   <span className="text-xs text-ide-muted font-body tracking-wide uppercase opacity-80">Projets réalisés</span>
@@ -141,7 +141,7 @@ export function AboutSection() {
           </motion.div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {principles.map((principle, index) => (
             <motion.div
               key={principle.title}

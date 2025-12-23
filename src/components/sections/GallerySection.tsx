@@ -227,7 +227,7 @@ export function GallerySection() {
                         </div>
 
                         {/* Sidebar */}
-                        <div className="w-full lg:w-52 flex flex-col gap-6">
+                        <div className="w-full lg:w-52 flex flex-col gap-4 sm:gap-6">
                             {/* Info */}
                             <AnimatePresence mode="wait">
                                 <motion.div
@@ -247,7 +247,7 @@ export function GallerySection() {
                             </AnimatePresence>
 
                             {/* Thumbnails */}
-                            <div className="grid grid-cols-3 lg:grid-cols-2 gap-3">
+                            <div className="grid grid-cols-3 lg:grid-cols-2 gap-2 sm:gap-3">
                                 {GALLERY_IMAGES.map((image, index) => (
                                     <button
                                         key={image.src}

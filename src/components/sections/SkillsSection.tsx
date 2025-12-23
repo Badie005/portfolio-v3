@@ -56,35 +56,49 @@ export function SkillsSection() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {skillCategories.map((category, index) => (
             <div
               key={category.title}
-              className="group liquid-glass-card rounded-2xl p-8 animate-fade-in-up"
+              className="group relative p-8 rounded-2xl border border-white/30 shadow-sm hover:shadow-xl transition-all duration-500 ease-out animate-fade-in-up overflow-hidden backdrop-blur-md bg-white/40 hover:bg-white/50 hover:border-ide-accent/40"
               style={{ animationDelay: `${index * 100}ms` }}
             >
-              <div className="flex items-center gap-4 mb-6 pb-4 border-b border-ide-border">
-                <div className="w-10 h-10 flex items-center justify-center">
-                  <Image
-                    src={category.icon}
-                    alt={category.title}
-                    width={24}
-                    height={24}
-                    className="w-6 h-6"
-                  />
+              {/* Top accent border - subtle */}
+              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-ide-accent/40 to-transparent" />
+
+              {/* Animated bottom border on hover */}
+              <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-ide-accent/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+
+              {/* Glass shine effect */}
+              <div className="absolute inset-0 bg-gradient-to-br from-white/30 via-transparent to-transparent opacity-60 pointer-events-none" />
+
+              {/* Hover glow */}
+              <div className="absolute -inset-1 bg-gradient-to-r from-ide-accent/0 via-ide-accent/10 to-ide-accent/0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl pointer-events-none" />
+
+              <div className="relative z-10">
+                <div className="flex items-center gap-4 mb-6 pb-4 border-b border-ide-border">
+                  <div className="w-12 h-12 flex items-center justify-center rounded-xl bg-white/50 backdrop-blur-sm border border-white/30">
+                    <Image
+                      src={category.icon}
+                      alt={category.title}
+                      width={24}
+                      height={24}
+                      className="w-6 h-6"
+                    />
+                  </div>
+                  <h3 className="font-heading text-xl font-semibold text-brand">{category.title}</h3>
                 </div>
-                <h3 className="font-heading text-xl font-semibold text-brand">{category.title}</h3>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {category.skills.map((skill) => (
-                  <span
-                    key={skill}
-                    className="group/skill relative px-2.5 py-1.5 bg-surface-1 text-ide-text text-xs font-mono rounded-lg border border-ide-border/50 hover:border-ide-accent/50 hover:bg-ide-accent/5 transition-all duration-200 cursor-default"
-                  >
-                    <span className="text-ide-accent/60 mr-1">#</span>
-                    {skill}
-                  </span>
-                ))}
+                <div className="flex flex-wrap gap-2">
+                  {category.skills.map((skill) => (
+                    <span
+                      key={skill}
+                      className="group/skill relative px-2.5 py-1.5 bg-surface-1 text-ide-text text-xs font-mono rounded-lg border border-ide-border/50 hover:border-ide-accent/50 hover:bg-ide-accent/5 transition-all duration-200 cursor-default"
+                    >
+                      <span className="text-ide-accent/60 mr-1">#</span>
+                      {skill}
+                    </span>
+                  ))}
+                </div>
               </div>
             </div>
           ))}

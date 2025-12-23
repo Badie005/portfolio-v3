@@ -134,11 +134,27 @@
 }
 
 /* Custom grid layout for hero section */
-@media (width >=64rem) {
+/* Sidebar browser / medium screens (800px - 1024px) */
+@media (min-width: 800px) and (max-width: 1023px) {
   .hero-grid {
-    grid-template-columns: 35% 65% !important;
+    grid-template-columns: 1fr !important;
   }
 }
+
+/* Large screens (1024px+) */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .hero-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Extra large screens (1280px+) */
+@media (min-width: 1280px) {
+  .hero-grid {
+    grid-template-columns: 38% 1fr !important;
+  }
+}
+
 
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -164,6 +180,14 @@
 }
 
 @layer base {
+
+  html,
+  body {
+    width: 100%;
+    overflow-x: hidden;
+    position: relative;
+  }
+
   :root {
     --background: 0 0% 100%;
     --foreground: 0 0% 3.9%;

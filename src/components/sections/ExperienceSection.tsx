@@ -66,7 +66,7 @@ export function ExperienceSection() {
         {/* Timeline Container */}
         <div className="relative">
           {/* Main Timeline Line with Gradient */}
-          <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-px md:-translate-x-1/2">
+          <div className="absolute left-4 sm:left-6 lg:left-1/2 top-0 bottom-0 w-px lg:-translate-x-1/2">
             <div className="absolute inset-0 bg-gradient-to-b from-ide-accent via-ide-border to-transparent" />
           </div>
 
@@ -74,15 +74,15 @@ export function ExperienceSection() {
             {experiences.map((exp, index) => (
               <div
                 key={exp.title}
-                className={`relative flex flex-col md:flex-row gap-8 ${index % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"
+                className={`relative flex flex-col lg:flex-row gap-8 ${index % 2 === 0 ? "lg:flex-row" : "lg:flex-row-reverse"
                   } animate-fade-in-up`}
                 style={{ animationDelay: `${index * 150}ms` }}
               >
                 {/* Timeline Node */}
-                <div className="absolute left-6 md:left-1/2 md:-translate-x-1/2 z-10">
+                <div className="absolute left-4 sm:left-6 lg:left-1/2 lg:-translate-x-1/2 z-10">
                   <div className="relative">
                     {/* Outer ring */}
-                    <div className="w-12 h-12 rounded-full backdrop-blur-md bg-white/50 border-2 border-white/30 flex items-center justify-center -translate-x-1/2 md:translate-x-0">
+                    <div className="w-12 h-12 rounded-full backdrop-blur-md bg-white/50 border-2 border-white/30 flex items-center justify-center -translate-x-1/2 lg:translate-x-0">
                       {/* Inner glow */}
                       <div className="absolute inset-2 bg-ide-accent/20 rounded-full animate-pulse" />
                       {/* Icon container */}
@@ -97,13 +97,13 @@ export function ExperienceSection() {
                       </div>
                     </div>
                     {/* Connection line to card */}
-                    <div className={`hidden md:block absolute top-1/2 w-8 h-px bg-ide-border ${index % 2 === 0 ? "-right-8" : "-left-8"
+                    <div className={`hidden lg:block absolute top-1/2 w-8 h-px bg-ide-border ${index % 2 === 0 ? "-right-8" : "-left-8"
                       }`} />
                   </div>
                 </div>
 
                 {/* Content Card */}
-                <div className={`ml-16 md:ml-0 md:w-[calc(50%-3rem)] ${index % 2 === 0 ? "md:pr-4" : "md:pl-4 md:ml-auto"
+                <div className={`ml-12 sm:ml-16 lg:ml-0 lg:w-[calc(50%-3rem)] ${index % 2 === 0 ? "lg:pr-4" : "lg:pl-4 lg:ml-auto"
                   }`}>
                   <div className="group relative rounded-xl border border-white/30 overflow-hidden transition-all duration-500 hover:border-ide-accent/40 hover:shadow-xl backdrop-blur-md bg-white/40 hover:bg-white/50 shadow-sm">
                     {/* Top accent border - subtle */}
@@ -178,8 +178,6 @@ export function ExperienceSection() {
                         ))}
                       </div>
                     </div>
-
-
                   </div>
                 </div>
               </div>
@@ -187,12 +185,12 @@ export function ExperienceSection() {
           </div>
 
           {/* Timeline End Node */}
-          <div className="relative mt-8 flex justify-start md:justify-center">
-            <div className="ml-6 md:ml-0 flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full backdrop-blur-md bg-white/50 border-2 border-white/30 flex items-center justify-center -translate-x-1/2 md:translate-x-0">
+          <div className="relative mt-8 flex justify-start lg:justify-center">
+            <div className="ml-6 lg:ml-0 flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full backdrop-blur-md bg-white/50 border-2 border-white/30 flex items-center justify-center -translate-x-1/2 lg:translate-x-0">
                 <div className="w-2 h-2 bg-ide-accent/50 rounded-full" />
               </div>
-              <span className="font-mono text-xs text-ide-muted md:hidden">La suite s&apos;écrit...</span>
+              <span className="font-mono text-xs text-ide-muted lg:hidden">La suite s&apos;écrit...</span>
             </div>
           </div>
         </div>

@@ -1,4 +1,4 @@
-import { useMemo, useCallback, useState } from 'react';
+import { useMemo, useCallback, useState, useEffect } from 'react';
 import { INITIAL_FILES } from './constants';
 import { FileData } from './types';
 import { FileIcon } from './components/FileIcon';
@@ -8,7 +8,7 @@ import { useFileSystem } from './hooks/useFileSystem';
 import { useFileSearch } from './hooks/useFileSearch';
 import { useResizablePanel } from './hooks/useResizablePanel';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
-import { useIsMobile } from './hooks/useMediaQuery';
+import { useIsMobile, useIsSidebarBrowser } from './hooks/useMediaQuery';
 import { useToggle } from './hooks/useToggle';
 
 // Components
@@ -27,12 +27,31 @@ const LAYOUT_CONFIG = {
     terminal: { minHeight: 100, maxHeight: 400, defaultHeight: 200 },
 } as const;
 
+// Compact layout config for sidebar browsers
+const COMPACT_LAYOUT_CONFIG = {
+    leftSidebar: { minWidth: 100, maxWidth: 200, defaultWidth: 140 },
+    rightSidebar: { minWidth: 0, maxWidth: 0, defaultWidth: 0 },
+    terminal: { minHeight: 80, maxHeight: 250, defaultHeight: 120 },
+} as const;
+
 export function CodeWindow() {
     const isMobile = useIsMobile();
+    const isSidebarBrowser = useIsSidebarBrowser();
+    const isCompactView = isMobile || isSidebarBrowser;
+
+    // Use compact config for sidebar browsers
+    const layoutConfig = isCompactView ? COMPACT_LAYOUT_CONFIG : LAYOUT_CONFIG;
 
     // UI State
     const [isTerminalOpen, toggleTerminal, setTerminalOpen] = useToggle(true);
     const [isSidebarOpen, toggleSidebar, setSidebarOpen] = useToggle(true);
+
+    // Auto-close sidebar on mobile to save space
+    useEffect(() => {
+        if (isMobile) {
+            setSidebarOpen(false);
+        }
+    }, [isMobile, setSidebarOpen]);
     const [isChatOpen, toggleChat] = useToggle(true);
     const [isTerminalMaximized, toggleTerminalMaximize] = useToggle(false);
     const [isCmdPaletteOpen, setIsCmdPaletteOpen] = useState(false);
@@ -65,14 +84,14 @@ export function CodeWindow() {
     // Search - include fileTreeVersion to force update
     const { searchQuery, setSearchQuery, filteredFiles } = useFileSearch(fileTree);
 
-    // Resizable Panels
+    // Resizable Panels - use dynamic config
     const leftPanel = useResizablePanel({
-        config: LAYOUT_CONFIG.leftSidebar,
+        config: layoutConfig.leftSidebar,
         direction: 'left',
     });
 
     const rightPanel = useResizablePanel({
-        config: LAYOUT_CONFIG.rightSidebar,
+        config: layoutConfig.rightSidebar,
         direction: 'right',
     });
 
@@ -123,7 +142,7 @@ export function CodeWindow() {
     const lineCount = currentFile?.content.split('\n').length || 0;
 
     return (
-        <div className="relative w-full h-full bg-ide-bg rounded-xl shadow-2xl flex flex-col overflow-hidden border border-white/40 ring-1 ring-black/5">
+        <div className="relative w-full h-full max-w-full bg-ide-bg rounded-xl shadow-2xl flex flex-col overflow-hidden border border-white/40 ring-1 ring-black/5">
 
             {/* ===== COMMAND PALETTE ===== */}
             <CommandPalette
@@ -159,8 +178,8 @@ export function CodeWindow() {
                             className="h-full overflow-hidden shrink-0 grow-0 bg-ide-bg"
                             style={{
                                 width: isMobile ? '100%' : `${leftPanel.width}px`,
-                                minWidth: isMobile ? undefined : `${LAYOUT_CONFIG.leftSidebar.minWidth}px`,
-                                maxWidth: isMobile ? undefined : `${LAYOUT_CONFIG.leftSidebar.maxWidth}px`,
+                                minWidth: isMobile ? undefined : `${layoutConfig.leftSidebar.minWidth}px`,
+                                maxWidth: isMobile ? undefined : `${layoutConfig.leftSidebar.maxWidth}px`,
                             }}
                         >
                             <Sidebar
@@ -228,7 +247,7 @@ export function CodeWindow() {
                 </main>
 
                 {/* ========== 4. AI AGENT ========== */}
-                {isChatOpen && !isMobile && (
+                {isChatOpen && !isCompactView && (
                     <>
                         {/* Right Resize Handle */}
                         <div
@@ -240,8 +259,8 @@ export function CodeWindow() {
                             className="h-full bg-ide-bg border-l border-ide-border flex flex-col shrink-0 grow-0 overflow-hidden"
                             style={{
                                 width: `${rightPanel.width}px`,
-                                minWidth: `${LAYOUT_CONFIG.rightSidebar.minWidth}px`,
-                                maxWidth: `${LAYOUT_CONFIG.rightSidebar.maxWidth}px`,
+                                minWidth: `${layoutConfig.rightSidebar.minWidth}px`,
+                                maxWidth: `${layoutConfig.rightSidebar.maxWidth}px`,
                             }}
                         >
                             <ChatPanel
