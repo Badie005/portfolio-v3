@@ -25,11 +25,11 @@ const cormorant = Cormorant_Garamond({
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
   title: {
-    default: "B.DEV - Abdelbadie Khoubiza | Full-Stack Developer",
+    default: "Abdelbadie Khoubiza | Développeur Full-Stack React & Node.js - Portfolio B.DEV",
     template: "%s | B.DEV",
   },
   description:
-    "Full-Stack Developer spécialisé en React, Node.js et Laravel. Portfolio de projets professionnels incluant plateformes e-learning, systèmes de gestion et infrastructure DevOps.",
+    "Abdelbadie Khoubiza - Développeur Full-Stack spécialisé React, Next.js, Node.js et Laravel. Création d'applications web performantes à Fès, Maroc. Découvrez mon portfolio de projets professionnels.",
   keywords: [
     "Full-Stack Developer",
     "React",
@@ -48,6 +48,7 @@ export const metadata: Metadata = {
   creator: "Abdelbadie Khoubiza",
   icons: {
     icon: [
+      { url: "/favicon.ico", sizes: "32x32" },
       { url: "/favicon-dark.svg", type: "image/svg+xml", media: "(prefers-color-scheme: dark)" },
       { url: "/favicon-light.svg", type: "image/svg+xml", media: "(prefers-color-scheme: light)" },
     ],

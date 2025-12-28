@@ -1,26 +1,24 @@
-# 🎨 Portfolio Abdelbadie Khoubiza
+# Portfolio Abdelbadie Khoubiza
 
-Portfolio professionnel moderne développé avec Next.js 16, React 19, TypeScript et Tailwind CSS v4.
+Portfolio professionnel moderne développé avec Next.js 15, React 19, TypeScript et Tailwind CSS v4.
 
-## 🚀 Technologies utilisées
+## Technologies utilisées
 
-- **Framework** : Next.js 16.0.7 (App Router)
-- **UI** : React 19.2.0
+- **Framework** : Next.js 15 (App Router)
+- **UI** : React 19
 - **Styling** : Tailwind CSS v4
 - **Langage** : TypeScript 5
-- **Animations** : Framer Motion (motion)
-- **Formulaires** : React Hook Form
-- **Validation** : Zod
+- **Animations** : Framer Motion
+- **Formulaires** : React Hook Form + Zod
 - **Emails** : Resend API
-- **Icônes** : Lucide React
 - **UI Components** : Radix UI, shadcn/ui
-- **Notifications** : Sonner
+- **Analytics** : Vercel Analytics
 
-## 📦 Installation
+## Installation
 
 ```bash
 # Installer les dépendances
-npm install
+bun install
 
 # Configurer les variables d'environnement
 # Créer un fichier .env.local à la racine :
@@ -30,94 +28,93 @@ TO_EMAIL=badiekhoubiza05@gmail.com
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
 
 # Lancer le serveur de développement
-npm run dev
+bun run dev
 ```
 
 Le site sera accessible sur [http://localhost:3000](http://localhost:3000)
 
-## 🎯 Fonctionnalités
+## Fonctionnalités
 
-### ✅ Implémentées
-- 🎨 Design minimaliste noir et blanc
-- 📱 Responsive (mobile, tablet, desktop)
-- ⚡ Navigation sticky avec menu mobile
-- 🎭 Animations fluides avec Framer Motion
-- 📝 Formulaire de contact fonctionnel avec Resend
-- ✉️ Rate limiting sur l'API (5 emails/heure)
-- 🔍 SEO optimisé (metadata, Open Graph, Twitter Cards)
-- 📄 Sitemap.xml et robots.txt automatiques
-- 🌐 JSON-LD structured data (Schema.org)
-- 🎪 PWA Support (manifest.json)
-- ♿ Accessibilité (WCAG 2.1)
-- 🚀 Performance optimisée (Next.js Image)
+### Implémentées
+- Design minimaliste avec thème clair
+- Responsive (mobile, tablet, desktop)
+- Navigation sticky avec menu mobile
+- Animations fluides avec Framer Motion
+- Formulaire de contact fonctionnel avec Resend
+- Rate limiting sur l'API (5 emails/heure)
+- SEO optimisé (metadata, Open Graph, Twitter Cards)
+- Sitemap.xml et robots.txt automatiques
+- JSON-LD structured data (Schema.org)
+- PWA Support (manifest.json)
+- Accessibilité (WCAG 2.1)
+- Performance optimisée (Next.js Image, WebP/AVIF)
 
-### 📄 Pages
+### Pages
 - **/** - Page d'accueil avec toutes les sections
-  - Hero avec appel à l'action
-  - À propos avec principes et statistiques
-  - 3 projets mis en avant
+  - Hero avec IDE interactif et agent B.AI
+  - Services proposés
+  - À propos
   - Expérience professionnelle
-  - Compétences techniques
+  - Compétences techniques (Tech Stack)
+  - Galerie AI Generated Art
   - Formulaire de contact
 - **/projects** - Page dédiée aux projets
+- **/projects/[id]** - Détail d'un projet
 
-## 📁 Structure du projet
+## Structure du projet
 
 ```
-portfolio-v.3.02/
+portfolio-v3/
 ├── src/
 │   ├── app/
-│   │   ├── api/contact/         # API Route Resend
-│   │   ├── projects/            # Page projets
+│   │   ├── api/
+│   │   │   ├── chat/            # API Gemini AI
+│   │   │   ├── contact/         # API Resend
+│   │   │   └── health/          # Health check
+│   │   ├── projects/            # Pages projets
 │   │   ├── layout.tsx           # Layout global
 │   │   ├── page.tsx             # Homepage
-│   │   ├── globals.css          # Styles Tailwind
-│   │   ├── sitemap.ts           # Génération sitemap
-│   │   └── robots.ts            # Génération robots.txt
+│   │   └── globals.css          # Styles Tailwind
 │   ├── components/
 │   │   ├── sections/            # Sections homepage
-│   │   │   ├── HeroSection.tsx
-│   │   │   ├── AboutSection.tsx
-│   │   │   ├── ProjectsSection.tsx
-│   │   │   ├── ExperienceSection.tsx
-│   │   │   ├── SkillsSection.tsx
-│   │   │   └── ContactSection.tsx
-│   │   ├── ui/                  # Composants UI réutilisables
+│   │   ├── code-window/         # IDE interactif avec B.AI Agent
+│   │   ├── ui/                  # Composants shadcn/ui
 │   │   ├── Navigation.tsx
-│   │   ├── Footer.tsx
-│   │   ├── ProjectCard.tsx
-│   │   └── ProjectDetailCard.tsx
+│   │   └── Footer.tsx
 │   ├── data/
 │   │   └── projects.ts          # Données des projets
 │   ├── lib/
+│   │   ├── gemini.ts            # Service Gemini AI
 │   │   └── utils.ts             # Fonctions utilitaires
 │   └── types/
-│       └── index.ts             # Types TypeScript
 ├── public/
-│   └── manifest.json            # PWA manifest
-├── .env.local                   # Variables d'environnement
-├── next.config.ts               # Configuration Next.js
-├── tailwind.config.ts           # Configuration Tailwind
-└── tsconfig.json                # Configuration TypeScript
+│   ├── images/                  # Images galerie
+│   ├── icons/                   # Icônes SVG
+│   └── logo/                    # Logos
+├── e2e/                         # Tests Playwright
+└── docs/                        # Documentation
 ```
 
-## 🔧 Scripts disponibles
+## Scripts disponibles
 
 ```bash
 # Développement
-npm run dev
+bun run dev
 
 # Build production
-npm run build
+bun run build
 
 # Démarrer le serveur production
-npm start
+bun start
 
 # Linter
-npm run lint
+bun run lint
+
+# Tests E2E
+bun run playwright test
 ```
 
-## 📧 Configuration du formulaire de contact
+## Configuration du formulaire de contact
 
 1. Créer un compte sur [Resend](https://resend.com)
 2. Générer une clé API
@@ -132,7 +129,7 @@ Le formulaire inclut :
 - States de chargement
 - Notifications toast
 
-## 🚀 Déploiement sur Vercel
+## Déploiement sur Vercel
 
 ```bash
 # Installer Vercel CLI
@@ -147,13 +144,13 @@ vercel --prod
 
 N'oubliez pas d'ajouter les variables d'environnement dans les paramètres Vercel.
 
-## 👨‍💻 Auteur
+## Auteur
 
 **Abdelbadie Khoubiza**
 - GitHub : [@Badie005](https://github.com/Badie005)
 - LinkedIn : [abdelbadie-khoubiza](https://linkedin.com/in/abdelbadie-khoubiza)
-- Email : badiekhoubiza05@gmail.com
+- Email : a.khoubiza.dev@gmail.com
 
-## 📝 License
+## License
 
 Ce projet est sous licence MIT.

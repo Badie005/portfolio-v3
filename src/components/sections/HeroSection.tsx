@@ -3,6 +3,7 @@
 import { motion } from "motion/react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
+import Image from "next/image";
 import { Github, Linkedin, Mail, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TerminalStatus } from "@/components/ui/TerminalStatus";
@@ -137,11 +138,13 @@ export function HeroSection() {
               transition={{ duration: 0.5 }}
             >
               {/* Background Image Container */}
-              <div
-                className="absolute inset-0 bg-cover bg-center rounded-xl"
-                style={{
-                  backgroundImage: 'url("/background B.411 IDE.jpeg")',
-                }}
+              <Image
+                src="/background B.411 IDE.jpeg"
+                alt="IDE Background"
+                fill
+                className="object-cover rounded-xl"
+                priority
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 60vw, 800px"
               />
 
               {/* IDE with padding to show background around edges */}

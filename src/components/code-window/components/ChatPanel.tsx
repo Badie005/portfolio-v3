@@ -23,6 +23,7 @@ import {
     X,
     Zap
 } from 'lucide-react';
+import Image from 'next/image';
 import {
     GeminiService,
     GeminiMessage,
@@ -679,9 +680,11 @@ const EmptyState = memo<{ onSuggestionClick?: (suggestion: string) => void }>(({
             <div className="mb-6 relative group">
                 <div className="absolute inset-0 bg-[#D97757]/20 rounded-xl blur-lg transform group-hover:scale-110 transition-transform duration-500" />
                 <div className="relative w-14 h-14 bg-[#FFFBF7] rounded-xl border border-[#E5E0DB] flex items-center justify-center shadow-sm group-hover:shadow-md transition-all duration-300">
-                    <img
+                    <Image
                         src="/logo/SVG/Mini-Logo-B.svg"
-                        alt="B.AI"
+                        alt="B.AI Assistant Logo"
+                        width={28}
+                        height={28}
                         className="w-7 h-7 transition-transform group-hover:rotate-12 duration-300"
                     />
                 </div>
@@ -1335,7 +1338,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                             <div className="px-3 py-2 pt-1">
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-2">
-                                        <img src="/logo/SVG/Mini-Logo-B.svg" alt="" className="w-4 h-4" />
+                                        <Image src="/logo/SVG/Mini-Logo-B.svg" alt="Agent Logo" width={16} height={16} className="w-4 h-4" />
                                         <span className="text-[11px] text-ide-muted">Agent</span>
                                     </div>
 
