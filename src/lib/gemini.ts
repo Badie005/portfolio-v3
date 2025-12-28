@@ -215,36 +215,31 @@ class ResponseCache {
             return null;
         }
 
+        // LRU: Move to end (Most Recently Used)
+        this.cache.delete(key);
         cached.hits++;
+        this.cache.set(key, cached);
+
         return { ...cached.response, cached: true };
     }
 
     set(message: string, history: GeminiMessage[], response: GeminiResponse): void {
-        this.cleanup();
         const key = this.generateKey(message, history);
+
+        // Refresh key if exists to update LRU position
+        if (this.cache.has(key)) {
+            this.cache.delete(key);
+        } else if (this.cache.size >= this.maxSize) {
+            // LRU Eviction: Remove the oldest (first inserted) item
+            const firstKey = this.cache.keys().next().value;
+            if (firstKey) this.cache.delete(firstKey);
+        }
+
         this.cache.set(key, {
             response: { ...response },
             timestamp: Date.now(),
             hits: 0
         });
-    }
-
-    private cleanup(): void {
-        if (this.cache.size < this.maxSize) return;
-
-        const now = Date.now();
-        for (const [key, entry] of this.cache.entries()) {
-            if (now - entry.timestamp > this.maxAge) {
-                this.cache.delete(key);
-            }
-        }
-
-        if (this.cache.size >= this.maxSize) {
-            const entries = Array.from(this.cache.entries())
-                .sort((a, b) => a[1].hits - b[1].hits);
-            entries.slice(0, Math.floor(this.maxSize / 4))
-                .forEach(([key]) => this.cache.delete(key));
-        }
     }
 
     clear(): void {
