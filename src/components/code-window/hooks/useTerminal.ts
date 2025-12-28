@@ -872,11 +872,11 @@ export function useTerminal({ files, onOpenFile }: UseTerminalOptions) {
                 const chars = 'ﾊﾐﾋｰｳｼﾅﾓﾆｻﾜﾂｵﾘｱﾎﾃﾏｹﾒｴｶｷﾑﾕﾗｾﾈｽﾀﾇﾍ01234567890';
                 const lines: TerminalMessage[] = [];
                 for (let i = 0; i < 8; i++) {
-                    let line = '';
+                    const lineChars = new Array(60);
                     for (let j = 0; j < 60; j++) {
-                        line += chars[Math.floor(Math.random() * chars.length)];
+                        lineChars[j] = chars[Math.floor(Math.random() * chars.length)];
                     }
-                    lines.push({ type: 'success', content: `${ansi.green}${line}${ansi.reset}` });
+                    lines.push({ type: 'success', content: `${ansi.green}${lineChars.join('')}${ansi.reset}` });
                 }
                 lines.push({ type: 'output', content: '\n[Matrix simulation - Press any key to exit]' });
                 return lines;
