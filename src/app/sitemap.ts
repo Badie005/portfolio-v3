@@ -1,9 +1,11 @@
 import { MetadataRoute } from "next";
+import { projects } from "@/data/projects";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://abdelbadie-khoubiza.com";
 
-  return [
+  // Pages principales
+  const mainPages: MetadataRoute.Sitemap = [
     {
       url: baseUrl,
       lastModified: new Date(),
@@ -13,8 +15,19 @@ export default function sitemap(): MetadataRoute.Sitemap {
     {
       url: `${baseUrl}/projects`,
       lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
+      changeFrequency: "weekly",
+      priority: 0.9,
     },
   ];
+
+  // Pages projets individuelles générées dynamiquement
+  const projectPages: MetadataRoute.Sitemap = projects.map((project) => ({
+    url: `${baseUrl}/projects/${project.id}`,
+    lastModified: new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.7,
+  }));
+
+  return [...mainPages, ...projectPages];
 }
+

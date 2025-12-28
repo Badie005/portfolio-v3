@@ -95,6 +95,7 @@ export function HeroSection() {
               href="https://github.com/Badie005"
               target="_blank"
               rel="noopener noreferrer"
+              aria-label="Visiter mon profil GitHub (ouvre dans un nouvel onglet)"
               className="group flex items-center gap-2 text-ide-muted hover:text-ide-accent transition-colors duration-300"
             >
               <Github size={20} className="group-hover:stroke-ide-accent transition-colors" />
@@ -104,6 +105,7 @@ export function HeroSection() {
               href="https://linkedin.com/in/abdelbadie-khoubiza"
               target="_blank"
               rel="noopener noreferrer"
+              aria-label="Visiter mon profil LinkedIn (ouvre dans un nouvel onglet)"
               className="group flex items-center gap-2 text-ide-muted hover:text-ide-accent transition-colors duration-300"
             >
               <Linkedin size={20} className="group-hover:stroke-ide-accent transition-colors" />
@@ -111,6 +113,7 @@ export function HeroSection() {
             </a>
             <a
               href="mailto:a.khoubiza.dev@gmail.com"
+              aria-label="M'envoyer un email à a.khoubiza.dev@gmail.com"
               className="group flex items-center gap-2 text-ide-muted hover:text-ide-accent transition-colors duration-300"
             >
               <Mail size={20} className="group-hover:stroke-ide-accent transition-colors" />
