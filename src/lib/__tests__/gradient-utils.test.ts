@@ -5,10 +5,64 @@ import {
     isValidHexColor,
     getLuminance,
     getContrastRatio,
-    DEFAULT_GRADIENTS
+    DEFAULT_GRADIENTS,
+    getCachedGradientConfig,
+    clearGradientCache
 } from '../gradient-utils';
 
 describe('gradient-utils', () => {
+    describe('getCachedGradientConfig', () => {
+        const testConfig = {
+            colors: ['#ff0000', '#00ff00'],
+            speed: 5,
+            blur: 'low' as const,
+            direction: 'horizontal' as const
+        };
+
+        it('should return cached instance for same key and config', () => {
+            clearGradientCache();
+            const config1 = getCachedGradientConfig('test-1', testConfig);
+            const config2 = getCachedGradientConfig('test-1', testConfig);
+
+            expect(config1).toBe(config2); // Strict equality check for same object reference
+        });
+
+        it('should return different instances for different keys', () => {
+            clearGradientCache();
+            const config1 = getCachedGradientConfig('test-1', testConfig);
+            const config2 = getCachedGradientConfig('test-2', testConfig);
+
+            expect(config1).not.toBe(config2);
+            expect(config1).toEqual(config2); // Content should be same
+        });
+
+        it('should return different instances for different configs', () => {
+            clearGradientCache();
+            const config1 = getCachedGradientConfig('test-1', testConfig);
+            const config2 = getCachedGradientConfig('test-1', { ...testConfig, speed: 10 });
+
+            expect(config1).not.toBe(config2);
+            expect(config1.speed).toBe(5);
+            expect(config2.speed).toBe(10);
+        });
+
+        it('should produce same key regardless of property order', () => {
+            clearGradientCache();
+            const config1 = getCachedGradientConfig('test-1', {
+                colors: ['#ff0000', '#00ff00'],
+                speed: 5
+            });
+
+            // Different property order
+            const config2 = getCachedGradientConfig('test-1', {
+                speed: 5,
+                colors: ['#ff0000', '#00ff00']
+            });
+
+            expect(config1).toBe(config2);
+        });
+    });
+
     describe('generateGradientCSS', () => {
         const testColors = ['#ff0000', '#00ff00', '#0000ff'];
 
