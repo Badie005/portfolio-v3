@@ -68,7 +68,7 @@ export const metadata: Metadata = {
       "Portfolio professionnel d'un développeur Full-Stack basé à Fès, Maroc",
     images: [
       {
-        url: "/logo/SVG/Logo-B.svg",
+        url: "/og-projects.jpg",
         width: 1200,
         height: 630,
         alt: "B.DEV × B.411 Portfolio",
@@ -79,7 +79,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "B.DEV - Full-Stack Developer",
     description: "Portfolio professionnel d'un développeur Full-Stack",
-    images: ["/logo/SVG/Logo-B.svg"],
+    images: ["/og-projects.jpg"],
   },
   robots: {
     index: true,
@@ -105,7 +105,7 @@ export default async function RootLayout({
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://abdelbadie-khoubiza.com";
   const nonce = (await headers()).get("x-nonce") || undefined;
 
-  const jsonLd = {
+  const jsonLdPerson = {
     "@context": "https://schema.org",
     "@type": "Person",
     name: "Abdelbadie Khoubiza",
@@ -122,6 +122,7 @@ export default async function RootLayout({
     sameAs: [
       "https://github.com/Badie005",
       "https://linkedin.com/in/abdelbadie-khoubiza",
+      "mailto:a.khoubiza.dev@gmail.com"
     ],
     knowsAbout: [
       "React",
@@ -137,6 +138,18 @@ export default async function RootLayout({
     ],
   };
 
+  const jsonLdWebsite = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Abdelbadie Khoubiza Portfolio",
+    url: siteUrl,
+    author: {
+      "@type": "Person",
+      name: "Abdelbadie Khoubiza",
+    },
+    description: "Portfolio professionnel d'un développeur Full-Stack basé à Fès, Maroc",
+  };
+
   return (
     <html lang="fr" className={`${outfit.variable} ${cormorant.variable}`} suppressHydrationWarning>
       <head>
@@ -148,7 +161,12 @@ export default async function RootLayout({
         <script
           type="application/ld+json"
           nonce={nonce}
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdPerson) }}
+        />
+        <script
+          type="application/ld+json"
+          nonce={nonce}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdWebsite) }}
         />
         {/* Skip Link for Accessibility */}
         <a
