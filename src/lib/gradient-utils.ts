@@ -244,13 +244,31 @@ export function generateGradientCSS(config: GradientConfig): string {
 const gradientCache = new Map<string, GradientConfig>();
 
 /**
+ * Generate a deterministic cache key for gradient configuration
+ */
+export function generateCacheKey(key: string, config: Partial<GradientConfig>): string {
+  // Escape delimiters in key to prevent collisions
+  const safeKey = key.replace(/\|/g, '\\|');
+  const parts = [safeKey];
+
+  if (config.colors) parts.push(`colors:${config.colors.join(',')}`);
+  if (config.speed !== undefined) parts.push(`speed:${config.speed}`);
+  if (config.blur !== undefined) parts.push(`blur:${config.blur}`);
+  if (config.direction !== undefined) parts.push(`dir:${config.direction}`);
+  if (config.minContrastRatio !== undefined) parts.push(`mcr:${config.minContrastRatio}`);
+  if (config.optimizePerformance !== undefined) parts.push(`opt:${config.optimizePerformance}`);
+
+  return parts.join('|');
+}
+
+/**
  * Get or create cached gradient configuration
  */
 export function getCachedGradientConfig(
   key: string,
   config: Partial<GradientConfig>
 ): GradientConfig {
-  const cacheKey = JSON.stringify({ key, ...config });
+  const cacheKey = generateCacheKey(key, config);
 
   if (gradientCache.has(cacheKey)) {
     return gradientCache.get(cacheKey)!;
