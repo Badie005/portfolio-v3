@@ -22,7 +22,7 @@ const FileTree: React.FC<FileTreeProps> = ({ items, level = 0, activeFileName, o
     });
 
     useEffect(() => {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
+         
         setOpenFolders(prev => {
             const next = { ...prev };
             const traverse = (nodes: FileSystemItem[]) => {

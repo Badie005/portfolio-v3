@@ -190,7 +190,7 @@ const Terminal: React.FC<TerminalProps> = ({
     // Update suggestions based on input
     useEffect(() => {
         if (!input) {
-            // eslint-disable-next-line react-hooks/set-state-in-effect
+             
             setSuggestions([]);
             setShowSuggestions(false);
             return;

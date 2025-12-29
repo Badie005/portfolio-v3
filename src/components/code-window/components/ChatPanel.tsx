@@ -769,10 +769,12 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
         geminiServiceRef.current = getGeminiService();
         setIsServiceReady(geminiServiceRef.current.isReady());
 
+        const abortController = abortControllerRef.current;
+        const thinkingInterval = thinkingIntervalRef.current;
         return () => {
-            abortControllerRef.current?.abort();
-            if (thinkingIntervalRef.current) {
-                clearInterval(thinkingIntervalRef.current);
+            abortController?.abort();
+            if (thinkingInterval) {
+                clearInterval(thinkingInterval);
             }
         };
     }, []);
@@ -1133,7 +1135,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
             setIsLoading(false);
             setStreamingText('');
         }
-    }, [input, isLoading, activeFile, enableStreaming, maxMessages, executeActions, getConversationHistory, onOpenFile, onCreateFile, onDeleteFile, contextFiles]);
+    }, [input, isLoading, activeFile, enableStreaming, maxMessages, executeActions, getConversationHistory, onOpenFile, onCreateFile, onCreateFileWithPath, onDeleteFile, contextFiles, thinkingTime]);
 
     // Retry last message
     const handleRetry = useCallback(() => {

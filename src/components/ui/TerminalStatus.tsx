@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 
 interface TerminalStatusProps {
   text?: string;
@@ -11,7 +11,7 @@ interface TerminalStatusProps {
 const spinnerFrames = ["◇", "✱", "◈", "✦", "◆", "✴", "⟡", "✸"];
 
 export function TerminalStatus({ text, texts, className = "" }: TerminalStatusProps) {
-  const textList = texts || (text ? [text] : []);
+  const textList = useMemo(() => texts || (text ? [text] : []), [texts, text]);
   const [frameIndex, setFrameIndex] = useState(0);
   const [textIndex, setTextIndex] = useState(0);
   const [displayedText, setDisplayedText] = useState("");

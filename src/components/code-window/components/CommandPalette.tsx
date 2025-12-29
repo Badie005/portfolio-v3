@@ -44,19 +44,20 @@ export function CommandPalette({
   }, [onOpenChange, open]);
 
   // Flatten file tree for search
-  const getAllFiles = (items: FileSystemItem[]): string[] => {
-    let result: string[] = [];
-    for (const item of items) {
-      if (item.type === 'folder' && item.children) {
-        result = [...result, ...getAllFiles(item.children)];
-      } else {
-        result.push(item.name);
+  const flatFiles = React.useMemo(() => {
+    const getAllFiles = (items: FileSystemItem[]): string[] => {
+      let result: string[] = [];
+      for (const item of items) {
+        if (item.type === 'folder' && item.children) {
+          result = [...result, ...getAllFiles(item.children)];
+        } else {
+          result.push(item.name);
+        }
       }
-    }
-    return result;
-  };
-
-  const flatFiles = React.useMemo(() => getAllFiles(files), [files]);
+      return result;
+    };
+    return getAllFiles(files);
+  }, [files]);
 
   return (
     <AnimatePresence>

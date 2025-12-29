@@ -55,6 +55,7 @@ export function SnakeGame({ onClose }: SnakeGameProps) {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- startGame is stable, adding it causes re-renders
   }, [gameStarted, gameOver, onClose]);
 
   const startGame = () => {
@@ -160,13 +161,14 @@ export function SnakeGame({ onClose }: SnakeGameProps) {
   useEffect(() => {
     // Initial draw
     if (canvasRef.current && !gameStarted) {
-        // Draw blank screen or title
-        const ctx = canvasRef.current.getContext("2d");
-        if(ctx) {
-            ctx.fillStyle = "#1e1e1e";
-            ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
-        }
+      // Draw blank screen or title
+      const ctx = canvasRef.current.getContext("2d");
+      if (ctx) {
+        ctx.fillStyle = "#1e1e1e";
+        ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+      }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: render only on mount
   }, []);
 
   return (
@@ -190,29 +192,29 @@ export function SnakeGame({ onClose }: SnakeGameProps) {
           height={CANVAS_SIZE}
           className="block"
         />
-        
+
         {(!gameStarted && !gameOver) && (
-            <div className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-                <button 
-                    onClick={startGame}
-                    className="px-4 py-2 bg-ide-accent text-white rounded hover:bg-ide-accent/90 transition-colors font-bold"
-                >
-                    START GAME
-                </button>
-            </div>
+          <div className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+            <button
+              onClick={startGame}
+              className="px-4 py-2 bg-ide-accent text-white rounded hover:bg-ide-accent/90 transition-colors font-bold"
+            >
+              START GAME
+            </button>
+          </div>
         )}
 
         {gameOver && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/80 backdrop-blur-sm text-white">
-                <div className="text-3xl font-bold mb-2 text-red-500">GAME OVER</div>
-                <div className="text-xl mb-6">Score: {score}</div>
-                <button 
-                    onClick={startGame}
-                    className="px-4 py-2 bg-ide-accent text-white rounded hover:bg-ide-accent/90 transition-colors font-bold"
-                >
-                    TRY AGAIN
-                </button>
-            </div>
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/80 backdrop-blur-sm text-white">
+            <div className="text-3xl font-bold mb-2 text-red-500">GAME OVER</div>
+            <div className="text-xl mb-6">Score: {score}</div>
+            <button
+              onClick={startGame}
+              className="px-4 py-2 bg-ide-accent text-white rounded hover:bg-ide-accent/90 transition-colors font-bold"
+            >
+              TRY AGAIN
+            </button>
+          </div>
         )}
       </div>
 
