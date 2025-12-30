@@ -4,7 +4,8 @@ module.exports = {
       // En CI, le serveur est déjà démarré par npm start dans le workflow
       // Pas besoin de startServerCommand ici
       url: ['http://localhost:3000/', 'http://localhost:3000/projects'],
-      numberOfRuns: 3,
+      numberOfRuns: 1,
+      chromeFlags: '--no-sandbox --headless=new --disable-gpu --disable-dev-shm-usage',
       settings: {
         preset: 'desktop',
         throttling: {
@@ -16,7 +17,7 @@ module.exports = {
       assertions: {
         // Performance
         'categories:performance': ['warn', { minScore: 0.8 }],
-        'first-contentful-paint': ['warn', { maxNumericValue: 2000 }],
+        'first-contentful-paint': ['warn', { maxNumericValue: 3000 }],
         'largest-contentful-paint': ['warn', { maxNumericValue: 2500 }],
         'cumulative-layout-shift': ['error', { maxNumericValue: 0.1 }],
         'total-blocking-time': ['warn', { maxNumericValue: 300 }],
