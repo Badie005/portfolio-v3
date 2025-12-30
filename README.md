@@ -1,4 +1,4 @@
-# Portfolio Abdelbadie Khoubiza
+# Portfolio Abdelbadie Khoubiza (portfolio-v3) <!-- CI Test -->
 
 Portfolio professionnel moderne développé avec Next.js 15, React 19, TypeScript et Tailwind CSS v4.
 
