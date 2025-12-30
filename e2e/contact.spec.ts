@@ -167,7 +167,11 @@ test.describe('Performance', () => {
 
     // Filter out known acceptable errors
     const criticalErrors = errors.filter(
-      (e) => !e.includes('favicon') && !e.includes('manifest')
+      (e) => 
+        !e.includes('favicon') && 
+        !e.includes('manifest') &&
+        !e.includes('_vercel/insights') &&
+        !e.includes('_vercel/speed-insights')
     );
 
     expect(criticalErrors).toHaveLength(0);

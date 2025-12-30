@@ -131,6 +131,10 @@ jobs:
         run: npm run test:e2e
         env:
           NEXT_PUBLIC_SITE_URL: http://localhost:3000
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          UPSTASH_REDIS_REST_URL: ${{ secrets.UPSTASH_REDIS_REST_URL }}
+          UPSTASH_REDIS_REST_TOKEN: ${{ secrets.UPSTASH_REDIS_REST_TOKEN }}
 
       - name: Upload Playwright report
         uses: actions/upload-artifact@v4
