@@ -1,9 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, Github, ExternalLink, Calendar, CheckCircle2, Target, Lightbulb } from "lucide-react";
+import { ArrowLeft, ArrowRight, Github, ExternalLink, Calendar, CheckCircle2, Target, Lightbulb, Copy, Check } from "lucide-react";
 import { Project } from "@/types";
 import { TerminalStatus } from "@/components/ui/TerminalStatus";
 import { projects } from "@/data/projects";
@@ -17,6 +18,84 @@ export function ProjectDetailContent({ project }: Props) {
   const currentIndex = projects.findIndex(p => p.id === project.id);
   const prevProject = currentIndex > 0 ? projects[currentIndex - 1] : null;
   const nextProject = currentIndex < projects.length - 1 ? projects[currentIndex + 1] : null;
+
+  // Copy to clipboard state
+  const [isCopied, setIsCopied] = useState(false);
+
+  // Generate Markdown content from project data
+  const generateMarkdown = (): string => {
+    let md = `# ${project.title}\n\n`;
+    md += `**Catégorie:** ${project.category}\n`;
+    md += `**Période:** ${project.period}\n\n`;
+
+    md += `## Description\n\n${project.fullDescription}\n\n`;
+
+    // Context section
+    if (project.context) {
+      md += `## Contexte\n\n`;
+      md += `- **Structure:** ${project.context.structure}\n`;
+      md += `- **Objectif:** ${project.context.objective}\n`;
+      md += `- **Rôle:** ${project.context.role}\n\n`;
+    }
+
+    // Technologies
+    md += `## Technologies\n\n`;
+    md += project.technologies.map(tech => `- ${tech}`).join('\n') + '\n\n';
+
+    // Features or Feature Groups
+    if (project.featureGroups && project.featureGroups.length > 0) {
+      md += `## Missions & Activités\n\n`;
+      project.featureGroups.forEach(group => {
+        md += `### ${group.title}\n\n`;
+        md += group.items.map(item => `- ${item}`).join('\n') + '\n\n';
+      });
+    } else if (project.features.length > 0) {
+      md += `## Fonctionnalités\n\n`;
+      md += project.features.map(f => `- ${f}`).join('\n') + '\n\n';
+    }
+
+    // Results
+    md += `## Résultats\n\n`;
+    md += `| Métrique | Valeur |\n|----------|--------|\n`;
+    project.results.forEach(r => {
+      md += `| ${r.metric} | ${r.value} |\n`;
+    });
+    md += '\n';
+
+    // Learnings
+    if (project.learnings && project.learnings.length > 0) {
+      md += `## Ce que j'ai appris\n\n`;
+      md += project.learnings.map(l => `- ${l}`).join('\n') + '\n\n';
+    }
+
+    // Links
+    md += `## Liens\n\n`;
+    if (project.githubUrl) {
+      md += `- [Code source](${project.githubUrl})\n`;
+    }
+    if (project.githubUrls) {
+      project.githubUrls.forEach(repo => {
+        md += `- [${repo.label}](${repo.url})\n`;
+      });
+    }
+    if (project.liveUrl) {
+      md += `- [Voir le site](${project.liveUrl})\n`;
+    }
+
+    return md;
+  };
+
+  // Handle copy to clipboard
+  const handleCopyToClipboard = async () => {
+    try {
+      const markdown = generateMarkdown();
+      await navigator.clipboard.writeText(markdown);
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
+    }
+  };
 
   return (
     <div className="min-h-screen relative">
@@ -69,43 +148,63 @@ export function ProjectDetailContent({ project }: Props) {
             </p>
 
             {/* Links */}
-            <div className="flex flex-wrap gap-3 mt-8">
-              {/* Single GitHub URL */}
-              {project.githubUrl && (
-                <a
-                  href={project.githubUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-neutral-900 text-white rounded-full text-sm font-medium hover:bg-neutral-800 transition-colors"
-                >
-                  <Github size={16} />
-                  Voir le code
-                </a>
-              )}
-              {/* Multiple GitHub URLs (Frontend/Backend) */}
-              {project.githubUrls?.map((repo) => (
-                <a
-                  key={repo.label}
-                  href={repo.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-neutral-900 text-white rounded-full text-sm font-medium hover:bg-neutral-800 transition-colors"
-                >
-                  <Github size={16} />
-                  {repo.label}
-                </a>
-              ))}
-              {project.liveUrl && (
-                <a
-                  href={project.liveUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/60 backdrop-blur-sm border border-white/40 text-neutral-900 rounded-full text-sm font-medium hover:bg-white/80 transition-colors"
-                >
-                  <ExternalLink size={16} />
-                  Voir le site
-                </a>
-              )}
+            <div className="flex flex-wrap items-center justify-between gap-3 mt-8">
+              <div className="flex flex-wrap gap-3">
+                {/* Single GitHub URL */}
+                {project.githubUrl && (
+                  <a
+                    href={project.githubUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-4 py-2 text-sm bg-neutral-900 text-white hover:bg-neutral-700 border border-neutral-900 rounded-full transition-colors inline-flex items-center gap-2"
+                  >
+                    <Github size={14} />
+                    Voir le code
+                  </a>
+                )}
+                {/* Multiple GitHub URLs (Frontend/Backend) */}
+                {project.githubUrls?.map((repo) => (
+                  <a
+                    key={repo.label}
+                    href={repo.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-4 py-2 text-sm bg-neutral-900 text-white hover:bg-neutral-700 border border-neutral-900 rounded-full transition-colors inline-flex items-center gap-2"
+                  >
+                    <Github size={14} />
+                    {repo.label}
+                  </a>
+                ))}
+                {project.liveUrl && (
+                  <a
+                    href={project.liveUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-4 py-2 text-sm text-ide-muted hover:text-ide-accent border border-ide-border rounded-full transition-colors inline-flex items-center gap-2"
+                  >
+                    <ExternalLink size={14} />
+                    Voir le site
+                  </a>
+                )}
+              </div>
+              {/* Copy to Markdown Button */}
+              <button
+                onClick={handleCopyToClipboard}
+                className="px-4 py-2 text-sm text-ide-muted hover:text-ide-accent border border-ide-border rounded-full transition-colors inline-flex items-center gap-2"
+                title="Copier les informations en Markdown"
+              >
+                {isCopied ? (
+                  <>
+                    <Check size={14} className="text-green-600" />
+                    Copié !
+                  </>
+                ) : (
+                  <>
+                    <Copy size={14} />
+                    Copier
+                  </>
+                )}
+              </button>
             </div>
           </motion.div>
 
