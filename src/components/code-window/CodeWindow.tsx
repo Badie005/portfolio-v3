@@ -77,7 +77,7 @@ export function CodeWindow() {
         listDirectory,
     } = useFileSystem({
         initialFiles: INITIAL_FILES,
-        initialOpenFiles: ['README.md', 'B.DEV.json'],
+        initialOpenFiles: ['README.md'],
         initialActiveFile: 'README.md',
     });
 

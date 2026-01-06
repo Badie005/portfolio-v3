@@ -10,16 +10,72 @@ const SyntaxHighlighter: React.FC<SyntaxHighlighterProps> = ({ content, language
 
     if (language === 'markdown') {
         return (
-            <div className="whitespace-pre font-mono text-[13px] leading-6">
+            <div className="whitespace-pre font-mono text-[13px] leading-7">
                 {content.split('\n').map((line, i) => {
-                    if (line.startsWith('#')) {
-                        return <div key={i} className="text-ide-accent font-bold">{line}</div>;
+                    // H1 - Title principal
+                    if (line.startsWith('# ')) {
+                        return <div key={i} className="text-ide-accent font-bold text-lg mt-2">{line}</div>;
                     }
-                    if (line.trim().startsWith('-')) {
+                    // H2
+                    if (line.startsWith('## ')) {
+                        return <div key={i} className="text-ide-accent font-bold text-base mt-4 mb-1">{line}</div>;
+                    }
+                    // H3
+                    if (line.startsWith('### ')) {
+                        return <div key={i} className="text-ide-keyword font-semibold mt-3">{line}</div>;
+                    }
+                    // Badges ![...](...)
+                    if (line.includes('![') && line.includes('](')) {
+                        return <div key={i} className="text-ide-muted opacity-70 text-[11px]">{line}</div>;
+                    }
+                    // Links [text](url)
+                    if (line.includes('](http') || line.includes('](mailto')) {
+                        return <div key={i} className="text-ide-string underline decoration-ide-string/30">{line}</div>;
+                    }
+                    // Tables |...|
+                    if (line.trim().startsWith('|')) {
+                        return <div key={i} className="text-ide-function bg-ide-bg/50 px-1 -mx-1">{line}</div>;
+                    }
+                    // List items - / *
+                    if (line.trim().startsWith('-') || line.trim().startsWith('*')) {
                         return <div key={i} className="text-ide-string">{line}</div>;
                     }
+                    // Numbered list 1. 2. etc
+                    if (/^\s*\d+\./.test(line)) {
+                        return <div key={i} className="text-ide-string">{line}</div>;
+                    }
+                    // Code blocks ```
                     if (line.startsWith('```')) {
-                        return <div key={i} className="text-ide-muted opacity-50">{line}</div>;
+                        return <div key={i} className="text-ide-comment opacity-50 bg-neutral-100 -mx-1 px-1">{line}</div>;
+                    }
+                    // Inline code backticks or bold **text**
+                    if (line.includes('**') || line.includes('`')) {
+                        const parts = line.split(/(\*\*.*?\*\*|`[^`]+`)/g);
+                        return (
+                            <div key={i} className="text-ide-text">
+                                {parts.map((part, idx) => {
+                                    if (part.startsWith('**') && part.endsWith('**')) {
+                                        return <span key={idx} className="font-bold text-ide-keyword">{part}</span>;
+                                    }
+                                    if (part.startsWith('`') && part.endsWith('`')) {
+                                        return <span key={idx} className="bg-neutral-100 text-ide-function px-1 rounded text-[12px]">{part}</span>;
+                                    }
+                                    return <span key={idx}>{part}</span>;
+                                })}
+                            </div>
+                        );
+                    }
+                    // Emojis at start of line (like 📧 🎓 🚀)
+                    if (/^[\u{1F300}-\u{1F9FF}]/u.test(line.trim())) {
+                        return <div key={i} className="text-ide-text">{line}</div>;
+                    }
+                    // Blockquotes
+                    if (line.trim().startsWith('>')) {
+                        return <div key={i} className="text-ide-comment italic border-l-2 border-ide-accent/30 pl-3 -ml-1">{line}</div>;
+                    }
+                    // Empty lines
+                    if (line.trim() === '') {
+                        return <div key={i} className="h-4">&nbsp;</div>;
                     }
                     return <div key={i} className="text-ide-text">{line}</div>;
                 })}

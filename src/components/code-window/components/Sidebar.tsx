@@ -43,13 +43,13 @@ export function Sidebar({
         >
             {/* Header */}
             <header className="h-9 flex items-center justify-between px-4 pt-2 mb-2">
-                <h2 className="text-gray-400 text-[11px] font-bold tracking-wider uppercase">
+                <h2 className="text-ide-muted text-[11px] font-bold tracking-wider uppercase">
                     {title}
                 </h2>
                 {isMobile && (
                     <button
                         onClick={onClose}
-                        className="text-gray-400 hover:text-gray-600 transition-colors"
+                        className="text-ide-muted hover:text-ide-text transition-colors"
                         aria-label="Close sidebar"
                     >
                         <X size={14} />
@@ -70,9 +70,9 @@ export function Sidebar({
                         value={searchQuery}
                         onChange={(e) => onSearchChange(e.target.value)}
                         className={cn(
-                            'w-full bg-white border border-gray-200 rounded-md',
-                            'py-1 pl-7 pr-2 text-xs text-gray-600',
-                            'placeholder:text-gray-400',
+                            'w-full bg-white/80 backdrop-blur-sm border border-ide-border rounded-md',
+                            'py-1 pl-7 pr-2 text-xs text-ide-text',
+                            'placeholder:text-ide-muted',
                             'focus:outline-none focus:border-ide-accent/50',
                             'focus:ring-1 focus:ring-ide-accent/20',
                             'transition-all'
@@ -81,7 +81,7 @@ export function Sidebar({
                     {searchQuery && (
                         <button
                             onClick={() => onSearchChange('')}
-                            className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                            className="absolute right-2 top-1/2 -translate-y-1/2 text-ide-muted hover:text-ide-text"
                             aria-label="Clear search"
                         >
                             <X size={10} />

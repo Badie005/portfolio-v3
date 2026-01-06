@@ -17,6 +17,7 @@ const ANSI_COLORS: Record<string, string> = {
     '35': 'text-purple-500',  // Magenta
     '36': 'text-cyan-500',    // Cyan
     '37': 'text-gray-300',    // White
+    '38': 'text-ide-accent',  // Accent (copper)
     // Bright Foreground
     '90': 'text-gray-400',
     '91': 'text-red-400',
@@ -116,5 +117,6 @@ export const ansi = {
     magenta: '\x1b[35m',
     cyan: '\x1b[36m',
     white: '\x1b[37m',
+    accent: '\x1b[38m',
     gray: '\x1b[90m',
 };

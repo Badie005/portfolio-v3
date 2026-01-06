@@ -2,351 +2,7 @@ import { FileSystemItem } from './types';
 
 export const INITIAL_FILES: FileSystemItem[] = [
   {
-    name: 'portfolio',
-    type: 'folder',
-    isOpen: true,
-    children: [
-      {
-        name: 'experience',
-        type: 'folder',
-        isOpen: false,
-        children: [
-          {
-            name: 'formation.md',
-            type: 'markdown',
-            content: `# 🎓 Formation Universitaire
-
-## Licence en Sciences Mathématiques et Informatique
-**Université Sidi Mohamed Ben Abdellah (USMBA)** | Fès, Maroc
-*2021 - 2024*
-
-### Compétences acquises
-- Algorithmique et structures de données
-- Programmation orientée objet (Java, C++)
-- Bases de données relationnelles (SQL, MySQL)
-- Développement web (HTML, CSS, JavaScript)
-- Réseaux et systèmes d'exploitation
-
-### Moyenne générale
-**14.5/20** - Mention Bien`
-          },
-          {
-            name: 'pfe_bts_mcw.md',
-            type: 'markdown',
-            content: `# 🎓 PFE - BTS Management Commercial et Web
-
-## Plateforme E-learning AYJI
-**Projet de Fin d'Études** | Fès, Maroc | 2024
-
-### Contexte académique
-Projet de fin d'études pour l'obtention du BTS MCW.
-
-### Réalisations techniques
-- **Frontend**: Interface moderne avec React.js et Tailwind CSS
-- **Backend**: API RESTful avec Node.js et Express
-- **Base de données**: MongoDB avec Mongoose ODM
-- **Auth**: Système d'authentification JWT sécurisé
-- **Paiement**: Intégration CMI pour les abonnements
-
-### Résultats
-- +500 utilisateurs inscrits en 3 mois
-- 50+ cours vidéo publiés
-- Note de satisfaction: 4.7/5
-- **Mention**: Très Bien`
-          },
-          {
-            name: 'projets_freelance.md',
-            type: 'markdown',
-            content: `# 🚀 Projets & Freelance
-
-## Portail de Gestion USMBA
-*Projet académique + Freelance*
-
-### Stack technique
-- **Frontend**: Next.js 14, TypeScript, Tailwind CSS
-- **Backend**: Laravel 11, PHP 8.3
-- **BDD**: PostgreSQL
-- **Infra**: Docker, Nginx, CI/CD GitHub Actions
-
-### Fonctionnalités
-- Dashboard administrateur complet
-- Gestion des inscriptions et réinscriptions
-- Génération automatique des bulletins de notes
-- Export PDF/Excel des données
-
----
-
-## Audit Infrastructure Datacenter
-*Mission de conseil*
-
-### Livrables
-- Rapport d'audit 50+ pages
-- Recommandations de sécurité
-- Plan de modernisation 3 ans`
-          }
-        ]
-      },
-      {
-        name: 'projets',
-        type: 'folder',
-        isOpen: false,
-        children: [
-          {
-            name: 'ayji_elearning.md',
-            type: 'markdown',
-            content: `# 📚 Plateforme E-learning AYJI
-
-## Technologies
-- React.js + Tailwind CSS
-- Node.js + Express
-- MongoDB + Docker
-
-## Métriques
-| Indicateur | Valeur |
-|------------|--------|
-| Utilisateurs | 500+ |
-| Cours | 50+ |
-| Satisfaction | 4.7/5 |`
-          },
-          {
-            name: 'portail_usmba.md',
-            type: 'markdown',
-            content: `# 🏫 Portail de Gestion USMBA
-
-## Technologies
-- Next.js 14 + TypeScript
-- Laravel 11 + PHP 8.3
-- PostgreSQL + Docker
-
-## Modules
-- Gestion des étudiants
-- Gestion des notes
-- Emplois du temps
-- Notifications email/SMS`
-          }
-        ]
-      },
-      {
-        name: 'skills.json',
-        type: 'json',
-        content: `{
-  "frontend": {
-    "frameworks": ["Next.js", "React.js", "Vue.js"],
-    "styling": ["Tailwind CSS", "CSS3", "SASS"],
-    "languages": ["TypeScript", "JavaScript"]
-  },
-  "backend": {
-    "frameworks": ["Node.js", "Express", "Laravel"],
-    "databases": ["PostgreSQL", "MongoDB", "MySQL"],
-    "languages": ["Python", "PHP", "Java"]
-  },
-  "devops": {
-    "containers": ["Docker", "Kubernetes"],
-    "ci_cd": ["GitHub Actions", "Jenkins"],
-    "cloud": ["AWS", "Vercel", "DigitalOcean"]
-  }
-}`
-      }
-    ]
-  },
-  {
-    name: 'src',
-    type: 'folder',
-    isOpen: false,
-    children: [
-      {
-        name: 'components',
-        type: 'folder',
-        isOpen: false,
-        children: [
-          {
-            name: 'ContactForm.tsx',
-            type: 'typescript',
-            content: `"use client";
-
-import { useState, useTransition } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { toast } from "sonner";
-import { Send, Loader2 } from "lucide-react";
-
-// Validation schema
-const contactSchema = z.object({
-  name: z.string().min(2, "Nom requis"),
-  email: z.string().email("Email invalide"),
-  subject: z.string().min(5, "Sujet trop court"),
-  message: z.string().min(20, "Message trop court"),
-});
-
-type ContactFormData = z.infer<typeof contactSchema>;
-
-export function ContactForm() {
-  const [isPending, startTransition] = useTransition();
-  
-  const form = useForm<ContactFormData>({
-    resolver: zodResolver(contactSchema),
-    defaultValues: { name: "", email: "", subject: "", message: "" },
-  });
-
-  const onSubmit = (data: ContactFormData) => {
-    startTransition(async () => {
-      try {
-        const res = await fetch("/api/contact", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-        });
-        
-        if (res.ok) {
-          toast.success("Message envoyé !");
-          form.reset();
-        } else {
-          toast.error("Erreur d'envoi");
-        }
-      } catch (e) {
-        toast.error("Erreur de connexion");
-      }
-    });
-  };
-
-  return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-      <Input {...form.register("name")} placeholder="Nom" />
-      <Input {...form.register("email")} type="email" placeholder="Email" />
-      <Input {...form.register("subject")} placeholder="Sujet" />
-      <Textarea {...form.register("message")} placeholder="Message..." />
-      
-      <Button type="submit" disabled={isPending} className="w-full">
-        {isPending ? <Loader2 className="animate-spin" /> : <Send />}
-        {isPending ? "Envoi..." : "Envoyer"}
-      </Button>
-    </form>
-  );
-}`
-          },
-          {
-            name: 'HeroSection.tsx',
-            type: 'typescript',
-            content: `"use client";
-
-import { motion, useScroll, useTransform } from "motion/react";
-import { ArrowRight, Github, Linkedin } from "lucide-react";
-import Link from "next/link";
-import dynamic from "next/dynamic";
-
-const CodeWindow = dynamic(() => import("./CodeWindow"), {
-  loading: () => <div className="animate-pulse bg-muted h-96 rounded-xl" />,
-});
-
-export function HeroSection() {
-  const { scrollY } = useScroll();
-  const opacity = useTransform(scrollY, [0, 300], [1, 0]);
-  const y = useTransform(scrollY, [0, 300], [0, 50]);
-
-  return (
-    <section className="relative min-h-screen flex items-center py-20">
-      <div className="container mx-auto px-6 grid lg:grid-cols-2 gap-12">
-        <motion.div style={{ opacity, y }} className="space-y-8">
-          <div className="inline-flex items-center gap-2 text-sm font-mono">
-            <span className="animate-pulse text-green-500">●</span>
-            Available for work
-          </div>
-          
-          <h1 className="text-6xl lg:text-7xl font-heading leading-[1.1]">
-            Code with <span className="text-accent">Passion</span>,
-            <br />Build with <span className="text-accent">Purpose</span>
-          </h1>
-          
-          <p className="text-xl text-muted max-w-lg">
-            Full Stack Developer créant des expériences web modernes.
-          </p>
-          
-          <div className="flex flex-wrap gap-4">
-            <Link href="/projects" className="btn-primary">
-              Voir projets <ArrowRight />
-            </Link>
-            <Link href="#contact" className="btn-outline">
-              Me contacter
-            </Link>
-          </div>
-          
-          <div className="flex gap-4">
-            <a href="https://github.com/Badie005" className="text-muted hover:text-foreground">
-              <Github size={20} />
-            </a>
-            <a href="https://linkedin.com/in/abdelbadie-khoubiza" className="text-muted hover:text-foreground">
-              <Linkedin size={20} />
-            </a>
-          </div>
-        </motion.div>
-        
-        <div className="hidden lg:block">
-          <CodeWindow />
-        </div>
-      </div>
-    </section>
-  );
-}`
-          }
-        ]
-      },
-      {
-        name: 'lib',
-        type: 'folder',
-        isOpen: false,
-        children: [
-          {
-            name: 'utils.ts',
-            type: 'typescript',
-            content: `import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
-
-/**
- * Combine class names with Tailwind merge
- */
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
-
-/**
- * Format date in French locale
- */
-export function formatDate(date: Date | string): string {
-  return new Intl.DateTimeFormat("fr-FR", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  }).format(new Date(date));
-}
-
-/**
- * Debounce function for performance
- */
-export function debounce<T extends (...args: unknown[]) => void>(
-  fn: T,
-  delay: number
-): (...args: Parameters<T>) => void {
-  let timeoutId: NodeJS.Timeout;
-  return (...args) => {
-    clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => fn(...args), delay);
-  };
-}
-
-/**
- * Truncate text with ellipsis
- */
-export function truncate(str: string, length: number): string {
-  return str.length > length ? str.slice(0, length) + "..." : str;
-}`
-          }
-        ]
-      }
-    ]
-  },
-  {
-    name: 'config',
+    name: '.config',
     type: 'folder',
     isOpen: true,
     children: [
@@ -401,6 +57,265 @@ export function truncate(str: string, length: number): string {
     "Les micro-interactions comptent"
   ]
 }`
+      }
+    ]
+  },
+  {
+    name: 'profile',
+    type: 'folder',
+    isOpen: false,
+    children: [
+      {
+        name: 'about.md',
+        type: 'markdown',
+        content: `# 👋 À propos
+
+## Abdelbadie Khoubiza
+**Full Stack Developer** | Fès, Maroc
+
+Passionné par la création d'expériences web modernes et performantes.
+J'allie une approche minimaliste à une attention méticuleuse aux détails techniques.
+
+### Chiffres clés
+| Indicateur | Valeur |
+|------------|--------|
+| Projets réalisés | 3 |
+| Technologies | 8+ |
+| Stages effectués | 2 |
+| Temps de réponse | 24h |
+
+### Contact
+📧 a.khoubiza.dev@gmail.com`
+      },
+      {
+        name: 'philosophie.md',
+        type: 'markdown',
+        content: `# 💡 Philosophie
+
+> "Simplicité, élégance et efficacité dans chaque ligne de code."
+
+## Principes
+
+### Performance
+Je conçois des applications en pensant performance, accessibilité et maintenabilité.
+
+### Simplicité
+Une approche minimaliste avec une attention méticuleuse aux détails techniques.
+
+### Efficacité
+Transformer des idées en produits numériques efficaces, élégants et pérennes.`
+      }
+    ]
+  },
+  {
+    name: 'experience',
+    type: 'folder',
+    isOpen: true,
+    children: [
+      {
+        name: 'experience_1.md',
+        type: 'markdown',
+        content: `# 🏢 Stage Développeur Full-Stack
+
+## Agence Urbaine de Taza
+**Jan - Fév 2024** | Stage
+
+### Mission
+Audit complet de l'infrastructure Windows Server, création de scripts PowerShell pour automatiser les tâches administratives, et élaboration d'un plan de migration vers Azure.
+
+### Stack technique
+\`\`\`
+PowerShell | Windows Server | Active Directory | Azure
+\`\`\`
+
+### Réalisations
+- Audit infrastructure datacenter
+- Scripts d'automatisation PowerShell
+- Plan de migration cloud Azure
+- Rapport de recommandations sécurité`
+      },
+      {
+        name: 'experience_2.md',
+        type: 'markdown',
+        content: `# 🎓 Projet Académique - Portail USMBA
+
+## Université Sidi Mohamed Ben Abdellah
+**Mars - Juin 2024** | Projet Académique
+
+### Mission
+Développement d'une application web complète pour automatiser l'inscription et la gestion académique des étudiants.
+
+### Stack technique
+\`\`\`
+Laravel | PHP 8.2 | MySQL | Tailwind CSS
+\`\`\`
+
+### Résultats
+| Métrique | Valeur |
+|----------|--------|
+| Utilisateurs | 500+ |
+| Disponibilité | 99.8% |
+| Modules | 12 |`
+      },
+      {
+        name: 'experience_3.md',
+        type: 'markdown',
+        content: `# 🚀 Projet Personnel - Plateforme E-learning
+
+## AYJI E-learning
+**Sept - Déc 2023** | Projet Personnel
+
+### Mission
+Conception et développement d'une plateforme d'apprentissage en ligne avec système de cours, quiz interactifs et suivi de progression en temps réel.
+
+### Stack technique
+\`\`\`
+Node.js | Angular | MongoDB | Socket.io
+\`\`\`
+
+### Résultats
+| Métrique | Valeur |
+|----------|--------|
+| Utilisateurs | 500+ |
+| Cours vidéo | 50+ |
+| Satisfaction | 4.7/5 |`
+      }
+    ]
+  },
+  {
+    name: 'stack',
+    type: 'folder',
+    isOpen: false,
+    children: [
+      {
+        name: 'skills.json',
+        type: 'json',
+        content: `{
+  "frontend": {
+    "frameworks": ["Next.js", "React.js", "Vue.js"],
+    "styling": ["Tailwind CSS", "CSS3", "SASS"],
+    "languages": ["TypeScript", "JavaScript"]
+  },
+  "backend": {
+    "frameworks": ["Node.js", "Express", "Laravel"],
+    "databases": ["PostgreSQL", "MongoDB", "MySQL"],
+    "languages": ["Python", "PHP", "Java"]
+  },
+  "devops": {
+    "containers": ["Docker", "Kubernetes"],
+    "ci_cd": ["GitHub Actions", "Jenkins"],
+    "cloud": ["AWS", "Vercel", "DigitalOcean"]
+  }
+}`
+      },
+      {
+        name: 'tools.md',
+        type: 'markdown',
+        content: `# 🛠️ Outils Quotidiens
+
+## Développement
+- **IDE**: VS Code, WebStorm
+- **Terminal**: Windows Terminal, PowerShell
+- **Version Control**: Git, GitHub
+
+## Design
+- **UI/UX**: Figma
+- **Prototypage**: Figma, Excalidraw
+
+## Productivité
+- **Notes**: Notion, Obsidian
+- **Communication**: Discord, Slack`
+      }
+    ]
+  },
+  {
+    name: 'projects',
+    type: 'folder',
+    isOpen: false,
+    children: [
+      {
+        name: 'project_ayji.md',
+        type: 'markdown',
+        content: `# 📚 AYJI E-learning
+
+## Plateforme d'apprentissage en ligne
+
+### Technologies
+- React.js + Tailwind CSS
+- Node.js + Express
+- MongoDB + Docker
+
+### Métriques
+| Indicateur | Valeur |
+|------------|--------|
+| Utilisateurs | 500+ |
+| Cours | 50+ |
+| Satisfaction | 4.7/5 |`
+      },
+      {
+        name: 'project_usmba.md',
+        type: 'markdown',
+        content: `# 🏫 Portail de Gestion USMBA
+
+## Application de gestion universitaire
+
+### Technologies
+- Next.js 14 + TypeScript
+- Laravel 11 + PHP 8.3
+- PostgreSQL + Docker
+
+### Modules
+- Gestion des étudiants
+- Gestion des notes
+- Emplois du temps
+- Notifications email/SMS`
+      },
+      {
+        name: 'project_audit.md',
+        type: 'markdown',
+        content: `# 🔐 Audit Infrastructure Datacenter
+
+## Mission de conseil - Agence Urbaine
+
+### Livrables
+- Rapport d'audit 50+ pages
+- Recommandations de sécurité
+- Plan de modernisation 3 ans
+
+### Technologies auditées
+- Windows Server 2019
+- Active Directory
+- Infrastructure réseau
+- Politique de sécurité`
+      }
+    ]
+  },
+  {
+    name: 'contact',
+    type: 'folder',
+    isOpen: false,
+    children: [
+      {
+        name: 'channels.md',
+        type: 'markdown',
+        content: `# 📬 Contact
+
+## Abdelbadie Khoubiza
+
+### Canaux de communication
+| Canal | Lien |
+|-------|------|
+| 📧 Email | a.khoubiza.dev@gmail.com |
+| 💼 LinkedIn | /in/abdelbadie-khoubiza |
+| 🐙 GitHub | /Badie005 |
+
+### Disponibilité
+🟢 **Disponible** pour :
+- Freelance
+- CDI
+- Collaboration ponctuelle
+
+⏱️ Temps de réponse : **< 24h**`
       }
     ]
   },

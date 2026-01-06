@@ -8,7 +8,7 @@ import { SnakeGame } from './SnakeGame';
 
 // Output line renderer component - IDE style without icons
 const OutputLine: React.FC<{ msg: TerminalMessage; promptPath: string }> = ({ msg }) => {
-// ... (rest of the component remains same until render)
+    // ... (rest of the component remains same until render)
     // Get text styling - IDE colors only
     const getContainerClass = () => {
         const base = 'whitespace-pre-wrap break-all font-mono text-[11px] leading-5';
@@ -17,8 +17,8 @@ const OutputLine: React.FC<{ msg: TerminalMessage; promptPath: string }> = ({ ms
         return `${base} text-ide-text/90`;
     };
 
-    const content = msg.type === 'command' 
-        ? msg.content 
+    const content = msg.type === 'command'
+        ? msg.content
         : parseAnsi(msg.content);
 
     return (
@@ -82,13 +82,13 @@ const MIN_HEIGHT = 100;
 const MAX_HEIGHT = 600;
 const DEFAULT_HEIGHT = 200;
 
-const Terminal: React.FC<TerminalProps> = ({ 
-    isOpen, 
-    onClose, 
-    onOpenFile, 
+const Terminal: React.FC<TerminalProps> = ({
+    isOpen,
+    onClose,
+    onOpenFile,
     files,
     isMaximized = false,
-    onToggleMaximize 
+    onToggleMaximize
 }) => {
     const {
         history,
@@ -113,17 +113,17 @@ const Terminal: React.FC<TerminalProps> = ({
     const [showSnake, setShowSnake] = useState(false);
     const startYRef = useRef(0);
     const startHeightRef = useRef(0);
-    
+
     // Console capture hook
     const { messages: consoleMessages, clearMessages: clearConsole } = useConsoleCapture();
-    
+
     // Filtered console messages
     const filteredConsoleMessages = consoleMessages.filter(msg => {
         const matchesFilter = consoleFilter === 'all' || msg.type === consoleFilter;
         const matchesSearch = !consoleSearch || msg.content.toLowerCase().includes(consoleSearch.toLowerCase());
         return matchesFilter && matchesSearch;
     });
-    
+
     const bottomRef = useRef<HTMLDivElement>(null);
     const consoleBottomRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
@@ -190,7 +190,7 @@ const Terminal: React.FC<TerminalProps> = ({
     // Update suggestions based on input
     useEffect(() => {
         if (!input) {
-             
+
             setSuggestions([]);
             setShowSuggestions(false);
             return;
@@ -198,7 +198,7 @@ const Terminal: React.FC<TerminalProps> = ({
 
         const parts = input.split(' ');
         const lastPart = parts[parts.length - 1];
-        
+
         if (parts.length === 1) {
             // Command suggestions
             const cmdSuggestions = getCommandSuggestions(input);
@@ -222,7 +222,7 @@ const Terminal: React.FC<TerminalProps> = ({
     const handleCommand = useCallback((e: React.FormEvent) => {
         e.preventDefault();
         if (!input.trim()) return;
-        
+
         if (input.trim().toLowerCase() === 'snake' || input.trim().toLowerCase() === 'game') {
             setShowSnake(true);
             setInput('');
@@ -246,7 +246,7 @@ const Terminal: React.FC<TerminalProps> = ({
             }
             return;
         }
-        
+
         if (e.key === 'ArrowDown') {
             e.preventDefault();
             if (showSuggestions && suggestions.length > 0) {
@@ -325,9 +325,9 @@ const Terminal: React.FC<TerminalProps> = ({
     if (!isOpen) return null;
 
     return (
-        <div 
+        <div
             className="border-t border-ide-border bg-ide-bg flex flex-col font-mono text-[11px] shrink-0 w-full"
-            style={{ 
+            style={{
                 height: isMaximized ? '100%' : `${height}px`,
                 minHeight: `${MIN_HEIGHT}px`,
                 maxHeight: isMaximized ? undefined : `${MAX_HEIGHT}px`,
@@ -335,20 +335,20 @@ const Terminal: React.FC<TerminalProps> = ({
             }}
         >
             {/* Resize Handle - at the top */}
-            <div 
+            <div
                 className={`h-1 w-full cursor-ns-resize hover:bg-ide-accent/50 transition-colors shrink-0 ${isResizing ? 'bg-ide-accent' : 'bg-ide-border'}`}
                 onMouseDown={handleResizeStart}
             />
-            
+
             {/* Terminal Tab Bar - IDE style */}
             <div className="h-7 border-b border-ide-border flex items-center justify-between px-2 bg-ide-sidebar select-none shrink-0 overflow-hidden">
                 <div className="flex items-center overflow-x-auto scrollbar-none flex-1 min-w-0">
                     {/* Terminal Tab */}
-                    <button 
+                    <button
                         onClick={() => setActiveTab('terminal')}
                         className={`px-3 py-1 text-[11px] transition-colors border-b-2
-                            ${activeTab === 'terminal' 
-                                ? 'text-ide-text border-ide-accent' 
+                            ${activeTab === 'terminal'
+                                ? 'text-ide-text border-ide-accent'
                                 : 'text-ide-muted hover:text-ide-text border-transparent'
                             }`}
                     >
@@ -356,11 +356,11 @@ const Terminal: React.FC<TerminalProps> = ({
                     </button>
 
                     {/* Console Tab */}
-                    <button 
+                    <button
                         onClick={() => setActiveTab('console')}
                         className={`px-3 py-1 text-[11px] transition-colors border-b-2 flex items-center gap-1
-                            ${activeTab === 'console' 
-                                ? 'text-ide-text border-ide-accent' 
+                            ${activeTab === 'console'
+                                ? 'text-ide-text border-ide-accent'
                                 : 'text-ide-muted hover:text-ide-text border-transparent'
                             }`}
                     >
@@ -373,11 +373,11 @@ const Terminal: React.FC<TerminalProps> = ({
                     </button>
 
                     {/* Output Tab */}
-                    <button 
+                    <button
                         onClick={() => setActiveTab('output')}
                         className={`px-3 py-1 text-[11px] transition-colors border-b-2
-                            ${activeTab === 'output' 
-                                ? 'text-ide-text border-ide-accent' 
+                            ${activeTab === 'output'
+                                ? 'text-ide-text border-ide-accent'
                                 : 'text-ide-muted hover:text-ide-text border-transparent'
                             }`}
                     >
@@ -385,11 +385,11 @@ const Terminal: React.FC<TerminalProps> = ({
                     </button>
 
                     {/* Problems Tab */}
-                    <button 
+                    <button
                         onClick={() => setActiveTab('problems')}
                         className={`px-3 py-1 text-[11px] transition-colors border-b-2 flex items-center gap-1
-                            ${activeTab === 'problems' 
-                                ? 'text-ide-text border-ide-accent' 
+                            ${activeTab === 'problems'
+                                ? 'text-ide-text border-ide-accent'
                                 : 'text-ide-muted hover:text-ide-text border-transparent'
                             }`}
                     >
@@ -398,11 +398,11 @@ const Terminal: React.FC<TerminalProps> = ({
                     </button>
 
                     {/* Debug Tab */}
-                    <button 
+                    <button
                         onClick={() => setActiveTab('debug')}
                         className={`px-3 py-1 text-[11px] transition-colors border-b-2
-                            ${activeTab === 'debug' 
-                                ? 'text-ide-text border-ide-accent' 
+                            ${activeTab === 'debug'
+                                ? 'text-ide-text border-ide-accent'
                                 : 'text-ide-muted hover:text-ide-text border-transparent'
                             }`}
                     >
@@ -411,16 +411,16 @@ const Terminal: React.FC<TerminalProps> = ({
                 </div>
 
                 <div className="flex items-center gap-1 text-ide-muted shrink-0 ml-2">
-                    <button 
+                    <button
                         onClick={onToggleMaximize}
-                        className="p-1 hover:text-ide-text hover:bg-ide-hover rounded transition-colors"
+                        className="p-1 hover:text-ide-text hover:bg-ide-ui rounded transition-colors"
                         title={isMaximized ? "Restore" : "Maximize"}
                     >
                         {isMaximized ? <Minimize2 size={12} /> : <Maximize2 size={12} />}
                     </button>
-                    <button 
+                    <button
                         onClick={onClose}
-                        className="p-1 hover:text-ide-text hover:bg-ide-hover rounded transition-colors"
+                        className="p-1 hover:text-ide-text hover:bg-ide-ui rounded transition-colors"
                         title="Close"
                     >
                         <X size={12} />
@@ -437,61 +437,61 @@ const Terminal: React.FC<TerminalProps> = ({
                             <SnakeGame onClose={() => setShowSnake(false)} />
                         </div>
                     ) : (
-                    <div 
-                        ref={terminalRef}
-                        className="h-full overflow-y-auto p-3 cursor-text scrollbar-thin scrollbar-thumb-ide-border scrollbar-track-transparent"
-                        onClick={() => inputRef.current?.focus()}
-                    >
-                        {history.map((msg, i) => (
-                            <OutputLine key={i} msg={msg} promptPath={prompt.path} />
-                        ))}
+                        <div
+                            ref={terminalRef}
+                            className="h-full overflow-y-auto p-3 cursor-text scrollbar-thin scrollbar-thumb-ide-border scrollbar-track-transparent"
+                            onClick={() => inputRef.current?.focus()}
+                        >
+                            {history.map((msg, i) => (
+                                <OutputLine key={i} msg={msg} promptPath={prompt.path} />
+                            ))}
 
-                        {/* Input Line - IDE style */}
-                        <div className="relative mt-2">
-                            <form onSubmit={handleCommand} className="flex items-center font-mono text-[11px]">
-                                <span className="shrink-0 select-none mr-2 text-ide-accent">$</span>
-                                <input
-                                    ref={inputRef}
-                                    type="text"
-                                    value={input}
-                                    onChange={(e) => setInput(e.target.value)}
-                                    onKeyDown={handleKeyDown}
-                                    className="flex-1 bg-transparent border-none outline-none text-ide-text placeholder-ide-muted caret-ide-text"
-                                    autoComplete="off"
-                                    spellCheck="false"
-                                />
-                            </form>
+                            {/* Input Line - IDE style */}
+                            <div className="relative mt-2">
+                                <form onSubmit={handleCommand} className="flex items-center font-mono text-[11px]">
+                                    <span className="shrink-0 select-none mr-2 text-ide-accent">$</span>
+                                    <input
+                                        ref={inputRef}
+                                        type="text"
+                                        value={input}
+                                        onChange={(e) => setInput(e.target.value)}
+                                        onKeyDown={handleKeyDown}
+                                        className="flex-1 bg-transparent border-none outline-none text-ide-text placeholder-ide-muted caret-ide-text"
+                                        autoComplete="off"
+                                        spellCheck="false"
+                                    />
+                                </form>
 
-                            {/* Autocomplete Suggestions - IDE style */}
-                            {showSuggestions && suggestions.length > 0 && (
-                                <div className="absolute bottom-full left-4 mb-1 bg-ide-sidebar border border-ide-border rounded shadow-lg overflow-hidden z-50 min-w-[180px] max-h-[120px] overflow-y-auto">
-                                    {suggestions.map((suggestion, idx) => (
-                                        <button
-                                            key={suggestion}
-                                            className={`w-full px-2 py-1 text-left text-[11px] font-mono transition-colors
-                                                ${idx === selectedSuggestion ? 'bg-ide-hover text-ide-text' : 'text-ide-muted hover:bg-ide-hover hover:text-ide-text'}
+                                {/* Autocomplete Suggestions - IDE style */}
+                                {showSuggestions && suggestions.length > 0 && (
+                                    <div className="absolute bottom-full left-4 mb-1 bg-ide-sidebar border border-ide-border rounded shadow-lg overflow-hidden z-50 min-w-[180px] max-h-[120px] overflow-y-auto">
+                                        {suggestions.map((suggestion, idx) => (
+                                            <button
+                                                key={suggestion}
+                                                className={`w-full px-2 py-1 text-left text-[11px] font-mono transition-colors
+                                                ${idx === selectedSuggestion ? 'bg-ide-ui text-ide-text' : 'text-ide-muted hover:bg-ide-ui hover:text-ide-text'}
                                             `}
-                                            onClick={() => {
-                                                const parts = input.split(' ');
-                                                if (parts.length === 1) {
-                                                    setInput(suggestion + ' ');
-                                                } else {
-                                                    parts[parts.length - 1] = suggestion;
-                                                    setInput(parts.join(' '));
-                                                }
-                                                setShowSuggestions(false);
-                                                inputRef.current?.focus();
-                                            }}
-                                        >
-                                            {suggestion}
-                                        </button>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
+                                                onClick={() => {
+                                                    const parts = input.split(' ');
+                                                    if (parts.length === 1) {
+                                                        setInput(suggestion + ' ');
+                                                    } else {
+                                                        parts[parts.length - 1] = suggestion;
+                                                        setInput(parts.join(' '));
+                                                    }
+                                                    setShowSuggestions(false);
+                                                    inputRef.current?.focus();
+                                                }}
+                                            >
+                                                {suggestion}
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
 
-                        <div ref={bottomRef} />
-                    </div>
+                            <div ref={bottomRef} />
+                        </div>
                     )
                 )}
 
@@ -504,33 +504,29 @@ const Terminal: React.FC<TerminalProps> = ({
                             <div className="flex items-center gap-1 text-[10px]">
                                 <button
                                     onClick={() => setConsoleFilter('all')}
-                                    className={`px-2 py-0.5 rounded transition-colors ${
-                                        consoleFilter === 'all' ? 'bg-ide-hover text-ide-text' : 'text-ide-muted hover:text-ide-text'
-                                    }`}
+                                    className={`px-2 py-0.5 rounded transition-colors ${consoleFilter === 'all' ? 'bg-ide-ui text-ide-text' : 'text-ide-muted hover:text-ide-text'
+                                        }`}
                                 >
                                     All
                                 </button>
                                 <button
                                     onClick={() => setConsoleFilter('error')}
-                                    className={`px-2 py-0.5 rounded transition-colors ${
-                                        consoleFilter === 'error' ? 'bg-ide-hover text-ide-error' : 'text-ide-muted hover:text-ide-error'
-                                    }`}
+                                    className={`px-2 py-0.5 rounded transition-colors ${consoleFilter === 'error' ? 'bg-ide-hover text-ide-error' : 'text-ide-muted hover:text-ide-error'
+                                        }`}
                                 >
                                     Errors ({consoleMessages.filter(m => m.type === 'error').length})
                                 </button>
                                 <button
                                     onClick={() => setConsoleFilter('warn')}
-                                    className={`px-2 py-0.5 rounded transition-colors ${
-                                        consoleFilter === 'warn' ? 'bg-ide-hover text-ide-warning' : 'text-ide-muted hover:text-ide-warning'
-                                    }`}
+                                    className={`px-2 py-0.5 rounded transition-colors ${consoleFilter === 'warn' ? 'bg-ide-hover text-ide-warning' : 'text-ide-muted hover:text-ide-warning'
+                                        }`}
                                 >
                                     Warnings ({consoleMessages.filter(m => m.type === 'warn').length})
                                 </button>
                                 <button
                                     onClick={() => setConsoleFilter('log')}
-                                    className={`px-2 py-0.5 rounded transition-colors ${
-                                        consoleFilter === 'log' ? 'bg-ide-hover text-ide-text' : 'text-ide-muted hover:text-ide-text'
-                                    }`}
+                                    className={`px-2 py-0.5 rounded transition-colors ${consoleFilter === 'log' ? 'bg-ide-hover text-ide-text' : 'text-ide-muted hover:text-ide-text'
+                                        }`}
                                 >
                                     Logs
                                 </button>
@@ -553,7 +549,7 @@ const Terminal: React.FC<TerminalProps> = ({
                                 </button>
                             </div>
                         </div>
-                        
+
                         {/* Console Messages */}
                         <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-ide-border scrollbar-track-transparent">
                             {filteredConsoleMessages.length === 0 ? (

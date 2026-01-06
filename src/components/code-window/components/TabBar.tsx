@@ -49,8 +49,8 @@ export function TabBar({
                             'min-w-[120px] max-w-[180px] select-none rounded-t-md',
                             'border-t border-l border-r transition-colors',
                             isActive
-                                ? 'bg-white text-gray-700 border-ide-border shadow-sm translate-y-[1px] relative z-10'
-                                : 'bg-transparent text-gray-500 border-transparent hover:bg-gray-200/40'
+                                ? 'bg-white text-ide-text border-ide-border shadow-sm translate-y-[1px] relative z-10'
+                                : 'bg-transparent text-ide-muted border-transparent hover:bg-ide-ui/40'
                         )}
                     >
                         {tab.icon && <span className="shrink-0">{tab.icon}</span>}
@@ -61,7 +61,7 @@ export function TabBar({
                         <button
                             onClick={(e) => handleClose(e, tab.id)}
                             className={cn(
-                                'p-0.5 rounded hover:bg-gray-200 transition-opacity',
+                                'p-0.5 rounded hover:bg-ide-ui transition-opacity',
                                 isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
                             )}
                             aria-label={`Close ${tab.label}`}

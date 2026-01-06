@@ -32,19 +32,19 @@ export function TitleBar({
                     <TrafficLight color="yellow" />
                     <TrafficLight color="green" />
                 </div>
-                
+
                 {/* Toggle Buttons */}
                 <div className="hidden md:flex items-center gap-1 ml-2">
                     <button
                         onClick={onToggleSidebar}
-                        className="p-1.5 rounded hover:bg-ide-hover text-ide-muted hover:text-ide-text transition-colors"
+                        className="p-1.5 rounded hover:bg-ide-ui text-ide-muted hover:text-ide-text transition-colors"
                         title="Toggle Sidebar (Ctrl+B)"
                     >
                         <PanelLeft size={14} />
                     </button>
                     <button
                         onClick={onToggleTerminal}
-                        className="p-1.5 rounded hover:bg-ide-hover text-ide-muted hover:text-ide-text transition-colors"
+                        className="p-1.5 rounded hover:bg-ide-ui text-ide-muted hover:text-ide-text transition-colors"
                         title="Toggle Terminal (Ctrl+J)"
                     >
                         <Terminal size={14} />
@@ -52,7 +52,7 @@ export function TitleBar({
                     {onToggleChat && (
                         <button
                             onClick={onToggleChat}
-                            className="p-1.5 rounded hover:bg-ide-hover text-ide-muted hover:text-ide-text transition-colors"
+                            className="p-1.5 rounded hover:bg-ide-ui text-ide-muted hover:text-ide-text transition-colors"
                             title="Toggle AI Agent (Ctrl+L)"
                         >
                             <MessageSquare size={14} />
@@ -62,7 +62,7 @@ export function TitleBar({
             </div>
 
             {/* Title */}
-            <h1 className="text-xs font-medium text-gray-500 tracking-wide opacity-80 absolute left-1/2 -translate-x-1/2">
+            <h1 className="text-xs font-medium text-ide-muted tracking-wide opacity-80 absolute left-1/2 -translate-x-1/2">
                 {title}
             </h1>
 
@@ -71,10 +71,10 @@ export function TitleBar({
                 {showMobileMenu && (
                     <button
                         onClick={onToggleSidebar}
-                        className="md:hidden p-1 hover:bg-gray-100 rounded transition-colors"
+                        className="md:hidden p-1 hover:bg-ide-ui rounded transition-colors"
                         aria-label="Toggle sidebar"
                     >
-                        <Menu size={18} className="text-gray-500" />
+                        <Menu size={18} className="text-ide-muted" />
                     </button>
                 )}
             </div>

@@ -34,10 +34,11 @@ const experiences = [
   },
 ];
 
+// Palette harmonisée avec le thème cuivre/terra cotta
 const typeColors = {
-  stage: "text-green-400 bg-green-400/10 border-green-400/20",
-  academic: "text-blue-400 bg-blue-400/10 border-blue-400/20",
-  personal: "text-purple-400 bg-purple-400/10 border-purple-400/20",
+  stage: "text-ide-accent bg-ide-accent/10 border-ide-accent/30",
+  academic: "text-ide-string bg-ide-string/10 border-ide-string/30",
+  personal: "text-ide-keyword bg-ide-keyword/10 border-ide-keyword/30",
 };
 
 const typeLabels = {
@@ -105,18 +106,9 @@ export function ExperienceSection() {
                 {/* Content Card */}
                 <div className={`ml-12 sm:ml-16 lg:ml-0 lg:w-[calc(50%-3rem)] ${index % 2 === 0 ? "lg:pr-4" : "lg:pl-4 lg:ml-auto"
                   }`}>
-                  <div className="group relative rounded-xl border border-white/30 overflow-hidden transition-all duration-500 hover:border-ide-accent/40 hover:shadow-xl backdrop-blur-md bg-white/40 hover:bg-white/50 shadow-sm">
+                  <div className="group liquid-glass-card rounded-xl transition-all duration-500 hover:shadow-xl">
                     {/* Top accent border - subtle */}
-                    <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-ide-accent/40 to-transparent" />
-
-                    {/* Animated bottom border on hover */}
-                    <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-ide-accent/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-
-                    {/* Glass shine effect */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-white/30 via-transparent to-transparent opacity-60 pointer-events-none" />
-
-                    {/* Hover glow */}
-                    <div className="absolute -inset-1 bg-gradient-to-r from-ide-accent/0 via-ide-accent/10 to-ide-accent/0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl pointer-events-none" />
+                    <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-ide-accent/40 to-transparent z-10" />
 
                     {/* Card Header - Terminal Style */}
                     <div className="relative z-10 px-5 py-3 bg-white/30 backdrop-blur-sm border-b border-white/20 flex items-center justify-between">

@@ -676,45 +676,44 @@ const EmptyState = memo<{ onSuggestionClick?: (suggestion: string) => void }>(({
 
     return (
         <div className="h-full flex flex-col items-center justify-center p-6">
-            {/* Icon with halo effect */}
-            <div className="mb-6 relative group">
-                <div className="absolute inset-0 bg-[#D97757]/20 rounded-xl blur-lg transform group-hover:scale-110 transition-transform duration-500" />
-                <div className="relative w-14 h-14 bg-[#FFFBF7] rounded-xl border border-[#E5E0DB] flex items-center justify-center shadow-sm group-hover:shadow-md transition-all duration-300">
+            {/* Icon - ultra minimal */}
+            <div className="mb-6">
+                <div className="w-14 h-14 bg-white rounded-xl border border-ide-border/50 flex items-center justify-center">
                     <Image
                         src="/logo/SVG/Mini-Logo-B.svg"
                         alt="B.AI Assistant Logo"
                         width={28}
                         height={28}
-                        className="w-7 h-7 transition-transform group-hover:rotate-12 duration-300"
+                        className="w-7 h-7"
                     />
                 </div>
             </div>
 
             {/* Text */}
             <div className="text-center mb-8 space-y-2">
-                <h3 className="text-lg font-serif font-medium text-[#2D2A26]">B.AI Agent</h3>
-                <p className="text-xs text-[#8A8580] max-w-[260px] mx-auto leading-relaxed">
+                <h3 className="text-lg font-serif font-medium text-brand">B.AI Agent</h3>
+                <p className="text-xs text-ide-muted max-w-[260px] mx-auto leading-relaxed">
                     Je connais chaque ligne de ce portfolio.<br />
                     <span className="opacity-70">Pose une question technique ou explore mes projets.</span>
                 </p>
             </div>
 
-            {/* Suggestion buttons */}
+            {/* Suggestion buttons - minimal */}
             {onSuggestionClick && (
                 <div className="flex flex-wrap justify-center gap-2 max-w-[380px]">
                     {suggestions.map((suggestion, idx) => (
                         <button
                             key={idx}
                             onClick={() => onSuggestionClick(suggestion.text)}
-                            className="group bg-white hover:bg-[#FFFBF7] text-[#5C5550] hover:text-[#D97757] text-[11px] px-4 py-2 rounded-lg border border-[#E5E0DB] hover:border-[#D97757]/40 transition-all duration-300 shadow-sm hover:shadow flex items-center gap-2"
+                            className="text-ide-muted hover:text-ide-accent text-[11px] px-3 py-1.5 rounded-md border border-ide-border/50 hover:border-ide-accent/50 bg-white"
                         >
                             {suggestion.hasIcon && (
-                                <svg className="w-3 h-3 opacity-50 group-hover:opacity-100" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <svg className="w-3 h-3 inline mr-1.5 opacity-60" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                     <polyline points="16 18 22 12 16 6" />
                                     <polyline points="8 6 2 12 8 18" />
                                 </svg>
                             )}
-                            <span>{suggestion.text}</span>
+                            {suggestion.text}
                         </button>
                     ))}
                 </div>
@@ -1317,12 +1316,12 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                 </div>
             </div>
 
-            {/* Input Area - Elevated and distinct */}
-            <div className="p-3 pt-2 bg-ide-sidebar border-t border-ide-border/50 shadow-[0_-4px_12px_rgba(0,0,0,0.08)]">
+            {/* Input Area - Glassmorphism style */}
+            <div className="p-3 pt-2 bg-white/60 backdrop-blur-md border-t border-white/40">
                 <div className="mx-auto w-full max-w-[580px]">
-                    <div className={`border rounded-xl overflow-hidden transition-all bg-white shadow-sm ${isLoading
-                        ? 'border-ide-muted'
-                        : 'border-ide-border focus-within:border-ide-accent focus-within:shadow-md focus-within:ring-2 focus-within:ring-ide-accent/10'
+                    <div className={`border rounded-xl overflow-hidden transition-all bg-white/80 backdrop-blur-sm shadow-sm ${isLoading
+                        ? 'border-ide-muted/50'
+                        : 'border-white/60 focus-within:border-ide-accent/60 focus-within:shadow-lg focus-within:ring-2 focus-within:ring-ide-accent/20'
                         }`}>
                         <form className="flex flex-col" onSubmit={(e) => { e.preventDefault(); handleSend(); }}>
                             <textarea
@@ -1341,14 +1340,14 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-2">
                                         <Image src="/logo/SVG/Mini-Logo-B.svg" alt="Agent Logo" width={16} height={16} className="w-4 h-4" />
-                                        <span className="text-[11px] text-ide-muted">Agent</span>
+                                        <span className="text-[11px] text-ide-muted font-medium">Agent</span>
                                     </div>
 
                                     <button
                                         type="submit"
                                         disabled={!input.trim() || isLoading || !isServiceReady}
                                         className={`flex h-7 w-7 items-center justify-center rounded-full transition-all ${input.trim() && !isLoading && isServiceReady
-                                            ? 'bg-ide-text text-white hover:bg-ide-text/80'
+                                            ? 'bg-ide-accent text-white hover:bg-ide-accent/90 shadow-sm hover:shadow'
                                             : 'bg-ide-ui/50 text-ide-muted cursor-not-allowed'
                                             }`}
                                     >
