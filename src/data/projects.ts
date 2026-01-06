@@ -53,7 +53,7 @@ export const projects: Project[] = [
       "Application web éducative (LMS) moderne conçue pour moderniser le suivi pédagogique avec une expérience utilisateur fluide et interactive.",
     fullDescription:
       "AYJI est une Single Page Application éducative offrant un espace étudiant complet (dashboard, catalogue de cours, quiz interactifs) et un back-office administrateur. Construite avec Angular 19 et NgRx pour une gestion d'état robuste, elle intègre Socket.io pour les notifications en temps réel.",
-    image: "/projet-image/B.DEV × AYJI FR.svg",
+    image: "/projet-image/B.DEV%20%C3%97%20AYJI%20FR.svg",
     imageAlt: "Dashboard de la plateforme e-learning AYJI",
     period: "Sept - Déc 2025",
     technologies: ["Angular 19", "TypeScript", "NgRx", "RxJS", "Node.js", "MongoDB", "Mongoose", "Redis", "Socket.io", "PouchDB", "Cypress", "SCSS"],
