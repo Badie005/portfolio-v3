@@ -14,18 +14,19 @@ export const INITIAL_FILES: FileSystemItem[] = [
     "name": "Abdelbadie Khoubiza",
     "alias": "B.DEV",
     "role": "Full Stack Developer",
-    "status": "🟢 Disponible",
+    "status": "Open to Work",
     "version": "3.0.2"
   },
   "contact": {
     "email": "a.khoubiza.dev@gmail.com",
-    "location": "Fès, Maroc",
-    "timezone": "GMT+1"
+    "location": "Fes, Morocco",
+    "timezone": "GMT+1",
+    "response_time": "24h"
   },
-  "stack": {
+  "core_stack": {
     "frontend": ["Next.js", "React", "TypeScript", "Tailwind CSS"],
     "backend": ["Node.js", "Laravel", "Python"],
-    "database": ["PostgreSQL", "MongoDB"],
+    "database": ["PostgreSQL", "MongoDB", "MySQL"],
     "devops": ["Docker", "GitHub Actions", "Vercel"]
   }
 }`
@@ -52,9 +53,9 @@ export const INITIAL_FILES: FileSystemItem[] = [
     }
   },
   "principles": [
-    "La fonction dicte la forme",
-    "L'espace blanc est un élément",
-    "Les micro-interactions comptent"
+    "Function drives form",
+    "Whitespace is intentional",
+    "Details matter"
   ]
 }`
       }
@@ -68,42 +69,42 @@ export const INITIAL_FILES: FileSystemItem[] = [
       {
         name: 'about.md',
         type: 'markdown',
-        content: `# 👋 À propos
+        content: `# About
 
 ## Abdelbadie Khoubiza
-**Full Stack Developer** | Fès, Maroc
+**Full Stack Developer** | Fes, Morocco
 
-Passionné par la création d'expériences web modernes et performantes.
-J'allie une approche minimaliste à une attention méticuleuse aux détails techniques.
+I build modern, high-performance web applications.
+Clean code. Scalable architecture. Pixel-perfect interfaces.
 
-### Chiffres clés
-| Indicateur | Valeur |
-|------------|--------|
-| Projets réalisés | 3 |
-| Technologies | 8+ |
-| Stages effectués | 2 |
-| Temps de réponse | 24h |
+### Key Metrics
+| Metric | Value |
+|--------|-------|
+| Projects Delivered | 3 |
+| Technologies Mastered | 10+ |
+| Professional Experience | 2 internships |
+| Response Time | 24h |
 
 ### Contact
-📧 a.khoubiza.dev@gmail.com`
+a.khoubiza.dev@gmail.com`
       },
       {
-        name: 'philosophie.md',
+        name: 'approach.md',
         type: 'markdown',
-        content: `# 💡 Philosophie
+        content: `# Development Approach
 
-> "Simplicité, élégance et efficacité dans chaque ligne de code."
+\> "Ship fast. Ship quality. Ship often."
 
-## Principes
+## Core Principles
 
-### Performance
-Je conçois des applications en pensant performance, accessibilité et maintenabilité.
+### Performance First
+Every millisecond counts. I optimize for speed, accessibility, and maintainability from day one.
 
-### Simplicité
-Une approche minimaliste avec une attention méticuleuse aux détails techniques.
+### Clean Architecture
+Modular, testable, scalable. Code that teams can maintain and extend.
 
-### Efficacité
-Transformer des idées en produits numériques efficaces, élégants et pérennes.`
+### User-Centric Design
+Interfaces that work. Experiences that convert. Details that matter.`
       }
     ]
   },
@@ -115,70 +116,70 @@ Transformer des idées en produits numériques efficaces, élégants et pérenne
       {
         name: 'experience_1.md',
         type: 'markdown',
-        content: `# 🏢 Stage Développeur Full-Stack
+        content: `# IT Infrastructure Internship
 
-## Agence Urbaine de Taza
-**Jan - Fév 2024** | Stage
+## Urban Agency of Taza
+**Jan - Feb 2024** | Internship
 
-### Mission
-Audit complet de l'infrastructure Windows Server, création de scripts PowerShell pour automatiser les tâches administratives, et élaboration d'un plan de migration vers Azure.
+### Scope
+Complete infrastructure audit. PowerShell automation. Azure migration roadmap.
 
-### Stack technique
+### Tech Stack
 \`\`\`
 PowerShell | Windows Server | Active Directory | Azure
 \`\`\`
 
-### Réalisations
-- Audit infrastructure datacenter
-- Scripts d'automatisation PowerShell
-- Plan de migration cloud Azure
-- Rapport de recommandations sécurité`
+### Deliverables
+- Full datacenter infrastructure audit
+- Automated admin scripts (PowerShell)
+- Cloud migration plan (Azure)
+- Security recommendations report`
       },
       {
         name: 'experience_2.md',
         type: 'markdown',
-        content: `# 🎓 Projet Académique - Portail USMBA
+        content: `# USMBA Student Portal
 
-## Université Sidi Mohamed Ben Abdellah
-**Mars - Juin 2024** | Projet Académique
+## Sidi Mohamed Ben Abdellah University
+**Mar - Jun 2024** | Academic Project
 
-### Mission
-Développement d'une application web complète pour automatiser l'inscription et la gestion académique des étudiants.
+### Scope
+End-to-end student management system. Automated registration. Secure document generation.
 
-### Stack technique
+### Tech Stack
 \`\`\`
-Laravel | PHP 8.2 | MySQL | Tailwind CSS
+Laravel 12 | PHP 8.2 | MySQL 8 | Tailwind CSS
 \`\`\`
 
-### Résultats
-| Métrique | Valeur |
-|----------|--------|
-| Utilisateurs | 500+ |
-| Disponibilité | 99.8% |
-| Modules | 12 |`
+### Results
+| Metric | Value |
+|--------|-------|
+| Active Users | 500+ |
+| Uptime | 99.8% |
+| Modules Built | 12 |`
       },
       {
         name: 'experience_3.md',
         type: 'markdown',
-        content: `# 🚀 Projet Personnel - Plateforme E-learning
+        content: `# AYJI E-learning Platform
 
-## AYJI E-learning
-**Sept - Déc 2023** | Projet Personnel
+## Personal Project
+**Sep - Dec 2023** | Full Stack Development
 
-### Mission
-Conception et développement d'une plateforme d'apprentissage en ligne avec système de cours, quiz interactifs et suivi de progression en temps réel.
+### Scope
+Modern LMS from scratch. Real-time features. Interactive assessments.
 
-### Stack technique
+### Tech Stack
 \`\`\`
-Node.js | Angular | MongoDB | Socket.io
+Angular 19 | Node.js | MongoDB | Socket.io | Redis
 \`\`\`
 
-### Résultats
-| Métrique | Valeur |
-|----------|--------|
-| Utilisateurs | 500+ |
-| Cours vidéo | 50+ |
-| Satisfaction | 4.7/5 |`
+### Results
+| Metric | Value |
+|--------|-------|
+| Users Onboarded | 500+ |
+| Video Courses | 50+ |
+| User Satisfaction | 4.7/5 |`
       }
     ]
   },
@@ -192,38 +193,38 @@ Node.js | Angular | MongoDB | Socket.io
         type: 'json',
         content: `{
   "frontend": {
-    "frameworks": ["Next.js", "React.js", "Vue.js"],
-    "styling": ["Tailwind CSS", "CSS3", "SASS"],
+    "frameworks": ["Next.js", "React", "Angular", "Vue.js"],
+    "styling": ["Tailwind CSS", "CSS3", "SCSS"],
     "languages": ["TypeScript", "JavaScript"]
   },
   "backend": {
-    "frameworks": ["Node.js", "Express", "Laravel"],
-    "databases": ["PostgreSQL", "MongoDB", "MySQL"],
+    "frameworks": ["Node.js", "Express", "Laravel", "NestJS"],
+    "databases": ["PostgreSQL", "MongoDB", "MySQL", "Redis"],
     "languages": ["Python", "PHP", "Java"]
   },
   "devops": {
     "containers": ["Docker", "Kubernetes"],
     "ci_cd": ["GitHub Actions", "Jenkins"],
-    "cloud": ["AWS", "Vercel", "DigitalOcean"]
+    "cloud": ["AWS", "Vercel", "Railway"]
   }
 }`
       },
       {
         name: 'tools.md',
         type: 'markdown',
-        content: `# 🛠️ Outils Quotidiens
+        content: `# Daily Tools
 
-## Développement
+## Development
 - **IDE**: VS Code, WebStorm
 - **Terminal**: Windows Terminal, PowerShell
 - **Version Control**: Git, GitHub
 
 ## Design
 - **UI/UX**: Figma
-- **Prototypage**: Figma, Excalidraw
+- **Prototyping**: Figma, Excalidraw
 
-## Productivité
-- **Notes**: Notion, Obsidian
+## Productivity
+- **Documentation**: Notion, Obsidian
 - **Communication**: Discord, Slack`
       }
     ]
@@ -236,57 +237,63 @@ Node.js | Angular | MongoDB | Socket.io
       {
         name: 'project_ayji.md',
         type: 'markdown',
-        content: `# 📚 AYJI E-learning
+        content: `# AYJI E-learning
 
-## Plateforme d'apprentissage en ligne
+## Modern Learning Management System
 
-### Technologies
-- React.js + Tailwind CSS
-- Node.js + Express
-- MongoDB + Docker
+A full-featured educational platform with real-time capabilities.
 
-### Métriques
-| Indicateur | Valeur |
-|------------|--------|
-| Utilisateurs | 500+ |
-| Cours | 50+ |
+### Tech Stack
+- Angular 19 + NgRx + RxJS
+- Node.js + Express + MongoDB
+- Socket.io + Redis + Docker
+
+### Metrics
+| Metric | Value |
+|--------|-------|
+| Users | 500+ |
+| Courses | 50+ |
 | Satisfaction | 4.7/5 |`
       },
       {
         name: 'project_usmba.md',
         type: 'markdown',
-        content: `# 🏫 Portail de Gestion USMBA
+        content: `# USMBA Management Portal
 
-## Application de gestion universitaire
+## University Administration System
 
-### Technologies
-- Next.js 14 + TypeScript
-- Laravel 11 + PHP 8.3
-- PostgreSQL + Docker
+Streamlined academic workflows. Secure document generation. Admin dashboards.
 
-### Modules
-- Gestion des étudiants
-- Gestion des notes
-- Emplois du temps
-- Notifications email/SMS`
+### Tech Stack
+- Laravel 12 + PHP 8.2 + Blade
+- MySQL 8 + Tailwind CSS
+- Sanctum + QR Code PDF
+
+### Features
+- Student registration automation
+- Prerequisite validation engine
+- Secure certificate generation
+- Real-time admin dashboard`
       },
       {
         name: 'project_audit.md',
         type: 'markdown',
-        content: `# 🔐 Audit Infrastructure Datacenter
+        content: `# Infrastructure Audit
 
-## Mission de conseil - Agence Urbaine
+## IT Consulting - Urban Agency
 
-### Livrables
-- Rapport d'audit 50+ pages
-- Recommandations de sécurité
-- Plan de modernisation 3 ans
+Comprehensive datacenter assessment and modernization roadmap.
 
-### Technologies auditées
+### Deliverables
+- 50+ page audit report
+- Security vulnerability analysis
+- 3-year modernization plan
+
+### Scope
 - Windows Server 2019
 - Active Directory
-- Infrastructure réseau
-- Politique de sécurité`
+- Network infrastructure
+- Security policies`
       }
     ]
   },
@@ -298,48 +305,48 @@ Node.js | Angular | MongoDB | Socket.io
       {
         name: 'channels.md',
         type: 'markdown',
-        content: `# 📬 Contact
+        content: `# Get In Touch
 
 ## Abdelbadie Khoubiza
 
-### Canaux de communication
-| Canal | Lien |
-|-------|------|
-| 📧 Email | a.khoubiza.dev@gmail.com |
-| 💼 LinkedIn | /in/abdelbadie-khoubiza |
-| 🐙 GitHub | /Badie005 |
+### Contact Channels
+| Channel | Link |
+|---------|------|
+| Email | a.khoubiza.dev@gmail.com |
+| LinkedIn | /in/abdelbadie-khoubiza |
+| GitHub | /Badie005 |
 
-### Disponibilité
-🟢 **Disponible** pour :
-- Freelance
-- CDI
-- Collaboration ponctuelle
+### Availability
+Currently open for:
+- Full-time positions (CDI)
+- Freelance projects
+- Technical collaborations
 
-⏱️ Temps de réponse : **< 24h**`
+Response time: **Under 24 hours**`
       }
     ]
   },
   {
     name: 'README.md',
     type: 'markdown',
-    content: `# 👋 B.DEV x B.411
-### Portfolio Abdelbadie Khoubiza
+    content: `# B.DEV x B.411
+### Abdelbadie Khoubiza - Portfolio
 
 ![Version](https://img.shields.io/badge/version-3.0.2-black)
 ![Status](https://img.shields.io/badge/status-available-success)
 
-## À propos
-Développeur Full Stack passionné par la création d'expériences web modernes.
+## About
+Full Stack Developer building modern, scalable web applications.
 
-## Stack technique
+## Tech Stack
 - **Frontend**: Next.js 16, React 19, TypeScript, Tailwind v4
 - **Backend**: Node.js, Laravel, PostgreSQL, Docker
-- **Design**: Figma, UI/UX, Design System
+- **Design**: Figma, UI/UX, Design Systems
 
-## Projets phares
-- 🎓 **AYJI E-learning** - Plateforme éducative (PFE BTS)
-- 🏫 **Portail USMBA** - Gestion universitaire
-- 🔐 **Audit Datacenter** - Sécurité infrastructure
+## Featured Projects
+- **AYJI E-learning** - LMS Platform (BTS Final Project)
+- **USMBA Portal** - University Management System
+- **Infrastructure Audit** - IT Consulting
 
 ## Contact
 a.khoubiza.dev@gmail.com`

@@ -9,15 +9,13 @@ import { Button } from "@/components/ui/button";
 import { TerminalStatus } from "@/components/ui/TerminalStatus";
 import { GrainyTextLines } from "@/components/ui/GrainyTextReveal";
 
+import { CodeWindowSkeleton } from "@/components/code-window/CodeWindowSkeleton";
+
 // Lazy load CodeWindow pour améliorer LCP
 const CodeWindow = dynamic(
   () => import("@/components/code-window/CodeWindow").then((mod) => mod.CodeWindow),
   {
-    loading: () => (
-      <div className="w-full h-full bg-surface-2 animate-pulse rounded-xl flex items-center justify-center">
-        <div className="text-ide-muted font-mono text-sm">Chargement IDE...</div>
-      </div>
-    ),
+    loading: () => <CodeWindowSkeleton />,
     ssr: false,
   }
 );

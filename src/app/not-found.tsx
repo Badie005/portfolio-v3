@@ -1,18 +1,35 @@
+"use client";
+
 import Link from "next/link";
+import { motion } from "motion/react";
 import { Home, ArrowRight, FolderOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen flex items-center justify-center px-6 py-32 bg-surface-1">
-      <div className="max-w-2xl mx-auto text-center">
+    <div
+      className="min-h-screen flex items-center justify-center px-6 py-32 bg-surface-1"
+      role="main"
+      aria-labelledby="not-found-title"
+    >
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="max-w-2xl mx-auto text-center"
+      >
         {/* Terminal Style Header */}
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-surface-2 border border-ide-border mb-8">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.2, duration: 0.4 }}
+          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-surface-2 border border-ide-border mb-8"
+        >
           <span className="w-2 h-2 rounded-full bg-red-400" />
           <span className="font-mono text-xs text-ide-muted tracking-wide">
             ~/error/404
           </span>
-        </div>
+        </motion.div>
 
         <div className="mb-8">
           <h1 className="text-8xl lg:text-9xl font-bold text-brand mb-4 font-heading">
@@ -76,7 +93,7 @@ export default function NotFound() {
             </Link>
           </div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }
