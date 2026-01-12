@@ -1,104 +1,124 @@
 'use client';
 
-import { motion } from 'motion/react';
-
 /**
  * Skeleton placeholder for CodeWindow component during lazy loading.
- * Mimics the IDE-style layout with animated placeholders.
+ * Matches the actual IDE design with proper theme variables.
  */
 export function CodeWindowSkeleton() {
     return (
-        <div className="w-full h-[600px] bg-neutral-900 rounded-2xl overflow-hidden border border-neutral-800 shadow-2xl">
-            {/* Title bar skeleton */}
-            <div className="h-10 bg-neutral-800 flex items-center px-4 gap-2">
+        <div className="relative w-full h-full max-w-full bg-ide-bg rounded-xl shadow-2xl flex flex-col overflow-hidden border border-white/40 ring-1 ring-black/5">
+
+            {/* ===== TITLE BAR ===== */}
+            <div className="h-10 bg-ide-titlebar flex items-center px-4 shrink-0 border-b border-ide-border">
                 {/* Traffic lights */}
                 <div className="flex gap-2">
-                    <div className="w-3 h-3 rounded-full bg-red-500/50 animate-pulse" />
-                    <div className="w-3 h-3 rounded-full bg-yellow-500/50 animate-pulse" />
-                    <div className="w-3 h-3 rounded-full bg-green-500/50 animate-pulse" />
+                    <div className="w-3 h-3 rounded-full bg-red-400 animate-pulse" />
+                    <div className="w-3 h-3 rounded-full bg-yellow-400 animate-pulse" />
+                    <div className="w-3 h-3 rounded-full bg-green-400 animate-pulse" />
                 </div>
                 {/* Title placeholder */}
                 <div className="flex-1 flex justify-center">
-                    <div className="h-4 w-32 bg-neutral-700 rounded animate-pulse" />
+                    <div className="h-4 w-40 bg-ide-border rounded animate-pulse" />
                 </div>
             </div>
 
-            <div className="flex h-[calc(100%-2.5rem)]">
-                {/* Left sidebar skeleton */}
-                <div className="w-48 bg-neutral-850 border-r border-neutral-800 p-3 space-y-2">
-                    <div className="h-4 w-20 bg-neutral-700 rounded animate-pulse mb-4" />
-                    {Array.from({ length: 6 }).map((_, i) => (
-                        <motion.div
-                            key={i}
-                            initial={{ opacity: 0.3 }}
-                            animate={{ opacity: [0.3, 0.6, 0.3] }}
-                            transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.1 }}
-                            className="flex items-center gap-2"
-                        >
-                            <div className="w-4 h-4 bg-neutral-700 rounded" />
-                            <div className="h-3 bg-neutral-700 rounded" style={{ width: `${60 + Math.random() * 40}%` }} />
-                        </motion.div>
-                    ))}
-                </div>
+            {/* ===== MAIN LAYOUT ===== */}
+            <div className="flex-1 flex overflow-hidden min-h-0">
 
-                {/* Main content area skeleton */}
-                <div className="flex-1 p-4 space-y-3">
-                    {/* Tab bar */}
-                    <div className="flex gap-2 mb-4">
-                        <div className="h-8 w-24 bg-neutral-800 rounded-t animate-pulse" />
-                        <div className="h-8 w-20 bg-neutral-700 rounded-t animate-pulse" />
-                    </div>
+                {/* ===== LEFT SIDEBAR ===== */}
+                <aside className="w-48 h-full bg-ide-bg border-r border-ide-border p-3 shrink-0">
+                    {/* Explorer title */}
+                    <div className="h-4 w-28 bg-ide-border rounded animate-pulse mb-4" />
 
-                    {/* Code lines */}
-                    {Array.from({ length: 12 }).map((_, i) => (
-                        <motion.div
-                            key={i}
-                            initial={{ opacity: 0.2 }}
-                            animate={{ opacity: [0.2, 0.5, 0.2] }}
-                            transition={{ duration: 2, repeat: Infinity, delay: i * 0.08 }}
-                            className="flex items-center gap-4"
-                        >
-                            {/* Line number */}
-                            <div className="w-6 h-4 bg-neutral-700 rounded" />
-                            {/* Code content */}
+                    {/* File tree skeleton */}
+                    <div className="space-y-2">
+                        {Array.from({ length: 8 }).map((_, i) => (
                             <div
-                                className="h-4 bg-neutral-700 rounded"
-                                style={{ width: `${20 + Math.random() * 60}%` }}
-                            />
-                        </motion.div>
-                    ))}
-                </div>
-
-                {/* Right sidebar skeleton (chat preview) */}
-                <div className="w-64 bg-neutral-850 border-l border-neutral-800 p-3 hidden lg:block">
-                    <div className="h-4 w-16 bg-neutral-700 rounded animate-pulse mb-4" />
-                    <div className="space-y-3">
-                        {Array.from({ length: 4 }).map((_, i) => (
-                            <motion.div
                                 key={i}
-                                initial={{ opacity: 0.3 }}
-                                animate={{ opacity: [0.3, 0.5, 0.3] }}
-                                transition={{ duration: 1.8, repeat: Infinity, delay: i * 0.15 }}
-                                className="p-3 bg-neutral-800 rounded-lg space-y-2"
+                                className="flex items-center gap-2 animate-pulse"
+                                style={{
+                                    animationDelay: `${i * 100}ms`,
+                                    paddingLeft: i === 0 || i === 4 ? '0' : '12px'
+                                }}
                             >
-                                <div className="h-3 w-full bg-neutral-700 rounded" />
-                                <div className="h-3 w-3/4 bg-neutral-700 rounded" />
-                            </motion.div>
+                                <div className="w-4 h-4 bg-ide-border rounded" />
+                                <div
+                                    className="h-3 bg-ide-border rounded"
+                                    style={{ width: `${50 + (i * 7) % 40}%` }}
+                                />
+                            </div>
                         ))}
                     </div>
-                </div>
+                </aside>
+
+                {/* ===== CENTER: EDITOR ===== */}
+                <main className="flex-1 flex flex-col bg-white overflow-hidden min-w-0 min-h-0">
+
+                    {/* Tab bar skeleton */}
+                    <div className="h-9 bg-ide-tabs border-b border-ide-border flex items-end px-2 shrink-0">
+                        <div className="h-8 w-28 bg-ide-bg rounded-t border border-b-0 border-ide-border flex items-center justify-center gap-2 px-3 animate-pulse">
+                            <div className="w-4 h-4 bg-ide-border rounded" />
+                            <div className="h-3 w-16 bg-ide-border rounded" />
+                        </div>
+                        <div className="h-7 w-24 bg-ide-tabs flex items-center justify-center gap-2 px-3 animate-pulse ml-1" style={{ animationDelay: '150ms' }}>
+                            <div className="w-4 h-4 bg-ide-border rounded" />
+                            <div className="h-3 w-14 bg-ide-border rounded" />
+                        </div>
+                    </div>
+
+                    {/* Editor content skeleton */}
+                    <div className="flex-1 p-4 space-y-2 overflow-hidden">
+                        {Array.from({ length: 14 }).map((_, i) => (
+                            <div
+                                key={i}
+                                className="flex items-center gap-4 animate-pulse"
+                                style={{ animationDelay: `${i * 50}ms` }}
+                            >
+                                {/* Line number */}
+                                <div className="w-6 h-4 bg-neutral-100 rounded text-right" />
+                                {/* Code content - varying widths */}
+                                <div
+                                    className="h-4 bg-neutral-100 rounded"
+                                    style={{ width: `${20 + ((i * 17) % 60)}%` }}
+                                />
+                            </div>
+                        ))}
+                    </div>
+                </main>
+
+                {/* ===== RIGHT SIDEBAR (Chat) ===== */}
+                <aside className="w-64 h-full bg-ide-bg border-l border-ide-border flex-col hidden lg:flex shrink-0">
+                    {/* Chat header */}
+                    <div className="h-12 border-b border-ide-border flex items-center px-4">
+                        <div className="h-4 w-20 bg-ide-border rounded animate-pulse" />
+                    </div>
+
+                    {/* Chat messages skeleton */}
+                    <div className="flex-1 p-3 space-y-3 overflow-hidden">
+                        {Array.from({ length: 3 }).map((_, i) => (
+                            <div
+                                key={i}
+                                className="p-3 bg-neutral-50 rounded-lg space-y-2 animate-pulse"
+                                style={{ animationDelay: `${i * 200}ms` }}
+                            >
+                                <div className="h-3 w-full bg-ide-border rounded" />
+                                <div className="h-3 w-4/5 bg-ide-border rounded" />
+                                {i === 0 && <div className="h-3 w-2/3 bg-ide-border rounded" />}
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Input skeleton */}
+                    <div className="h-14 border-t border-ide-border p-2">
+                        <div className="h-full w-full bg-neutral-50 rounded-lg animate-pulse" />
+                    </div>
+                </aside>
             </div>
 
-            {/* Terminal skeleton at bottom */}
-            <div className="absolute bottom-0 left-0 right-0 h-32 bg-neutral-850 border-t border-neutral-800 p-3">
-                <div className="flex items-center gap-2 mb-2">
-                    <div className="w-2 h-2 rounded-full bg-green-500/50" />
-                    <div className="h-3 w-16 bg-neutral-700 rounded animate-pulse" />
-                </div>
-                <div className="space-y-1">
-                    <div className="h-3 w-48 bg-neutral-700 rounded animate-pulse" />
-                    <div className="h-3 w-32 bg-neutral-700 rounded animate-pulse" />
-                </div>
+            {/* ===== STATUS BAR ===== */}
+            <div className="h-6 bg-ide-statusbar border-t border-ide-border flex items-center justify-between px-4 shrink-0">
+                <div className="h-3 w-20 bg-ide-border rounded animate-pulse" />
+                <div className="h-3 w-32 bg-ide-border rounded animate-pulse" />
             </div>
         </div>
     );
