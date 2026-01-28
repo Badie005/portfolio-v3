@@ -63,6 +63,8 @@ export function useConsoleCapture() {
     }, []);
 
     useEffect(() => {
+        const shouldForwardToConsole = process.env.NODE_ENV !== 'production';
+
         // Store original console methods
         originalConsoleRef.current = {
             log: console.log,
@@ -74,27 +76,27 @@ export function useConsoleCapture() {
 
         // Override console methods
         console.log = (...args: unknown[]) => {
-            originalConsoleRef.current?.log(...args);
+            if (shouldForwardToConsole) originalConsoleRef.current?.log(...args);
             addMessage('log', args);
         };
 
         console.info = (...args: unknown[]) => {
-            originalConsoleRef.current?.info(...args);
+            if (shouldForwardToConsole) originalConsoleRef.current?.info(...args);
             addMessage('info', args);
         };
 
         console.warn = (...args: unknown[]) => {
-            originalConsoleRef.current?.warn(...args);
+            if (shouldForwardToConsole) originalConsoleRef.current?.warn(...args);
             addMessage('warn', args);
         };
 
         console.error = (...args: unknown[]) => {
-            originalConsoleRef.current?.error(...args);
+            if (shouldForwardToConsole) originalConsoleRef.current?.error(...args);
             addMessage('error', args);
         };
 
         console.debug = (...args: unknown[]) => {
-            originalConsoleRef.current?.debug(...args);
+            if (shouldForwardToConsole) originalConsoleRef.current?.debug(...args);
             addMessage('debug', args);
         };
 

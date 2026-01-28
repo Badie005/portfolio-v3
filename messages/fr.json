@@ -1,0 +1,495 @@
+{
+    "common": {
+        "siteName": "B.DEV Portfolio",
+        "loading": "Chargement...",
+        "error": "Une erreur est survenue",
+        "notFound": "Page non trouvée",
+        "backHome": "Retour à l'accueil",
+        "readMore": "Lire plus",
+        "viewAll": "Voir tout",
+        "download": "Télécharger",
+        "contact": "Contact",
+        "send": "Envoyer",
+        "skipToContent": "Aller au contenu principal"
+    },
+    "errors": {
+        "title": "Une erreur est survenue",
+        "description": "Nous nous excusons pour ce désagrément. L'erreur a été enregistrée et notre équipe a été notifiée.",
+        "tryAgain": "Réessayer",
+        "code": "Code: {code}",
+        "globalTitle": "Erreur critique",
+        "globalDescription": "Une erreur inattendue s'est produite. Veuillez réessayer ou recharger la page.",
+        "reloadPage": "Recharger la page"
+    },
+    "nav": {
+        "home": "Accueil",
+        "about": "À propos",
+        "projects": "Projets",
+        "skills": "Compétences",
+        "blog": "Blog",
+        "stats": "Stats",
+        "contact": "Contact",
+        "gallery": "Galerie",
+        "startProject": "Démarrer un projet",
+        "openMenu": "Ouvrir le menu",
+        "closeMenu": "Fermer le menu",
+        "changeLanguage": "Changer la langue"
+    },
+    "hero": {
+        "greeting": "Bonjour, je suis",
+        "name": "Abdelbadie Khoubiza",
+        "title": "Développeur Full-Stack",
+        "subtitle": "Spécialisé en React, Next.js, Node.js et Laravel",
+        "terminalTexts": [
+            "Disponible pour travailler...",
+            "Ouvert aux projets...",
+            "Prêt à coder..."
+        ],
+        "headline": {
+            "line1": {
+                "text": "Coder avec Passion,",
+                "highlight": "Passion,"
+            },
+            "line2": {
+                "text": "Construire avec Impact",
+                "highlight": "Impact"
+            }
+        },
+        "cta": {
+            "projects": "Voir mes projets",
+            "cv": "Télécharger CV",
+            "contact": "Me contacter"
+        },
+        "social": {
+            "githubAria": "Visiter mon profil GitHub (ouvre dans un nouvel onglet)",
+            "linkedinAria": "Visiter mon profil LinkedIn (ouvre dans un nouvel onglet)",
+            "emailAria": "M'envoyer un email à {email}"
+        },
+        "imageAlt": "Arrière-plan IDE"
+    },
+    "services": {
+        "terminalTexts": [
+            "Chargement des services...",
+            "Récupération des expertises...",
+            "Analyse des modules..."
+        ],
+        "title": "Mes expertises",
+        "description": "J'accompagne mes clients de la conception à la mise en ligne, avec une approche technique rigoureuse et un sens aigu du détail.",
+        "items": {
+            "frontend": {
+                "title": "Développement Frontend",
+                "description": "Création d'interfaces réactives et modernes avec React, Next.js et Tailwind CSS. Je transforme vos designs en code pixel-perfect."
+            },
+            "responsive": {
+                "title": "Design Responsive",
+                "description": "Des sites web qui s'adaptent parfaitement à tous les écrans, du mobile au desktop, pour une expérience utilisateur fluide partout."
+            },
+            "backend": {
+                "title": "Solutions Backend",
+                "description": "Architecture robuste et évolutive. API RESTful, bases de données et logique serveur sécurisée pour propulser vos applications."
+            },
+            "uiux": {
+                "title": "Design UI/UX",
+                "description": "Conception centrée utilisateur. Je crée des maquettes intuitives et esthétiques qui mettent en valeur votre marque."
+            },
+            "seo": {
+                "title": "Optimisation SEO",
+                "description": "Optimisation technique pour les moteurs de recherche. J'assure que votre site est visible et performant."
+            },
+            "performance": {
+                "title": "Performance",
+                "description": "Sites ultra-rapides et optimisés. Je veille à ce que chaque milliseconde compte pour retenir vos visiteurs."
+            }
+        }
+    },
+    "about": {
+        "title": "À propos de moi",
+        "subtitle": "Qui suis-je ?",
+        "description": "Développeur Full-Stack passionné basé à Fès, Maroc. Je crée des applications web modernes, performantes et accessibles.",
+        "experience": "Expérience",
+        "education": "Formation",
+        "location": "Fès, Maroc",
+        "terminalTexts": [
+            "Lecture du profil...",
+            "Chargement de la bio...",
+            "Analyse des données..."
+        ],
+        "sectionTitle": "À propos",
+        "sectionDescription": "Passionné par la création d'expériences web modernes et performantes. J'allie une approche minimaliste à une attention méticuleuse aux détails techniques pour transformer vos idées en produits numériques efficaces, élégants et pérennes.",
+        "animationAria": "Animation - À propos",
+        "stats": {
+            "projectsCompleted": "Projets réalisés",
+            "technologies": "Technologies",
+            "internshipsCompleted": "Stages effectués",
+            "responseTime": "Temps de réponse"
+        },
+        "philosophy": {
+            "title": "Philosophie",
+            "quote": "Simplicité, élégance et efficacité dans chaque ligne de code."
+        },
+        "principles": {
+            "performance": {
+                "title": "Performance",
+                "description": "Je conçois des applications en pensant performance, accessibilité et maintenabilité."
+            },
+            "simplicity": {
+                "title": "Simplicité",
+                "description": "Une approche minimaliste avec une attention méticuleuse aux détails techniques."
+            },
+            "efficiency": {
+                "title": "Efficacité",
+                "description": "Transformer des idées en produits numériques efficaces, élégants et pérennes."
+            }
+        }
+    },
+    "experience": {
+        "terminalTexts": [
+            "Récupération de l'historique...",
+            "git log --oneline",
+            "Chargement de la timeline..."
+        ],
+        "title": "Expérience",
+        "description": "Mon parcours professionnel et académique, des projets concrets qui m'ont permis de développer mes compétences techniques.",
+        "types": {
+            "stage": "Stage",
+            "academic": "Académique",
+            "personal": "Personnel"
+        },
+        "items": {
+            "fullstackIntern": {
+                "title": "Stage Développeur Full-Stack",
+                "company": "Agence Urbaine de Taza",
+                "period": "Jan - Fév 2024",
+                "description": "Audit complet de l'infrastructure Windows Server, création de scripts PowerShell pour automatiser les tâches administratives, et élaboration d'un plan de migration vers Azure."
+            },
+            "usmbaPortal": {
+                "title": "Projet Académique - Portail USMBA",
+                "company": "Université Sidi Mohamed Ben Abdellah",
+                "period": "Mars - Juin 2024",
+                "description": "Développement d'une application web complète pour automatiser l'inscription et la gestion académique des étudiants. Plus de 500 utilisateurs avec 99.8% de disponibilité."
+            },
+            "ayjiElearning": {
+                "title": "Projet Personnel - Plateforme E-learning",
+                "company": "AYJI E-learning",
+                "period": "Sept - Déc 2023",
+                "description": "Conception et développement d'une plateforme d'apprentissage en ligne avec système de cours, quiz interactifs et suivi de progression en temps réel."
+            }
+        },
+        "timelineEnd": "La suite s'écrit...",
+        "status": {
+            "label": "Statut:",
+            "available": "Disponible pour de nouvelles opportunités"
+        }
+    },
+    "projects": {
+        "title": "Mes Projets",
+        "subtitle": "Réalisations",
+        "description": "Découvrez mes projets professionnels et personnels",
+        "viewProject": "Voir le projet",
+        "viewCode": "Code source",
+        "liveDemo": "Démo live",
+        "technologies": "Technologies",
+        "features": "Fonctionnalités",
+        "context": "Contexte",
+        "learnings": "Apprentissages",
+        "home": {
+            "title": "Mes réalisations",
+            "description": "Une sélection de projets où performance, innovation et expérience utilisateur se rencontrent.",
+            "viewAll": "Voir tous mes projets"
+        },
+        "list": {
+            "terminalTexts": [
+                "Chargement des projets...",
+                "Récupération des dépôts...",
+                "~/portfolio/projects",
+                "Construction des composants..."
+            ],
+            "titleBrand": "Mes ",
+            "titleAccent": "Projets",
+            "description": "Du concept à la production — des applications web qui résolvent de <realProblems>vrais problèmes</realProblems> avec des <measurableResults>résultats mesurables</measurableResults>.",
+            "cta": {
+                "terminalTexts": [
+                    "~/portfolio/contact",
+                    "Initialisation de la connexion...",
+                    "Prêt à collaborer"
+                ],
+                "titleLine1": "Prêt à lancer",
+                "titleLine2": "votre prochain projet ?"
+            }
+        },
+        "detail": {
+            "notFoundTitle": "Projet introuvable",
+            "terminalTexts": [
+                "Chargement du projet...",
+                "Récupération des détails...",
+                "Rendu du contenu..."
+            ],
+            "backToProjects": "Retour aux projets",
+            "viewCode": "Voir le code",
+            "viewSite": "Voir le site",
+            "copyMarkdownTitle": "Copier les informations en Markdown",
+            "copy": "Copier",
+            "copied": "Copié !",
+            "previous": "Précédent",
+            "next": "Suivant",
+            "allProjects": "Tous les projets",
+            "sections": {
+                "description": "Description",
+                "context": "Contexte",
+                "technologies": "Technologies",
+                "missions": "Missions & Activités",
+                "features": "Fonctionnalités",
+                "results": "Résultats",
+                "learnings": "Ce que j'ai appris",
+                "links": "Liens"
+            },
+            "context": {
+                "structure": "Structure",
+                "objective": "Objectif",
+                "role": "Rôle"
+            },
+            "results": {
+                "metric": "Métrique",
+                "value": "Valeur"
+            },
+            "links": {
+                "sourceCode": "Code source",
+                "viewSite": "Voir le site"
+            },
+            "markdown": {
+                "category": "Catégorie:",
+                "period": "Période:"
+            }
+        }
+    },
+    "skills": {
+        "title": "Compétences",
+        "subtitle": "Technologies",
+        "frontend": "Frontend",
+        "backend": "Backend",
+        "tools": "Outils",
+        "database": "Base de données",
+        "terminalTexts": [
+            "Analyse des compétences...",
+            "npm list --depth=0",
+            "Indexation de la stack..."
+        ],
+        "description": "Une stack moderne et polyvalente. Je maîtrise tout le cycle de développement, du frontend responsive au backend robuste, pour couvrir tous vos besoins digitaux.",
+        "categories": {
+            "frontend": {
+                "title": "Frontend",
+                "skills": [
+                    "React & Next.js",
+                    "Angular",
+                    "TypeScript",
+                    "JavaScript (ES6+)",
+                    "Tailwind CSS",
+                    "Alpine.js",
+                    "HTML5 & CSS3"
+                ]
+            },
+            "backend": {
+                "title": "Backend",
+                "skills": [
+                    "Node.js & Express.js",
+                    "PHP & Laravel",
+                    "RESTful APIs & MVC",
+                    "MySQL",
+                    "NoSQL (MongoDB)"
+                ]
+            },
+            "toolsDevops": {
+                "title": "Outils & DevOps",
+                "skills": [
+                    "Git & GitHub",
+                    "Docker",
+                    "Vite",
+                    "Postman",
+                    "PowerShell",
+                    "Figma (UI/UX)"
+                ]
+            }
+        },
+        "stack": {
+            "title": "Stack full-stack complète",
+            "description": "Du design UI/UX au déploiement en production, je maîtrise l'ensemble du cycle de développement pour créer des applications web performantes et évolutives.",
+            "stats": {
+                "technologies": "Technologies",
+                "jsFrameworks": "Frameworks JS",
+                "backendLanguages": "Langages backend",
+                "committed": "Engagement"
+            }
+        }
+    },
+    "gallery": {
+        "ariaLabel": "Galerie",
+        "terminalTexts": [
+            "Génération des visuels...",
+            "Exécution du modèle IA...",
+            "Rendu des outputs..."
+        ],
+        "title": "Art généré par IA",
+        "description": "Au-delà du code, j'explore les outils de génération IA pour créer des visuels qui reflètent mon esthétique minimaliste et mon attention au détail.",
+        "controls": {
+            "pause": "Pause",
+            "play": "Lecture",
+            "previous": "Précédent",
+            "next": "Suivant",
+            "viewImage": "Voir {title}"
+        },
+        "progress": {
+            "label": "Progression"
+        },
+        "images": [
+            {
+                "src": "/images/1.png",
+                "alt": "Clavier mécanique en aluminium brossé",
+                "title": "Clavier mécanique",
+                "desc": "Aluminium & cuir"
+            },
+            {
+                "src": "/images/2.png",
+                "alt": "Lampe de bureau architecte",
+                "title": "Lampe d'architecte",
+                "desc": "Chrome & cuivre"
+            },
+            {
+                "src": "/images/3.png",
+                "alt": "Souris design",
+                "title": "Souris design",
+                "desc": "Acier brossé"
+            },
+            {
+                "src": "/images/4.png",
+                "alt": "Câble USB premium",
+                "title": "Câble premium",
+                "desc": "Cuivre tressé"
+            },
+            {
+                "src": "/images/5.png",
+                "alt": "Stylet de précision",
+                "title": "Stylet de précision",
+                "desc": "Titane & cuir"
+            },
+            {
+                "src": "/images/6.png",
+                "alt": "Support pour laptop",
+                "title": "Support laptop",
+                "desc": "Alliage d'aluminium"
+            }
+        ]
+    },
+    "blog": {
+        "title": "Blog",
+        "subtitle": "Articles & Insights",
+        "description": "Réflexions sur le développement web et les technologies modernes",
+        "readArticle": "Lire l'article",
+        "filterAll": "Tous",
+        "noPostsInCategory": "Aucun article trouvé dans cette catégorie.",
+        "backToBlog": "Retour au blog",
+        "notFoundTitle": "Article non trouvé",
+        "authorDescription": "Développeur Full-Stack passionné par React, Next.js et Node.js",
+        "publishedOn": "Publié le",
+        "readingTime": "min de lecture",
+        "noArticles": "Aucun article pour le moment",
+        "comingSoon": "Bientôt disponible"
+    },
+    "stats": {
+        "title": "Statistiques",
+        "subtitle": "Statistiques Publiques",
+        "description": "Transparence totale sur les métriques de mon portfolio",
+        "cvDownloads": "Téléchargements CV",
+        "pageViews": "Pages vues",
+        "uniqueVisitors": "Visiteurs uniques",
+        "lastUpdated": "Dernière mise à jour"
+    },
+    "contact": {
+        "title": "Contact",
+        "subtitle": "Travaillons ensemble",
+        "description": "N'hésitez pas à me contacter pour discuter de votre projet",
+        "terminal": {
+            "connecting": "Connexion...",
+            "openingChannel": "Ouverture du canal...",
+            "readyToChat": "Prêt à discuter..."
+        },
+        "status": {
+            "badge": "Disponible",
+            "title": "Ouvert aux opportunités",
+            "description": "Freelance, CDI, ou collaboration ponctuelle. Réponse sous 24h."
+        },
+        "validation": {
+            "required": "Requis",
+            "minLength": "Minimum {min} caractères",
+            "invalidEmail": "Email invalide"
+        },
+        "form": {
+            "name": "Nom",
+            "email": "Email",
+            "subject": "Sujet",
+            "message": "Message",
+            "placeholders": {
+                "name": "Jean Dupont",
+                "email": "jean@exemple.com",
+                "subject": "Projet web, collaboration...",
+                "message": "Décrivez votre projet..."
+            },
+            "submit": "Envoyer le message",
+            "sending": "Envoi...",
+            "success": "Message envoyé ! Je vous répondrai sous 24h.",
+            "error": "Erreur lors de l'envoi.",
+            "serverError": "Erreur serveur. Veuillez réessayer plus tard."
+        },
+        "social": {
+            "github": "GitHub",
+            "linkedin": "LinkedIn",
+            "email": "Email"
+        }
+    },
+    "footer": {
+        "rights": "Tous droits réservés",
+        "madeWith": "Fait avec",
+        "by": "par",
+        "description": "Développeur Full-Stack passionné par la création d'expériences web modernes, performantes et accessibles.",
+        "navigationTitle": "Navigation",
+        "contactTitle": "Contact",
+        "terminalTexts": [
+            "Construction du portfolio...",
+            "Prêt à collaborer...",
+            "Ouvert aux projets..."
+        ]
+    },
+    "meta": {
+        "title": "Abdelbadie Khoubiza | Développeur Full-Stack React & Node.js",
+        "description": "Développeur Full-Stack spécialisé React, Next.js, Node.js et Laravel. Création d'applications web performantes à Fès, Maroc.",
+        "keywords": [
+            "Développeur Full-Stack",
+            "React",
+            "Node.js",
+            "Laravel",
+            "TypeScript",
+            "Next.js",
+            "Maroc",
+            "Fès",
+            "USMBA",
+            "Développeur Web",
+            "B.DEV"
+        ],
+        "openGraph": {
+            "title": "B.DEV - Développeur Full-Stack",
+            "description": "Portfolio professionnel d'un développeur Full-Stack basé à Fès, Maroc"
+        },
+        "twitter": {
+            "title": "B.DEV - Développeur Full-Stack",
+            "description": "Portfolio professionnel d'un développeur Full-Stack"
+        },
+        "jsonLd": {
+            "person": {
+                "jobTitle": "Développeur Full-Stack",
+                "description": "Développeur Full-Stack spécialisé en React, Node.js et Laravel."
+            },
+            "website": {
+                "name": "Portfolio Abdelbadie Khoubiza"
+            }
+        }
+    }
+}

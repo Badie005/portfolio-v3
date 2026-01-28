@@ -3,7 +3,7 @@ import { Command } from "cmdk";
 import { Search, File, Terminal, Layout, User, Download, Github, Laptop } from "lucide-react";
 import { FileSystemItem } from "../types";
 import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 
 interface CommandPaletteProps {
   open: boolean;

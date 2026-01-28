@@ -2,18 +2,25 @@
 
 import { useEffect } from 'react';
 import { motion } from 'motion/react';
-import { FolderX, RefreshCw, ArrowLeft } from 'lucide-react';
-import Link from 'next/link';
+import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
+import { Link } from '@/i18n/navigation';
+import { useTranslations } from 'next-intl';
 
-export default function ProjectsError({
+export default function Error({
     error,
     reset,
 }: {
     error: Error & { digest?: string };
     reset: () => void;
 }) {
+    const tErrors = useTranslations('errors');
+    const tNav = useTranslations('nav');
+
     useEffect(() => {
-        console.error('[Projects Error]', error);
+        // Log error to console (replace with Sentry in production)
+        if (process.env.NODE_ENV !== 'production') {
+            console.error('[Error Boundary]', error);
+        }
     }, [error]);
 
     return (
@@ -29,26 +36,25 @@ export default function ProjectsError({
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
-                    className="mx-auto w-20 h-20 rounded-full bg-amber-100 flex items-center justify-center mb-6"
+                    className="mx-auto w-20 h-20 rounded-full bg-red-100 flex items-center justify-center mb-6"
                 >
-                    <FolderX className="w-10 h-10 text-amber-600" />
+                    <AlertTriangle className="w-10 h-10 text-red-600" />
                 </motion.div>
 
                 {/* Title */}
                 <h1 className="text-2xl font-bold text-neutral-900 mb-2">
-                    Erreur de chargement des projets
+                    {tErrors('title')}
                 </h1>
 
                 {/* Description */}
                 <p className="text-neutral-600 mb-6">
-                    Impossible de charger les données du projet. Vérifiez votre connexion
-                    et réessayez.
+                    {tErrors('description')}
                 </p>
 
-                {/* Error digest */}
+                {/* Error digest (for debugging) */}
                 {error.digest && (
                     <p className="text-xs text-neutral-400 mb-6 font-mono">
-                        Code: {error.digest}
+                        {tErrors('code', { code: error.digest })}
                     </p>
                 )}
 
@@ -61,15 +67,15 @@ export default function ProjectsError({
                         className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-neutral-900 text-white rounded-lg font-medium hover:bg-neutral-800 transition-colors"
                     >
                         <RefreshCw className="w-4 h-4" />
-                        Réessayer
+                        {tErrors('tryAgain')}
                     </motion.button>
 
                     <Link
-                        href="/projects"
+                        href="/"
                         className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-neutral-100 text-neutral-900 rounded-lg font-medium hover:bg-neutral-200 transition-colors"
                     >
-                        <ArrowLeft className="w-4 h-4" />
-                        Tous les projets
+                        <Home className="w-4 h-4" />
+                        {tNav('home')}
                     </Link>
                 </div>
             </motion.div>

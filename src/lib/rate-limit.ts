@@ -14,11 +14,11 @@ function getClientIp(req: Request): string {
   return "127.0.0.1";
 }
 
-function allowInMemory(ip: string, limit: number, windowSec: number) {
+function allowInMemory(key: string, limit: number, windowSec: number) {
   const now = Date.now();
-  const entry = memoryStore.get(ip);
+  const entry = memoryStore.get(key);
   if (!entry || now > entry.resetTime) {
-    memoryStore.set(ip, { count: 1, resetTime: now + windowSec * 1000 });
+    memoryStore.set(key, { count: 1, resetTime: now + windowSec * 1000 });
     return { allowed: true, remaining: limit - 1, reset: now + windowSec * 1000 };
   }
   if (entry.count >= limit) {
@@ -28,33 +28,43 @@ function allowInMemory(ip: string, limit: number, windowSec: number) {
   return { allowed: true, remaining: Math.max(0, limit - entry.count), reset: entry.resetTime };
 }
 
-let ratelimit: Ratelimit | null = null;
+let redis: Redis | null = null;
+const ratelimits = new Map<string, Ratelimit>();
 
 function getRatelimit(limit: number, windowSec: number) {
   if (!process.env.UPSTASH_REDIS_REST_URL || !process.env.UPSTASH_REDIS_REST_TOKEN) {
     return null;
   }
-  if (!ratelimit) {
-    const redis = new Redis({
+
+  const configKey = `${limit}:${windowSec}`;
+  const existing = ratelimits.get(configKey);
+  if (existing) return existing;
+
+  if (!redis) {
+    redis = new Redis({
       url: process.env.UPSTASH_REDIS_REST_URL!,
       token: process.env.UPSTASH_REDIS_REST_TOKEN!,
     });
-    ratelimit = new Ratelimit({
-      redis,
-      limiter: Ratelimit.slidingWindow(limit, `${windowSec} s`),
-      analytics: true,
-      prefix: "portfolio:rl",
-    });
   }
-  return ratelimit;
+
+  const rl = new Ratelimit({
+    redis,
+    limiter: Ratelimit.slidingWindow(limit, `${windowSec} s`),
+    analytics: true,
+    prefix: "portfolio:rl",
+  });
+
+  ratelimits.set(configKey, rl);
+  return rl;
 }
 
-export async function enforceRateLimit(req: Request, limit = 5, windowSec = 3600) {
+export async function enforceRateLimit(req: Request, limit = 5, windowSec = 3600, keyPrefix = "contact") {
   const ip = getClientIp(req);
+  const key = `${keyPrefix}:${ip}`;
   const rl = getRatelimit(limit, windowSec);
   if (!rl) {
-    return allowInMemory(ip, limit, windowSec);
+    return allowInMemory(key, limit, windowSec);
   }
-  const { success, reset, remaining } = await rl.limit(`contact:${ip}`);
+  const { success, reset, remaining } = await rl.limit(key);
   return { allowed: success, remaining, reset };
 }

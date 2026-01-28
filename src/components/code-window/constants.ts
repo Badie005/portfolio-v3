@@ -367,7 +367,7 @@ a.khoubiza.dev@gmail.com`
     "next": "16.0.7",
     "react": "19.2.0",
     "tailwindcss": "4.0.0",
-    "framer-motion": "11.0.0",
+    "motion": "12.23.24",
     "typescript": "5.7.0"
   }
 }`

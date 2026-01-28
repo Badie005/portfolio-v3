@@ -5,33 +5,5 @@
     "installCommand": "npm ci",
     "regions": [
         "cdg1"
-    ],
-    "headers": [
-        {
-            "source": "/(.*)",
-            "headers": [
-                {
-                    "key": "X-Content-Type-Options",
-                    "value": "nosniff"
-                },
-                {
-                    "key": "X-Frame-Options",
-                    "value": "SAMEORIGIN"
-                },
-                {
-                    "key": "X-XSS-Protection",
-                    "value": "1; mode=block"
-                }
-            ]
-        },
-        {
-            "source": "/api/(.*)",
-            "headers": [
-                {
-                    "key": "Cache-Control",
-                    "value": "no-store, max-age=0"
-                }
-            ]
-        }
     ]
 }

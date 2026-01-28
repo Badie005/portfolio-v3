@@ -5,6 +5,7 @@ import { motion } from "motion/react";
 import { Send, Loader2, ArrowUpRight, Mail, LinkedinIcon, GithubIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { TerminalStatus } from "@/components/ui/TerminalStatus";
 
 interface ContactFormData {
@@ -14,31 +15,37 @@ interface ContactFormData {
   message: string;
 }
 
-const contactLinks = [
-  {
-    label: "Email",
-    value: "a.khoubiza.dev@gmail.com",
-    href: "mailto:a.khoubiza.dev@gmail.com",
-    icon: Mail,
-  },
-  {
-    label: "LinkedIn",
-    value: "/in/abdelbadie-khoubiza",
-    href: "https://linkedin.com/in/abdelbadie-khoubiza",
-    icon: LinkedinIcon,
-  },
-  {
-    label: "GitHub",
-    value: "/Badie005",
-    href: "https://github.com/Badie005",
-    icon: GithubIcon,
-  },
-];
-
-const TERMINAL_TEXTS = ["Connecting...", "Opening channel...", "Ready to chat..."];
-
 export function ContactSection() {
+  const t = useTranslations("contact");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const contactLinks = [
+    {
+      label: t("social.email"),
+      value: "a.khoubiza.dev@gmail.com",
+      href: "mailto:a.khoubiza.dev@gmail.com",
+      icon: Mail,
+    },
+    {
+      label: t("social.linkedin"),
+      value: "/in/abdelbadie-khoubiza",
+      href: "https://linkedin.com/in/abdelbadie-khoubiza",
+      icon: LinkedinIcon,
+    },
+    {
+      label: t("social.github"),
+      value: "/Badie005",
+      href: "https://github.com/Badie005",
+      icon: GithubIcon,
+    },
+  ];
+
+  const terminalTexts = [
+    t("terminal.connecting"),
+    t("terminal.openingChannel"),
+    t("terminal.readyToChat"),
+  ];
+
   const {
     register,
     handleSubmit,
@@ -58,16 +65,18 @@ export function ContactSection() {
       // Vérifier le content-type avant de parser le JSON
       const contentType = response.headers.get("content-type");
       if (!contentType || !contentType.includes("application/json")) {
-        throw new Error("Erreur serveur. Veuillez réessayer plus tard.");
+        throw new Error(t("form.serverError"));
       }
 
       const result = await response.json();
-      if (!response.ok) throw new Error(result.error || "Erreur lors de l'envoi");
-      toast.success("Message envoyé ! Je vous répondrai sous 24h.");
+      if (!response.ok) throw new Error(result.error || t("form.error"));
+      toast.success(t("form.success"));
       reset();
     } catch (error) {
-      console.error("Contact form error:", error);
-      toast.error(error instanceof Error ? error.message : "Erreur lors de l'envoi.");
+      if (process.env.NODE_ENV !== "production") {
+        console.error("Contact form error:", error);
+      }
+      toast.error(error instanceof Error ? error.message : t("form.error"));
     } finally {
       setIsSubmitting(false);
     }
@@ -85,7 +94,7 @@ export function ContactSection() {
             transition={{ duration: 0.5 }}
           >
             <TerminalStatus
-              texts={TERMINAL_TEXTS}
+              texts={terminalTexts}
               className="mb-6"
             />
           </motion.div>
@@ -97,7 +106,7 @@ export function ContactSection() {
             transition={{ duration: 0.5, delay: 0.05 }}
             className="text-4xl lg:text-5xl font-medium text-ide-accent mb-6 font-heading tracking-tight"
           >
-            Contact
+            {t("title")}
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -106,7 +115,7 @@ export function ContactSection() {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="text-lg text-ide-muted leading-relaxed font-body"
           >
-            Vous avez un projet en tête ? N&apos;hésitez pas à me contacter.
+            {t("description")}
           </motion.p>
         </div>
 
@@ -160,13 +169,13 @@ export function ContactSection() {
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
                 </span>
-                <span className="text-xs text-accent-on-dark font-mono tracking-wide uppercase">Disponible</span>
+                <span className="text-xs text-accent-on-dark font-mono tracking-wide uppercase">{t("status.badge")}</span>
               </div>
               <p className="text-card-dark-text font-medium mb-2 text-lg">
-                Ouvert aux opportunités
+                {t("status.title")}
               </p>
               <p className="text-card-dark-muted text-sm leading-relaxed">
-                Freelance, CDI, ou collaboration ponctuelle. Réponse sous 24h.
+                {t("status.description")}
               </p>
             </div>
           </motion.div>
@@ -208,13 +217,16 @@ export function ContactSection() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label className="text-xs text-ide-muted font-mono uppercase tracking-widest">
-                      Nom <span className="text-ide-accent">*</span>
+                      {t("form.name")} <span className="text-ide-accent">*</span>
                     </label>
                     <input
-                      {...register("name", { required: "Requis", minLength: 2 })}
+                      {...register("name", {
+                        required: t("validation.required"),
+                        minLength: { value: 2, message: t("validation.minLength", { min: 2 }) },
+                      })}
                       className={`w-full h-12 px-4 bg-white/50 border rounded-lg text-ide-text placeholder-ide-muted/40 focus:outline-none focus:border-ide-accent focus:ring-1 focus:ring-ide-accent transition-all duration-300 ${errors.name ? "border-red-500/50" : "border-white/30"
                         }`}
-                      placeholder="Jean Dupont"
+                      placeholder={t("form.placeholders.name")}
                       disabled={isSubmitting}
                     />
                     {errors.name && (
@@ -223,17 +235,17 @@ export function ContactSection() {
                   </div>
                   <div className="space-y-2">
                     <label className="text-xs text-ide-muted font-mono uppercase tracking-widest">
-                      Email <span className="text-ide-accent">*</span>
+                      {t("form.email")} <span className="text-ide-accent">*</span>
                     </label>
                     <input
                       type="email"
                       {...register("email", {
-                        required: "Requis",
-                        pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: "Email invalide" },
+                        required: t("validation.required"),
+                        pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: t("validation.invalidEmail") },
                       })}
                       className={`w-full h-12 px-4 bg-white/50 border rounded-lg text-ide-text placeholder-ide-muted/40 focus:outline-none focus:border-ide-accent focus:ring-1 focus:ring-ide-accent transition-all duration-300 ${errors.email ? "border-red-500/50" : "border-white/30"
                         }`}
-                      placeholder="jean@exemple.com"
+                      placeholder={t("form.placeholders.email")}
                       disabled={isSubmitting}
                     />
                     {errors.email && (
@@ -245,13 +257,16 @@ export function ContactSection() {
                 {/* Subject */}
                 <div className="space-y-2">
                   <label className="text-xs text-ide-muted font-mono uppercase tracking-widest">
-                    Sujet <span className="text-ide-accent">*</span>
+                    {t("form.subject")} <span className="text-ide-accent">*</span>
                   </label>
                   <input
-                    {...register("subject", { required: "Requis", minLength: 3 })}
+                    {...register("subject", {
+                      required: t("validation.required"),
+                      minLength: { value: 3, message: t("validation.minLength", { min: 3 }) },
+                    })}
                     className={`w-full h-12 px-4 bg-white/50 border rounded-lg text-ide-text placeholder-ide-muted/40 focus:outline-none focus:border-ide-accent focus:ring-1 focus:ring-ide-accent transition-all duration-300 ${errors.subject ? "border-red-500/50" : "border-white/30"
                       }`}
-                    placeholder="Projet web, collaboration..."
+                    placeholder={t("form.placeholders.subject")}
                     disabled={isSubmitting}
                   />
                   {errors.subject && (
@@ -262,14 +277,17 @@ export function ContactSection() {
                 {/* Message */}
                 <div className="space-y-2">
                   <label className="text-xs text-ide-muted font-mono uppercase tracking-widest">
-                    Message <span className="text-ide-accent">*</span>
+                    {t("form.message")} <span className="text-ide-accent">*</span>
                   </label>
                   <textarea
-                    {...register("message", { required: "Requis", minLength: 10 })}
+                    {...register("message", {
+                      required: t("validation.required"),
+                      minLength: { value: 10, message: t("validation.minLength", { min: 10 }) },
+                    })}
                     rows={5}
                     className={`w-full p-4 bg-white/50 border rounded-lg text-ide-text placeholder-ide-muted/40 focus:outline-none focus:border-ide-accent focus:ring-1 focus:ring-ide-accent transition-all duration-300 resize-none ${errors.message ? "border-red-500/50" : "border-white/30"
                       }`}
-                    placeholder="Décrivez votre projet..."
+                    placeholder={t("form.placeholders.message")}
                     disabled={isSubmitting}
                   />
                   {errors.message && (
@@ -286,12 +304,12 @@ export function ContactSection() {
                   {isSubmitting ? (
                     <>
                       <Loader2 size={18} className="animate-spin" />
-                      <span>Envoi...</span>
+                      <span>{t("form.sending")}</span>
                     </>
                   ) : (
                     <>
                       <Send size={18} />
-                      <span>Envoyer le message</span>
+                      <span>{t("form.submit")}</span>
                     </>
                   )}
                 </button>

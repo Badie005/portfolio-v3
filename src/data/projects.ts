@@ -1,6 +1,6 @@
 import { Project } from "@/types";
 
-export const projects: Project[] = [
+export const projectsFr: Project[] = [
   {
     id: "usmba-portal",
     title: "Portail de Gestion Étudiant USMBA",
@@ -162,3 +162,169 @@ export const projects: Project[] = [
     liveUrl: "",
   },
 ];
+
+export const projectsEn: Project[] = [
+  {
+    id: "usmba-portal",
+    title: "USMBA Student Management Portal",
+    category: "Full-Stack Web Application",
+    description:
+      "Complete and secure web application for Sidi Mohamed Ben Abdellah University. Digitization of academic orientation and generation of official documents.",
+    fullDescription:
+      "An intuitive platform that modernizes university management: administration of academic tracks, automated enrollments, prerequisite validation, and generation of QR-code secured documents. Responsive glassmorphism interface compliant with WCAG.",
+    image: "/projet-image/USMBA x B.DEV ENG.svg",
+    imageAlt: "USMBA student management portal interface",
+    period: "March - June 2025",
+    technologies: ["Laravel 12", "PHP 8.2+", "MySQL 8.0", "Tailwind CSS 3", "Alpine.js", "Blade", "Sanctum", "Vite"],
+    results: [
+      { metric: "Users", value: "500+" },
+      { metric: "Security", value: "A+" },
+      { metric: "Uptime", value: "99.8%" },
+    ],
+    features: [
+      "Secure authentication via USMBA academic email with rate limiting",
+      "Smart selection system based on eligibility and prerequisites",
+      "Automatic validation of credits and semester grades",
+      "PDF generation of certificates and transcripts secured by QR Code",
+      "Personalized dashboard (admin & student) with real-time tracking",
+      "Responsive glassmorphism interface (mobile & desktop)",
+      "Logging of sensitive actions (Spatie Activity Log)",
+      "CSRF/XSS protection and secure sessions",
+    ],
+    githubUrl: "https://github.com/Badie005/gestion-parcours-usmba",
+    liveUrl: "https://gestion-parcours-usmba-production.up.railway.app/",
+    context: {
+      structure: "Capstone project - USMBA University, Taza",
+      objective: "Modernize and digitize academic track management",
+      role: "Laravel Full-Stack Developer + Database Design",
+    },
+    learnings: [
+      "Database modeling: schema design based on real USMBA Taza data",
+      "Laravel architecture: services, repositories, policies and middleware",
+      "Advanced web security: Sanctum, rate limiting, CSRF/XSS protection",
+      "Dynamic PDF generation: DomPDF with secure QR Codes",
+      "Modern UI/UX: glassmorphism, Tailwind CSS, reusable Blade components",
+    ],
+  },
+  {
+    id: "ayji-elearning",
+    title: "AYJI E-learning Platform",
+    category: "Full-Stack Web Application",
+    description:
+      "Modern educational (LMS) web application designed to improve learning tracking with a smooth and interactive user experience.",
+    fullDescription:
+      "AYJI is an educational Single Page Application offering a complete student space (dashboard, course catalog, interactive quizzes) and an admin back office. Built with Angular 19 and NgRx for robust state management, it integrates Socket.io for real-time notifications.",
+    image: "/projet-image/B.DEV%20%C3%97%20AYJI%20ENG.svg",
+    imageAlt: "AYJI e-learning platform dashboard",
+    period: "September - December 2025",
+    technologies: ["Angular 19", "TypeScript", "NgRx", "RxJS", "Node.js", "MongoDB", "Mongoose", "Redis", "Socket.io", "PouchDB", "Cypress", "SCSS"],
+    results: [
+      { metric: "Modules", value: "5+" },
+      { metric: "Components", value: "40+" },
+      { metric: "Lighthouse", value: "90+" },
+    ],
+    features: [
+      "Student dashboard with progress and learning statistics",
+      "Course catalog with intuitive navigation and advanced filtering",
+      "Embedded PDF reader and optimized course interface",
+      "Interactive quizzes (MCQ) with automatic correction and instant feedback",
+      "Centralized state management with NgRx (Store, Effects, Entity)",
+      "Real-time notifications with Socket.io-client",
+      "Full back office for managing users and content",
+      "Responsive interface (Desktop, Tablet, Mobile) with SCSS",
+    ],
+    githubUrls: [
+      { label: "Frontend", url: "https://github.com/Badie005/ayji-frontend" },
+      { label: "Backend", url: "https://github.com/Badie005/ayji-backend" },
+    ],
+    liveUrl: "",
+    context: {
+      structure: "Personal project - 3 months of development",
+      objective: "Build a modern and accessible LMS alternative to expensive foreign platforms",
+      role: "Full-Stack Developer + Database Design (Angular, Node.js, MongoDB)",
+    },
+    learnings: [
+      "Advanced frontend architecture: mastering NgRx (Store, Effects, Entity)",
+      "Databases: MongoDB + Mongoose (backend), Redis (cache/sessions), PouchDB (offline)",
+      "Reactive programming: extensive use of RxJS for async flows",
+      "WebSockets & real-time: integrating Socket.io for notifications",
+      "Angular best practices: lazy loading, guards, interceptors, modular design",
+    ],
+  },
+  {
+    id: "infrastructure-audit",
+    title: "IT Infrastructure Internship - Urban Agency of Taza",
+    category: "Infrastructure & IT Support",
+    description:
+      "Introductory internship discovering IT infrastructure within a public institution. Observation, maintenance and technical support.",
+    fullDescription:
+      "15-day internship at the Urban Agency of Taza to discover how a professional IT infrastructure operates. Observed server/network audits, got introduced to VMware virtualization, practiced network diagnostics and provided user support.",
+    image: "/projet-image/AUT x B.DEV ENG.svg",
+    imageAlt: "IT infrastructure and network diagnostics",
+    period: "June 2024",
+    technologies: ["Windows Server", "VMware vSphere", "RAID", "Active Directory", "TCP/IP", "Network Diagnostics"],
+    results: [
+      { metric: "Duration", value: "15 days" },
+      { metric: "Areas explored", value: "6" },
+      { metric: "Technologies", value: "8+" },
+    ],
+    features: [],
+    context: {
+      structure: "Urban Agency of Taza (public institution)",
+      objective: "Understand the workings of a professional IT infrastructure",
+      role: "IT Support Intern & Infrastructure Observation",
+    },
+    featureGroups: [
+      {
+        icon: "",
+        title: "Server Infrastructure",
+        items: [
+          "Observed server audits (CPU, RAM, logs, backups)",
+          "Discovered RAID configurations (0, 1, 5, 10) and rebuild",
+        ],
+      },
+      {
+        icon: "",
+        title: "Network & Connectivity",
+        items: [
+          "Explored network topology (routers, switches, access points)",
+          "Practiced network diagnostics (ping, traceroute, ipconfig, nslookup)",
+        ],
+      },
+      {
+        icon: "",
+        title: "VMware Virtualization",
+        items: [
+          "Supervised creation of virtual machines",
+          "Observed resource management and snapshots",
+        ],
+      },
+      {
+        icon: "",
+        title: "Support & Maintenance",
+        items: [
+          "User support and hardware/software maintenance",
+          "Installing and updating systems and software",
+          "Security awareness (firewalls, access management)",
+        ],
+      },
+    ],
+    learnings: [
+      "High-level view of a public institution IS (servers, network, security)",
+      "Structured approach to assessing infrastructure health",
+      "RAID, virtualization, Active Directory in a real context",
+      "Technical communication and prioritization in user support",
+    ],
+    liveUrl: "",
+  },
+];
+
+export function getProjects(locale: string): Project[] {
+  return locale === "en" ? projectsEn : projectsFr;
+}
+
+export function getProjectById(id: string, locale: string): Project | undefined {
+  return getProjects(locale).find((project) => project.id === id);
+}
+
+export const projects = projectsFr;

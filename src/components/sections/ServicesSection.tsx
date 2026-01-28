@@ -1,40 +1,45 @@
+"use client";
+
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { TerminalStatus } from "@/components/ui/TerminalStatus";
 
-const services = [
-    {
-        icon: "/icons/code-icon.svg",
-        title: "Frontend Development",
-        description: "Création d'interfaces réactives et modernes avec React, Next.js et Tailwind CSS. Je transforme vos designs en code pixel-perfect.",
-    },
-    {
-        icon: "/icons/globe-icon.svg",
-        title: "Responsive Design",
-        description: "Des sites web qui s'adaptent parfaitement à tous les écrans, du mobile au desktop, pour une expérience utilisateur fluide partout.",
-    },
-    {
-        icon: "/icons/server-icon.svg",
-        title: "Backend Solutions",
-        description: "Architecture robuste et évolutive. API RESTful, bases de données et logique serveur sécurisée pour propulser vos applications.",
-    },
-    {
-        icon: "/icons/sparkles-icon.svg",
-        title: "UI/UX Design",
-        description: "Conception centrée utilisateur. Je crée des maquettes intuitives et esthétiques qui mettent en valeur votre marque.",
-    },
-    {
-        icon: "/icons/bar-graph-icon.svg",
-        title: "SEO Optimization",
-        description: "Optimisation technique pour les moteurs de recherche. J'assure que votre site est visible et performant.",
-    },
-    {
-        icon: "/icons/workflow-icon.svg",
-        title: "Performance",
-        description: "Sites ultra-rapides et optimisés. Je veille à ce que chaque milliseconde compte pour retenir vos visiteurs.",
-    }
-];
-
 export function ServicesSection() {
+    const tServices = useTranslations("services");
+
+    const services = [
+        {
+            icon: "/icons/code-icon.svg",
+            title: tServices("items.frontend.title"),
+            description: tServices("items.frontend.description"),
+        },
+        {
+            icon: "/icons/globe-icon.svg",
+            title: tServices("items.responsive.title"),
+            description: tServices("items.responsive.description"),
+        },
+        {
+            icon: "/icons/server-icon.svg",
+            title: tServices("items.backend.title"),
+            description: tServices("items.backend.description"),
+        },
+        {
+            icon: "/icons/sparkles-icon.svg",
+            title: tServices("items.uiux.title"),
+            description: tServices("items.uiux.description"),
+        },
+        {
+            icon: "/icons/bar-graph-icon.svg",
+            title: tServices("items.seo.title"),
+            description: tServices("items.seo.description"),
+        },
+        {
+            icon: "/icons/workflow-icon.svg",
+            title: tServices("items.performance.title"),
+            description: tServices("items.performance.description"),
+        },
+    ];
+
     return (
         <section className="py-24 lg:py-32 relative overflow-hidden" id="services">
 
@@ -42,13 +47,13 @@ export function ServicesSection() {
 
                 {/* Section Header */}
                 <div className="mb-16 lg:mb-24 max-w-2xl">
-                    <TerminalStatus texts={["Loading services...", "Fetching expertise...", "Scanning modules..."]} className="mb-6 animate-fade-in" />
+                    <TerminalStatus texts={tServices.raw("terminalTexts") as string[]} className="mb-6 animate-fade-in" />
 
                     <h2 className="text-4xl lg:text-5xl font-medium text-ide-accent mb-6 font-heading tracking-tight animate-fade-in">
-                        Mes Expertises
+                        {tServices("title")}
                     </h2>
                     <p className="text-lg text-ide-muted leading-relaxed font-body animate-fade-in animation-delay-100">
-                        J&apos;accompagne mes clients de la conception à la mise en ligne, avec une approche technique rigoureuse et un sens aigu du détail.
+                        {tServices("description")}
                     </p>
                 </div>
 

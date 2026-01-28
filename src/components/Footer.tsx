@@ -1,25 +1,29 @@
-"use client";
+  "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import Image from "next/image";
 import { Github, Linkedin, Mail, ArrowUpRight } from "lucide-react";
 import { TerminalStatus } from "@/components/ui/TerminalStatus";
+import { useTranslations } from "next-intl";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
+  const tNav = useTranslations("nav");
+  const tFooter = useTranslations("footer");
+  const tContact = useTranslations("contact");
 
   const navItems = [
-    { name: "Projets", href: "/projects" },
-    { name: "À propos", href: "/#about" },
-    { name: "Compétences", href: "/#skills" },
-    { name: "Contact", href: "/#contact" },
-    { name: "Gallery", href: "/#gallery" },
+    { name: tNav("projects"), href: "/projects" },
+    { name: tNav("about"), href: "/#about" },
+    { name: tNav("skills"), href: "/#skills" },
+    { name: tNav("contact"), href: "/#contact" },
+    { name: tNav("gallery"), href: "/#gallery" },
   ];
 
   const socialLinks = [
-    { name: "GitHub", href: "https://github.com/Badie005", icon: Github },
-    { name: "LinkedIn", href: "https://linkedin.com/in/abdelbadie-khoubiza", icon: Linkedin },
-    { name: "Email", href: "mailto:a.khoubiza.dev@gmail.com", icon: Mail },
+    { name: tContact("social.github"), href: "https://github.com/Badie005", icon: Github },
+    { name: tContact("social.linkedin"), href: "https://linkedin.com/in/abdelbadie-khoubiza", icon: Linkedin },
+    { name: tContact("social.email"), href: "mailto:a.khoubiza.dev@gmail.com", icon: Mail },
   ];
 
   return (
@@ -41,20 +45,19 @@ export function Footer() {
               className="h-8 w-auto mb-5"
             />
             <p className="text-neutral-600 text-[15px] leading-relaxed max-w-md mb-6">
-              Full-Stack Developer passionné par la création d&apos;expériences
-              web modernes, performantes et accessibles.
+              {tFooter("description")}
             </p>
 
             {/* Terminal Status */}
             <TerminalStatus
-              texts={["Building portfolio...", "Ready to collaborate...", "Open for projects..."]}
+              texts={tFooter.raw("terminalTexts") as string[]}
             />
           </div>
 
           {/* Navigation Column */}
           <div>
             <h4 className="text-sm font-semibold text-neutral-800 uppercase tracking-wider mb-5">
-              Navigation
+              {tFooter("navigationTitle")}
             </h4>
             <nav className="space-y-3">
               {navItems.map((item) => (
@@ -76,7 +79,7 @@ export function Footer() {
           {/* Contact Column */}
           <div>
             <h4 className="text-sm font-semibold text-neutral-800 uppercase tracking-wider mb-5">
-              Contact
+              {tFooter("contactTitle")}
             </h4>
             <div className="space-y-3">
               {socialLinks.map((link) => (
@@ -105,7 +108,7 @@ export function Footer() {
             © {currentYear} Abdelbadie Khoubiza
           </p>
           <div className="flex items-center gap-1.5 text-xs">
-            <span className="text-neutral-400">By</span>
+            <span className="text-neutral-400">{tFooter("by")}</span>
             <span className="font-medium text-neutral-600">B.411</span>
             <span className="text-ide-accent">×</span>
             <span className="font-medium text-neutral-600">B.DEV</span>

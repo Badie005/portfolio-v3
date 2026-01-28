@@ -111,7 +111,9 @@ export function useGemini(): UseGeminiReturn {
             if (err instanceof Error && err.name === 'AbortError') return;
             const errorMessage = err instanceof Error ? err.message : 'Une erreur est survenue';
             setError(errorMessage);
-            console.error('[useGemini] Error:', err);
+            if (process.env.NODE_ENV !== 'production') {
+                console.error('[useGemini] Error:', err);
+            }
         } finally {
             setIsLoading(false);
             setStreamingText('');

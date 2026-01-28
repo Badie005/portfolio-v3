@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import { TerminalStatus } from "@/components/ui/TerminalStatus";
 import { AnimatedLogo } from "@/components/AnimatedLogo";
 

@@ -120,6 +120,7 @@ export function checkAccessibility(
   minContrastRatio: number = 4.5
 ): { isAccessible: boolean; issues: string[] } {
   const issues: string[] = [];
+  const isDev = process.env.NODE_ENV !== 'production';
 
   if (colors.length < 2) {
     issues.push('At least 2 colors are required for a gradient');
@@ -129,7 +130,7 @@ export function checkAccessibility(
   // Sanitize colors
   const sanitizedColors = colors.map(color => {
     const sanitized = sanitizeColorInput(color);
-    if (sanitized !== color) {
+    if (sanitized !== color && isDev) {
       console.warn('Invalid color detected and sanitized:', color);
     }
     return sanitized;
@@ -146,7 +147,9 @@ export function checkAccessibility(
     }
 
     if (issues.length > 0) {
-      console.warn('Accessibility issues found:', issues);
+      if (isDev) {
+        console.warn('Accessibility issues found:', issues);
+      }
     }
   }
 
@@ -190,7 +193,9 @@ export function validateGradientConfig(
     );
 
     if (!accessibility.isAccessible) {
-      console.warn('Accessibility issues detected:', accessibility.issues);
+      if (process.env.NODE_ENV !== 'production') {
+        console.warn('Accessibility issues detected:', accessibility.issues);
+      }
     }
   }
 

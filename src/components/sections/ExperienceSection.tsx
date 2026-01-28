@@ -1,38 +1,8 @@
+"use client";
+
 import Image from "next/image";
 import { TerminalStatus } from "@/components/ui/TerminalStatus";
-
-const experiences = [
-  {
-    title: "Stage Développeur Full-Stack",
-    company: "Agence Urbaine de Taza",
-    period: "Jan - Fév 2024",
-    description:
-      "Audit complet de l'infrastructure Windows Server, création de scripts PowerShell pour automatiser les tâches administratives, et élaboration d'un plan de migration vers Azure.",
-    technologies: ["PowerShell", "Windows Server", "Active Directory", "Azure"],
-    icon: "/icons/server-icon.svg",
-    type: "stage",
-  },
-  {
-    title: "Projet Académique - Portail USMBA",
-    company: "Université Sidi Mohamed Ben Abdellah",
-    period: "Mars - Juin 2024",
-    description:
-      "Développement d'une application web complète pour automatiser l'inscription et la gestion académique des étudiants. Plus de 500 utilisateurs avec 99.8% de disponibilité.",
-    technologies: ["Laravel", "PHP 8.2", "MySQL", "Tailwind CSS"],
-    icon: "/icons/code-icon.svg",
-    type: "academic",
-  },
-  {
-    title: "Projet Personnel - Plateforme E-learning",
-    company: "AYJI E-learning",
-    period: "Sept - Déc 2023",
-    description:
-      "Conception et développement d'une plateforme d'apprentissage en ligne avec système de cours, quiz interactifs et suivi de progression en temps réel.",
-    technologies: ["Node.js", "Angular", "MongoDB", "Socket.io"],
-    icon: "/icons/globe-icon.svg",
-    type: "personal",
-  },
-];
+import { useTranslations } from "next-intl";
 
 // Palette harmonisée avec le thème cuivre/terra cotta
 const typeColors = {
@@ -41,26 +11,52 @@ const typeColors = {
   personal: "text-ide-keyword bg-ide-keyword/10 border-ide-keyword/30",
 };
 
-const typeLabels = {
-  stage: "Stage",
-  academic: "Académique",
-  personal: "Personnel",
-};
-
 export function ExperienceSection() {
+  const tExperience = useTranslations("experience");
+
+  const experiences = [
+    {
+      title: tExperience("items.fullstackIntern.title"),
+      company: tExperience("items.fullstackIntern.company"),
+      period: tExperience("items.fullstackIntern.period"),
+      description: tExperience("items.fullstackIntern.description"),
+      technologies: ["PowerShell", "Windows Server", "Active Directory", "Azure"],
+      icon: "/icons/server-icon.svg",
+      type: "stage" as const,
+    },
+    {
+      title: tExperience("items.usmbaPortal.title"),
+      company: tExperience("items.usmbaPortal.company"),
+      period: tExperience("items.usmbaPortal.period"),
+      description: tExperience("items.usmbaPortal.description"),
+      technologies: ["Laravel", "PHP 8.2", "MySQL", "Tailwind CSS"],
+      icon: "/icons/code-icon.svg",
+      type: "academic" as const,
+    },
+    {
+      title: tExperience("items.ayjiElearning.title"),
+      company: tExperience("items.ayjiElearning.company"),
+      period: tExperience("items.ayjiElearning.period"),
+      description: tExperience("items.ayjiElearning.description"),
+      technologies: ["Node.js", "Angular", "MongoDB", "Socket.io"],
+      icon: "/icons/globe-icon.svg",
+      type: "personal" as const,
+    },
+  ];
+
   return (
     <section id="experience" className="py-32 px-6 relative overflow-hidden">
 
       <div className="max-w-6xl mx-auto relative z-10">
         {/* Section Header - Style Terminal */}
         <div className="mb-16 lg:mb-24">
-          <TerminalStatus texts={["Fetching history...", "git log --oneline", "Loading timeline..."]} className="mb-6 animate-fade-in" />
+          <TerminalStatus texts={tExperience.raw("terminalTexts") as string[]} className="mb-6 animate-fade-in" />
 
           <h2 className="text-4xl lg:text-5xl font-medium text-ide-accent mb-6 font-heading tracking-tight animate-fade-in">
-            Expérience
+            {tExperience("title")}
           </h2>
           <p className="text-lg text-ide-muted leading-relaxed font-body max-w-2xl animate-fade-in animation-delay-100">
-            Mon parcours professionnel et académique, des projets concrets qui m&apos;ont permis de développer mes compétences techniques.
+            {tExperience("description")}
           </p>
         </div>
 
@@ -123,7 +119,7 @@ export function ExperienceSection() {
                         </span>
                       </div>
                       <span className={`px-2 py-0.5 text-xs font-mono rounded border ${typeColors[exp.type as keyof typeof typeColors]}`}>
-                        {typeLabels[exp.type as keyof typeof typeLabels]}
+                        {tExperience(`types.${exp.type}`)}
                       </span>
                     </div>
 
@@ -182,7 +178,7 @@ export function ExperienceSection() {
               <div className="w-8 h-8 rounded-full backdrop-blur-md bg-white/50 border-2 border-white/30 flex items-center justify-center -translate-x-1/2 lg:translate-x-0">
                 <div className="w-2 h-2 bg-ide-accent/50 rounded-full" />
               </div>
-              <span className="font-mono text-xs text-ide-muted lg:hidden">La suite s&apos;écrit...</span>
+              <span className="font-mono text-xs text-ide-muted lg:hidden">{tExperience("timelineEnd")}</span>
             </div>
           </div>
         </div>
@@ -192,10 +188,10 @@ export function ExperienceSection() {
           <div className="inline-flex items-center gap-3 px-5 py-3 backdrop-blur-md bg-white/40 border border-white/20 rounded-xl">
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-              <span className="font-mono text-sm text-ide-muted">Status:</span>
+              <span className="font-mono text-sm text-ide-muted">{tExperience("status.label")}</span>
             </div>
             <span className="font-mono text-sm text-ide-accent">
-              Disponible pour de nouvelles opportunités
+              {tExperience("status.available")}
             </span>
           </div>
         </div>

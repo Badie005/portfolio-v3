@@ -1,7 +1,10 @@
 'use client';
 
 import { useEffect } from 'react';
+import { useParams } from 'next/navigation';
 import { AlertTriangle, RefreshCw } from 'lucide-react';
+import frMessages from '../../../messages/fr.json';
+import enMessages from '../../../messages/en.json';
 
 export default function GlobalError({
     error,
@@ -10,13 +13,29 @@ export default function GlobalError({
     error: Error & { digest?: string };
     reset: () => void;
 }) {
+    const params = useParams<{ locale?: string }>();
+    const localeParam = typeof params?.locale === 'string' ? params.locale : undefined;
+    const locale = localeParam === 'fr' ? 'fr' : 'en';
+    const messages = locale === 'en' ? enMessages : frMessages;
+
+    const t = (key: string) => {
+        const parts = key.split('.');
+        let value: unknown = messages;
+        for (const part of parts) {
+            value = (value as Record<string, unknown>)?.[part];
+        }
+        return typeof value === 'string' ? value : key;
+    };
+
     useEffect(() => {
         // Log critical error (this catches layout-level errors)
-        console.error('[Global Error Boundary]', error);
+        if (process.env.NODE_ENV !== 'production') {
+            console.error('[Global Error Boundary]', error);
+        }
     }, [error]);
 
     return (
-        <html lang="fr">
+        <html lang={locale}>
             <body className="min-h-screen flex items-center justify-center bg-neutral-100">
                 <div className="max-w-md w-full text-center p-8">
                     {/* Icon */}
@@ -26,19 +45,18 @@ export default function GlobalError({
 
                     {/* Title */}
                     <h1 className="text-2xl font-bold text-neutral-900 mb-2">
-                        Erreur critique
+                        {t('errors.globalTitle')}
                     </h1>
 
                     {/* Description */}
                     <p className="text-neutral-600 mb-6">
-                        Une erreur inattendue s&apos;est produite. Veuillez réessayer ou
-                        recharger la page.
+                        {t('errors.globalDescription')}
                     </p>
 
                     {/* Error digest */}
                     {error.digest && (
                         <p className="text-xs text-neutral-400 mb-6 font-mono">
-                            Code: {error.digest}
+                            {t('errors.code').replace('{code}', error.digest)}
                         </p>
                     )}
 
@@ -49,14 +67,14 @@ export default function GlobalError({
                             className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-neutral-900 text-white rounded-lg font-medium hover:bg-neutral-800 transition-colors"
                         >
                             <RefreshCw className="w-4 h-4" />
-                            Réessayer
+                            {t('errors.tryAgain')}
                         </button>
 
                         <button
                             onClick={() => window.location.reload()}
                             className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-neutral-200 text-neutral-900 rounded-lg font-medium hover:bg-neutral-300 transition-colors"
                         >
-                            Recharger la page
+                            {t('errors.reloadPage')}
                         </button>
                     </div>
                 </div>

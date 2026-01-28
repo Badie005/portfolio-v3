@@ -1,18 +1,20 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { Link, usePathname } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { motion } from "motion/react";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import throttle from "lodash/throttle";
 import { AnimatedLogo } from "@/components/AnimatedLogo";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 
 export function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+  const t = useTranslations("nav");
 
   useEffect(() => {
     const onScroll = throttle(() => {
@@ -45,10 +47,10 @@ export function Navigation() {
   };
 
   const navItems = [
-    { name: "À propos", href: "/#about", isAnchor: true },
-    { name: "Projets", href: "/projects", isAnchor: false },
-    { name: "Compétences", href: "/#skills", isAnchor: true },
-    { name: "Contact", href: "/#contact", isAnchor: true },
+    { name: t("about"), href: "/#about", isAnchor: true },
+    { name: t("projects"), href: "/projects", isAnchor: false },
+    { name: t("skills"), href: "/#skills", isAnchor: true },
+    { name: t("contact"), href: "/#contact", isAnchor: true },
   ];
 
   const handleNavClick = (e: React.MouseEvent, item: typeof navItems[0]) => {
@@ -81,21 +83,13 @@ export function Navigation() {
       <motion.nav
         initial={{ y: -100 }}
         animate={{ y: 0 }}
-        className="fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)]"
-        style={{
-          padding: isScrolled ? '12px 16px 0 16px' : '0',
-        }}
+        className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
       >
-        {/* Liquid Glass Container - Apple Style */}
+        {/* Liquid Glass Container - Minimal Style */}
         <div
           ref={headerRef}
           onMouseMove={handleMouseMove}
-          className="relative mx-auto transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] group overflow-hidden"
-          style={{
-            width: isScrolled ? 'min(100% - 32px, 1280px)' : '100%',
-            borderRadius: isScrolled ? '16px' : '0',
-          }}
-
+          className="relative w-full group overflow-visible"
         >
           {/* Spotlight Effect - Subtle */}
           <div
@@ -157,11 +151,18 @@ export function Navigation() {
                 <motion.div
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.35 }}
+                >
+                  <LanguageSwitcher />
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.4 }}
                 >
                   <Button asChild size="sm">
                     <Link
-                      href="/#contact"
+                      href={"/#contact"}
                       onClick={(e) => {
                         if (pathname === "/") {
                           e.preventDefault();
@@ -169,7 +170,7 @@ export function Navigation() {
                         }
                       }}
                     >
-                      Démarrer un projet
+                      {t("startProject")}
                     </Link>
                   </Button>
                 </motion.div>
@@ -179,7 +180,7 @@ export function Navigation() {
               <button
                 className="lg:hidden text-brand"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                aria-label={isMobileMenuOpen ? "Fermer le menu" : "Ouvrir le menu"}
+                aria-label={isMobileMenuOpen ? t("closeMenu") : t("openMenu")}
                 aria-expanded={isMobileMenuOpen}
               >
                 {isMobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
@@ -195,6 +196,9 @@ export function Navigation() {
                 className="lg:hidden mt-4 pb-4 border-t border-white/30 pt-4"
               >
                 <div className="flex flex-col gap-2">
+                  <div className="px-4 py-2">
+                    <LanguageSwitcher onLocaleChange={() => setIsMobileMenuOpen(false)} />
+                  </div>
                   {navItems.map((item) => (
                     <Link
                       key={item.name}

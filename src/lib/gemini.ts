@@ -568,12 +568,8 @@ export class GeminiService {
                     throw new Error(err.error || `API Error: ${res.status}`);
                 }
 
-                const data = await res.json();
-                if (data.response?.error) {
-                    const { code, message } = parseError(new Error(data.response.error));
-                    return { text: '', error: message, errorCode: code };
-                }
-                return data.response;
+                const text = await res.text();
+                return { text };
             } catch (error) {
                 const { code, message } = parseError(error);
                 return { text: '', error: message, errorCode: code };

@@ -3,17 +3,23 @@
 import { useState } from "react";
 import { motion } from "motion/react";
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { ArrowLeft, ArrowRight, Github, ExternalLink, Calendar, CheckCircle2, Target, Lightbulb, Copy, Check } from "lucide-react";
 import { Project } from "@/types";
 import { TerminalStatus } from "@/components/ui/TerminalStatus";
-import { projects } from "@/data/projects";
+import { getProjects } from "@/data/projects";
+import { useLocale, useTranslations } from "next-intl";
 
 interface Props {
   project: Project;
 }
 
 export function ProjectDetailContent({ project }: Props) {
+  const locale = useLocale();
+  const tProjects = useTranslations("projects");
+
+  const projects = getProjects(locale);
+
   // Get previous and next projects for navigation
   const currentIndex = projects.findIndex(p => p.id === project.id);
   const prevProject = currentIndex > 0 ? projects[currentIndex - 1] : null;
@@ -25,38 +31,38 @@ export function ProjectDetailContent({ project }: Props) {
   // Generate Markdown content from project data
   const generateMarkdown = (): string => {
     let md = `# ${project.title}\n\n`;
-    md += `**Catégorie:** ${project.category}\n`;
-    md += `**Période:** ${project.period}\n\n`;
+    md += `**${tProjects("detail.markdown.category")}** ${project.category}\n`;
+    md += `**${tProjects("detail.markdown.period")}** ${project.period}\n\n`;
 
-    md += `## Description\n\n${project.fullDescription}\n\n`;
+    md += `## ${tProjects("detail.sections.description")}\n\n${project.fullDescription}\n\n`;
 
     // Context section
     if (project.context) {
-      md += `## Contexte\n\n`;
-      md += `- **Structure:** ${project.context.structure}\n`;
-      md += `- **Objectif:** ${project.context.objective}\n`;
-      md += `- **Rôle:** ${project.context.role}\n\n`;
+      md += `## ${tProjects("detail.sections.context")}\n\n`;
+      md += `- **${tProjects("detail.context.structure")}** ${project.context.structure}\n`;
+      md += `- **${tProjects("detail.context.objective")}** ${project.context.objective}\n`;
+      md += `- **${tProjects("detail.context.role")}** ${project.context.role}\n\n`;
     }
 
     // Technologies
-    md += `## Technologies\n\n`;
+    md += `## ${tProjects("detail.sections.technologies")}\n\n`;
     md += project.technologies.map(tech => `- ${tech}`).join('\n') + '\n\n';
 
     // Features or Feature Groups
     if (project.featureGroups && project.featureGroups.length > 0) {
-      md += `## Missions & Activités\n\n`;
+      md += `## ${tProjects("detail.sections.missions")}\n\n`;
       project.featureGroups.forEach(group => {
         md += `### ${group.title}\n\n`;
         md += group.items.map(item => `- ${item}`).join('\n') + '\n\n';
       });
     } else if (project.features.length > 0) {
-      md += `## Fonctionnalités\n\n`;
+      md += `## ${tProjects("detail.sections.features")}\n\n`;
       md += project.features.map(f => `- ${f}`).join('\n') + '\n\n';
     }
 
     // Results
-    md += `## Résultats\n\n`;
-    md += `| Métrique | Valeur |\n|----------|--------|\n`;
+    md += `## ${tProjects("detail.sections.results")}\n\n`;
+    md += `| ${tProjects("detail.results.metric")} | ${tProjects("detail.results.value")} |\n|----------|--------|\n`;
     project.results.forEach(r => {
       md += `| ${r.metric} | ${r.value} |\n`;
     });
@@ -64,14 +70,14 @@ export function ProjectDetailContent({ project }: Props) {
 
     // Learnings
     if (project.learnings && project.learnings.length > 0) {
-      md += `## Ce que j'ai appris\n\n`;
+      md += `## ${tProjects("detail.sections.learnings")}\n\n`;
       md += project.learnings.map(l => `- ${l}`).join('\n') + '\n\n';
     }
 
     // Links
-    md += `## Liens\n\n`;
+    md += `## ${tProjects("detail.sections.links")}\n\n`;
     if (project.githubUrl) {
-      md += `- [Code source](${project.githubUrl})\n`;
+      md += `- [${tProjects("detail.links.sourceCode")}](${project.githubUrl})\n`;
     }
     if (project.githubUrls) {
       project.githubUrls.forEach(repo => {
@@ -79,7 +85,7 @@ export function ProjectDetailContent({ project }: Props) {
       });
     }
     if (project.liveUrl) {
-      md += `- [Voir le site](${project.liveUrl})\n`;
+      md += `- [${tProjects("detail.links.viewSite")}](${project.liveUrl})\n`;
     }
 
     return md;
@@ -93,7 +99,9 @@ export function ProjectDetailContent({ project }: Props) {
       setIsCopied(true);
       setTimeout(() => setIsCopied(false), 2000);
     } catch (err) {
-      console.error('Failed to copy:', err);
+      if (process.env.NODE_ENV !== "production") {
+        console.error('Failed to copy:', err);
+      }
     }
   };
 
@@ -112,7 +120,7 @@ export function ProjectDetailContent({ project }: Props) {
               className="inline-flex items-center gap-2 text-ide-muted hover:text-ide-accent transition-colors mb-8 group"
             >
               <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
-              <span>Retour aux projets</span>
+              <span>{tProjects("detail.backToProjects")}</span>
             </Link>
           </motion.div>
 
@@ -125,7 +133,7 @@ export function ProjectDetailContent({ project }: Props) {
           >
             {/* Terminal Status */}
             <TerminalStatus
-              texts={["Loading project...", "Fetching details...", "Rendering content..."]}
+              texts={tProjects.raw("detail.terminalTexts") as string[]}
               className="mb-6"
             />
 
@@ -159,7 +167,7 @@ export function ProjectDetailContent({ project }: Props) {
                     className="px-4 py-2 text-sm bg-neutral-900 text-white hover:bg-neutral-700 border border-neutral-900 rounded-full transition-colors inline-flex items-center gap-2"
                   >
                     <Github size={14} />
-                    Voir le code
+                    {tProjects("detail.viewCode")}
                   </a>
                 )}
                 {/* Multiple GitHub URLs (Frontend/Backend) */}
@@ -183,7 +191,7 @@ export function ProjectDetailContent({ project }: Props) {
                     className="px-4 py-2 text-sm text-ide-muted hover:text-ide-accent border border-ide-border rounded-full transition-colors inline-flex items-center gap-2"
                   >
                     <ExternalLink size={14} />
-                    Voir le site
+                    {tProjects("detail.viewSite")}
                   </a>
                 )}
               </div>
@@ -191,17 +199,17 @@ export function ProjectDetailContent({ project }: Props) {
               <button
                 onClick={handleCopyToClipboard}
                 className="px-4 py-2 text-sm text-ide-muted hover:text-ide-accent border border-ide-border rounded-full transition-colors inline-flex items-center gap-2"
-                title="Copier les informations en Markdown"
+                title={tProjects("detail.copyMarkdownTitle")}
               >
                 {isCopied ? (
                   <>
                     <Check size={14} className="text-green-600" />
-                    Copié !
+                    {tProjects("detail.copied")}
                   </>
                 ) : (
                   <>
                     <Copy size={14} />
-                    Copier
+                    {tProjects("detail.copy")}
                   </>
                 )}
               </button>
@@ -239,27 +247,27 @@ export function ProjectDetailContent({ project }: Props) {
               {project.context && (
                 <div className="p-6 rounded-2xl bg-white/60 backdrop-blur-sm border border-ide-border">
                   <h2 className="font-heading text-2xl font-semibold text-brand mb-5">
-                    Contexte
+                    {tProjects("detail.sections.context")}
                   </h2>
                   <div className="space-y-4">
                     <div className="flex items-start gap-3">
                       <Image src="/icons/building-icon.svg" alt="" width={18} height={18} className="mt-0.5 flex-shrink-0" />
                       <div>
-                        <span className="text-xs uppercase tracking-wider text-ide-muted">Structure</span>
+                        <span className="text-xs uppercase tracking-wider text-ide-muted">{tProjects("detail.context.structure")}</span>
                         <p className="text-brand font-medium">{project.context.structure}</p>
                       </div>
                     </div>
                     <div className="flex items-start gap-3">
                       <Target size={18} className="text-ide-accent mt-0.5 flex-shrink-0" />
                       <div>
-                        <span className="text-xs uppercase tracking-wider text-ide-muted">Objectif</span>
+                        <span className="text-xs uppercase tracking-wider text-ide-muted">{tProjects("detail.context.objective")}</span>
                         <p className="text-brand font-medium">{project.context.objective}</p>
                       </div>
                     </div>
                     <div className="flex items-start gap-3">
                       <Image src="/icons/user-icon.svg" alt="" width={18} height={18} className="mt-0.5 flex-shrink-0" />
                       <div>
-                        <span className="text-xs uppercase tracking-wider text-ide-muted">Rôle</span>
+                        <span className="text-xs uppercase tracking-wider text-ide-muted">{tProjects("detail.context.role")}</span>
                         <p className="text-brand font-medium">{project.context.role}</p>
                       </div>
                     </div>
@@ -271,7 +279,7 @@ export function ProjectDetailContent({ project }: Props) {
               {project.featureGroups && project.featureGroups.length > 0 ? (
                 <div>
                   <h2 className="font-heading text-2xl font-semibold text-brand mb-6">
-                    Missions & Activités
+                    {tProjects("detail.sections.missions")}
                   </h2>
                   <div className="space-y-6">
                     {project.featureGroups.map((group, groupIndex) => (
@@ -301,7 +309,7 @@ export function ProjectDetailContent({ project }: Props) {
                 /* Standard Features List */
                 <div>
                   <h2 className="font-heading text-2xl font-semibold text-brand mb-6">
-                    Fonctionnalités
+                    {tProjects("detail.sections.features")}
                   </h2>
                   <ul className="space-y-4">
                     {project.features.map((feature, index) => (
@@ -324,7 +332,7 @@ export function ProjectDetailContent({ project }: Props) {
               {project.learnings && project.learnings.length > 0 && (
                 <div>
                   <h2 className="font-heading text-2xl font-semibold text-brand mb-6">
-                    Ce que j&apos;ai appris
+                    {tProjects("detail.sections.learnings")}
                   </h2>
                   <ul className="space-y-3">
                     {project.learnings.map((learning, index) => (
@@ -354,7 +362,7 @@ export function ProjectDetailContent({ project }: Props) {
               {/* Technologies */}
               <div className="p-6 rounded-2xl bg-white/60 backdrop-blur-sm border border-white/40">
                 <h3 className="font-heading text-lg font-semibold text-brand mb-4">
-                  Technologies
+                  {tProjects("detail.sections.technologies")}
                 </h3>
                 <div className="flex flex-wrap gap-2">
                   {project.technologies.map((tech) => (
@@ -371,7 +379,7 @@ export function ProjectDetailContent({ project }: Props) {
               {/* Results */}
               <div className="p-6 rounded-2xl bg-white/60 backdrop-blur-sm border border-white/40">
                 <h3 className="font-heading text-lg font-semibold text-brand mb-4">
-                  Résultats
+                  {tProjects("detail.sections.results")}
                 </h3>
                 <div className="space-y-4">
                   {project.results.map((result, index) => (
@@ -401,7 +409,7 @@ export function ProjectDetailContent({ project }: Props) {
                 >
                   <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
                   <div className="text-left">
-                    <span className="text-xs uppercase tracking-wider opacity-60">Précédent</span>
+                    <span className="text-xs uppercase tracking-wider opacity-60">{tProjects("detail.previous")}</span>
                     <p className="font-medium">{prevProject.title}</p>
                   </div>
                 </Link>
@@ -414,7 +422,7 @@ export function ProjectDetailContent({ project }: Props) {
                 href="/projects"
                 className="px-4 py-2 text-sm text-ide-muted hover:text-ide-accent border border-ide-border rounded-full transition-colors"
               >
-                Tous les projets
+                {tProjects("detail.allProjects")}
               </Link>
 
               {/* Next Project */}
@@ -424,7 +432,7 @@ export function ProjectDetailContent({ project }: Props) {
                   className="group flex items-center gap-3 text-ide-muted hover:text-ide-accent transition-colors"
                 >
                   <div className="text-right">
-                    <span className="text-xs uppercase tracking-wider opacity-60">Suivant</span>
+                    <span className="text-xs uppercase tracking-wider opacity-60">{tProjects("detail.next")}</span>
                     <p className="font-medium">{nextProject.title}</p>
                   </div>
                   <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />

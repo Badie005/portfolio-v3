@@ -1,14 +1,14 @@
 # Portfolio Abdelbadie Khoubiza (portfolio-v3) <!-- CI Test -->
 
-Portfolio professionnel moderne développé avec Next.js 15, React 19, TypeScript et Tailwind CSS v4.
+Portfolio professionnel moderne développé avec Next.js 16, React 19, TypeScript et Tailwind CSS v4.
 
 ## Technologies utilisées
 
-- **Framework** : Next.js 15 (App Router)
+- **Framework** : Next.js 16 (App Router)
 - **UI** : React 19
 - **Styling** : Tailwind CSS v4
 - **Langage** : TypeScript 5
-- **Animations** : Framer Motion
+- **Animations** : motion/react
 - **Formulaires** : React Hook Form + Zod
 - **Emails** : Resend API
 - **UI Components** : Radix UI, shadcn/ui
@@ -18,7 +18,7 @@ Portfolio professionnel moderne développé avec Next.js 15, React 19, TypeScrip
 
 ```bash
 # Installer les dépendances
-bun install
+npm install
 
 # Configurer les variables d'environnement
 # Créer un fichier .env.local à la racine :
@@ -26,9 +26,13 @@ RESEND_API_KEY=votre_clé_resend
 FROM_EMAIL=onboarding@resend.dev
 TO_EMAIL=badiekhoubiza05@gmail.com
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
+GOOGLE_AI_API_KEY=votre_clé_google_ai
+OPENROUTER_API_KEY=votre_clé_openrouter
+UPSTASH_REDIS_REST_URL=votre_url_upstash
+UPSTASH_REDIS_REST_TOKEN=votre_token_upstash
 
 # Lancer le serveur de développement
-bun run dev
+npm run dev
 ```
 
 Le site sera accessible sur [http://localhost:3000](http://localhost:3000)
@@ -39,7 +43,7 @@ Le site sera accessible sur [http://localhost:3000](http://localhost:3000)
 - Design minimaliste avec thème clair
 - Responsive (mobile, tablet, desktop)
 - Navigation sticky avec menu mobile
-- Animations fluides avec Framer Motion
+- Animations fluides avec motion/react
 - Formulaire de contact fonctionnel avec Resend
 - Rate limiting sur l'API (5 emails/heure)
 - SEO optimisé (metadata, Open Graph, Twitter Cards)
@@ -99,19 +103,19 @@ portfolio-v3/
 
 ```bash
 # Développement
-bun run dev
+npm run dev
 
 # Build production
-bun run build
+npm run build
 
 # Démarrer le serveur production
-bun start
+npm start
 
 # Linter
-bun run lint
+npm run lint
 
 # Tests E2E
-bun run playwright test
+npm run test:e2e
 ```
 
 ## Configuration du formulaire de contact

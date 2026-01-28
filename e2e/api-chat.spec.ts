@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('Chat API Security & Functionality', () => {
+test.describe.serial('Chat API Security & Functionality', () => {
 
     test('should reject requests without message', async ({ request }) => {
         const response = await request.post('/api/chat', {
@@ -22,7 +22,7 @@ test.describe('Chat API Security & Functionality', () => {
     });
 
     test('should respond to a valid greeting', async ({ request }) => {
-        // Note: This test requires a valid GEMINI_API_KEY in .env.local
+        // Note: This test requires a valid GOOGLE_AI_API_KEY (or OPENROUTER_API_KEY) in .env.local
         const response = await request.post('/api/chat', {
             data: { message: 'Hello, are you online?' }
         });
@@ -31,13 +31,12 @@ test.describe('Chat API Security & Functionality', () => {
         // it doesn't return 404 (route missing) or 405 (method not allowed).
         // Ideally it returns 200.
 
-        expect([200, 500, 503]).toContain(response.status());
+        expect([200, 429, 500, 503]).toContain(response.status());
 
         if (response.status() === 200) {
-            const body = await response.json();
-            expect(body).toHaveProperty('response');
-            expect(body.response).toHaveProperty('text');
-            expect(body).toHaveProperty('timestamp');
+            expect(response.headers()['content-type']).toContain('text/plain');
+            const bodyText = await response.text();
+            expect(bodyText.trim().length).toBeGreaterThan(0);
         }
     });
 

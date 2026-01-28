@@ -131,7 +131,7 @@ jobs:
         run: npm run test:e2e
         env:
           NEXT_PUBLIC_SITE_URL: http://localhost:3000
-          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          GOOGLE_AI_API_KEY: ${{ secrets.GOOGLE_AI_API_KEY || secrets.GOOGLE_API_KEY }}
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
           UPSTASH_REDIS_REST_URL: ${{ secrets.UPSTASH_REDIS_REST_URL }}
           UPSTASH_REDIS_REST_TOKEN: ${{ secrets.UPSTASH_REDIS_REST_TOKEN }}
@@ -208,7 +208,6 @@ jobs:
 
       - name: Check for secrets
         uses: trufflesecurity/trufflehog@main
-        continue-on-error: true
         with:
           path: ./
           extra_args: --only-verified

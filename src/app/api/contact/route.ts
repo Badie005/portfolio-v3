@@ -38,7 +38,7 @@ function escapeHtml(unsafe: string): string {
 
 export async function POST(request: Request) {
   try {
-    const rl = await enforceRateLimit(request, 5, 3600);
+    const rl = await enforceRateLimit(request, 5, 3600, "contact");
     if (!rl.allowed) {
       return NextResponse.json(
         { error: "Trop de requêtes. Réessayez plus tard." },

@@ -399,7 +399,9 @@ const InlineCodeBlock = memo<{ language: string; code: string }>(({ language, co
             setCopied(true);
             setTimeout(() => setCopied(false), 2000);
         } catch (err) {
-            console.error('Failed to copy:', err);
+            if (process.env.NODE_ENV !== 'production') {
+                console.error('Failed to copy:', err);
+            }
         }
     }, [code]);
 
@@ -1118,7 +1120,9 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
             setMessages(prev => [...prev, aiMsg].slice(-maxMessages));
 
         } catch (err) {
-            console.error('Chat error:', err);
+            if (process.env.NODE_ENV !== 'production') {
+                console.error('Chat error:', err);
+            }
             const errorMessage = err instanceof Error ? err.message : 'Erreur inconnue';
             setError({ message: errorMessage, code: GeminiErrorCode.UNKNOWN_ERROR });
 

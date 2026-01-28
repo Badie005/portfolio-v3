@@ -1,0 +1,495 @@
+{
+    "common": {
+        "siteName": "B.DEV Portfolio",
+        "loading": "Loading...",
+        "error": "An error occurred",
+        "notFound": "Page not found",
+        "backHome": "Back to home",
+        "readMore": "Read more",
+        "viewAll": "View all",
+        "download": "Download",
+        "contact": "Contact",
+        "send": "Send",
+        "skipToContent": "Skip to content"
+    },
+    "errors": {
+        "title": "An error occurred",
+        "description": "We apologize for the inconvenience. The error has been logged and our team has been notified.",
+        "tryAgain": "Try again",
+        "code": "Code: {code}",
+        "globalTitle": "Critical error",
+        "globalDescription": "An unexpected error occurred. Please try again or reload the page.",
+        "reloadPage": "Reload page"
+    },
+    "nav": {
+        "home": "Home",
+        "about": "About",
+        "projects": "Projects",
+        "skills": "Skills",
+        "blog": "Blog",
+        "stats": "Stats",
+        "contact": "Contact",
+        "gallery": "Gallery",
+        "startProject": "Start a project",
+        "openMenu": "Open menu",
+        "closeMenu": "Close menu",
+        "changeLanguage": "Change language"
+    },
+    "hero": {
+        "greeting": "Hi, I'm",
+        "name": "Abdelbadie Khoubiza",
+        "title": "Full-Stack Developer",
+        "subtitle": "Specialized in React, Next.js, Node.js and Laravel",
+        "terminalTexts": [
+            "Available for work...",
+            "Open to projects...",
+            "Ready to code..."
+        ],
+        "headline": {
+            "line1": {
+                "text": "Code with Passion,",
+                "highlight": "Passion,"
+            },
+            "line2": {
+                "text": "Build with Purpose",
+                "highlight": "Purpose"
+            }
+        },
+        "cta": {
+            "projects": "View my projects",
+            "cv": "Download CV",
+            "contact": "Contact me"
+        },
+        "social": {
+            "githubAria": "Visit my GitHub profile (opens in a new tab)",
+            "linkedinAria": "Visit my LinkedIn profile (opens in a new tab)",
+            "emailAria": "Send me an email at {email}"
+        },
+        "imageAlt": "IDE background"
+    },
+    "services": {
+        "terminalTexts": [
+            "Loading services...",
+            "Fetching expertise...",
+            "Scanning modules..."
+        ],
+        "title": "My Expertise",
+        "description": "From concept to launch, I help clients with a rigorous technical approach and a keen eye for detail.",
+        "items": {
+            "frontend": {
+                "title": "Frontend Development",
+                "description": "Building responsive, modern interfaces with React, Next.js and Tailwind CSS. I turn your designs into pixel-perfect code."
+            },
+            "responsive": {
+                "title": "Responsive Design",
+                "description": "Websites that adapt perfectly to any screen, from mobile to desktop, for a smooth user experience everywhere."
+            },
+            "backend": {
+                "title": "Backend Solutions",
+                "description": "Robust, scalable architecture: RESTful APIs, databases and secure server logic to power your applications."
+            },
+            "uiux": {
+                "title": "UI/UX Design",
+                "description": "User-centered design. I create intuitive, beautiful mockups that highlight your brand."
+            },
+            "seo": {
+                "title": "SEO Optimization",
+                "description": "Technical optimization for search engines. I make sure your site is visible and performant."
+            },
+            "performance": {
+                "title": "Performance",
+                "description": "Ultra-fast, optimized sites. I make every millisecond count to keep your visitors engaged."
+            }
+        }
+    },
+    "about": {
+        "title": "About me",
+        "subtitle": "Who am I?",
+        "description": "Passionate Full-Stack Developer based in Fès, Morocco. I create modern, performant, and accessible web applications.",
+        "experience": "Experience",
+        "education": "Education",
+        "location": "Fès, Morocco",
+        "terminalTexts": [
+            "Reading profile...",
+            "Loading bio...",
+            "Parsing data..."
+        ],
+        "sectionTitle": "About",
+        "sectionDescription": "Passionate about building modern, high-performance web experiences. I combine a minimalist approach with meticulous attention to technical detail to turn your ideas into efficient, elegant, long-lasting digital products.",
+        "animationAria": "Animation - About",
+        "stats": {
+            "projectsCompleted": "Projects completed",
+            "technologies": "Technologies",
+            "internshipsCompleted": "Internships completed",
+            "responseTime": "Response time"
+        },
+        "philosophy": {
+            "title": "Philosophy",
+            "quote": "Simplicity, elegance and efficiency in every line of code."
+        },
+        "principles": {
+            "performance": {
+                "title": "Performance",
+                "description": "I design applications with performance, accessibility and maintainability in mind."
+            },
+            "simplicity": {
+                "title": "Simplicity",
+                "description": "A minimalist approach with meticulous attention to technical details."
+            },
+            "efficiency": {
+                "title": "Efficiency",
+                "description": "Turning ideas into efficient, elegant and long-lasting digital products."
+            }
+        }
+    },
+    "experience": {
+        "terminalTexts": [
+            "Fetching history...",
+            "git log --oneline",
+            "Loading timeline..."
+        ],
+        "title": "Experience",
+        "description": "My professional and academic journey — real projects that helped me grow my technical skills.",
+        "types": {
+            "stage": "Internship",
+            "academic": "Academic",
+            "personal": "Personal"
+        },
+        "items": {
+            "fullstackIntern": {
+                "title": "Full-Stack Developer Internship",
+                "company": "Urban Agency of Taza",
+                "period": "Jan - Feb 2024",
+                "description": "Complete audit of the Windows Server infrastructure, creation of PowerShell scripts to automate administrative tasks, and development of a migration plan to Azure."
+            },
+            "usmbaPortal": {
+                "title": "Academic Project - USMBA Portal",
+                "company": "Sidi Mohamed Ben Abdellah University",
+                "period": "Mar - Jun 2024",
+                "description": "Developed a complete web application to automate student enrollment and academic management. Over 500 users with 99.8% availability."
+            },
+            "ayjiElearning": {
+                "title": "Personal Project - E-learning Platform",
+                "company": "AYJI E-learning",
+                "period": "Sep - Dec 2023",
+                "description": "Designed and developed an online learning platform with courses, interactive quizzes and real-time progress tracking."
+            }
+        },
+        "timelineEnd": "The story continues...",
+        "status": {
+            "label": "Status:",
+            "available": "Available for new opportunities"
+        }
+    },
+    "projects": {
+        "title": "My Projects",
+        "subtitle": "Portfolio",
+        "description": "Discover my professional and personal projects",
+        "viewProject": "View project",
+        "viewCode": "Source code",
+        "liveDemo": "Live demo",
+        "technologies": "Technologies",
+        "features": "Features",
+        "context": "Context",
+        "learnings": "Learnings",
+        "home": {
+            "title": "Selected work",
+            "description": "A selection of projects where performance, innovation and user experience meet.",
+            "viewAll": "View all my projects"
+        },
+        "list": {
+            "terminalTexts": [
+                "Loading projects...",
+                "Fetching repositories...",
+                "~/portfolio/projects",
+                "Building components..."
+            ],
+            "titleBrand": "My ",
+            "titleAccent": "Projects",
+            "description": "From concept to production — web applications that solve <realProblems>real problems</realProblems> with <measurableResults>measurable results</measurableResults>.",
+            "cta": {
+                "terminalTexts": [
+                    "~/portfolio/contact",
+                    "Initializing connection...",
+                    "Ready to collaborate"
+                ],
+                "titleLine1": "Ready to launch",
+                "titleLine2": "your next project?"
+            }
+        },
+        "detail": {
+            "notFoundTitle": "Project not found",
+            "terminalTexts": [
+                "Loading project...",
+                "Fetching details...",
+                "Rendering content..."
+            ],
+            "backToProjects": "Back to projects",
+            "viewCode": "View code",
+            "viewSite": "View site",
+            "copyMarkdownTitle": "Copy information as Markdown",
+            "copy": "Copy",
+            "copied": "Copied!",
+            "previous": "Previous",
+            "next": "Next",
+            "allProjects": "All projects",
+            "sections": {
+                "description": "Description",
+                "context": "Context",
+                "technologies": "Technologies",
+                "missions": "Missions & Activities",
+                "features": "Features",
+                "results": "Results",
+                "learnings": "What I learned",
+                "links": "Links"
+            },
+            "context": {
+                "structure": "Structure",
+                "objective": "Objective",
+                "role": "Role"
+            },
+            "results": {
+                "metric": "Metric",
+                "value": "Value"
+            },
+            "links": {
+                "sourceCode": "Source code",
+                "viewSite": "View site"
+            },
+            "markdown": {
+                "category": "Category:",
+                "period": "Period:"
+            }
+        }
+    },
+    "skills": {
+        "title": "Skills",
+        "subtitle": "Technologies",
+        "frontend": "Frontend",
+        "backend": "Backend",
+        "tools": "Tools",
+        "database": "Database",
+        "terminalTexts": [
+            "Scanning skills...",
+            "npm list --depth=0",
+            "Indexing stack..."
+        ],
+        "description": "A modern, versatile tech stack. I master the full development cycle, from responsive frontend to robust backend, to cover all your digital needs.",
+        "categories": {
+            "frontend": {
+                "title": "Frontend",
+                "skills": [
+                    "React & Next.js",
+                    "Angular",
+                    "TypeScript",
+                    "JavaScript (ES6+)",
+                    "Tailwind CSS",
+                    "Alpine.js",
+                    "HTML5 & CSS3"
+                ]
+            },
+            "backend": {
+                "title": "Backend",
+                "skills": [
+                    "Node.js & Express.js",
+                    "PHP & Laravel",
+                    "RESTful APIs & MVC",
+                    "MySQL",
+                    "NoSQL (MongoDB)"
+                ]
+            },
+            "toolsDevops": {
+                "title": "Tools & DevOps",
+                "skills": [
+                    "Git & GitHub",
+                    "Docker",
+                    "Vite",
+                    "Postman",
+                    "PowerShell",
+                    "Figma (UI/UX)"
+                ]
+            }
+        },
+        "stack": {
+            "title": "Complete Full-Stack stack",
+            "description": "From UI/UX design to production deployment, I master the entire development cycle to build performant and scalable web applications.",
+            "stats": {
+                "technologies": "Technologies",
+                "jsFrameworks": "JS Frameworks",
+                "backendLanguages": "Backend languages",
+                "committed": "Committed"
+            }
+        }
+    },
+    "gallery": {
+        "ariaLabel": "Gallery",
+        "terminalTexts": [
+            "Generating visuals...",
+            "Running AI model...",
+            "Rendering outputs..."
+        ],
+        "title": "AI Generated Art",
+        "description": "Beyond code, I explore AI generation tools to create visuals that reflect my minimalist aesthetic and attention to detail.",
+        "controls": {
+            "pause": "Pause",
+            "play": "Play",
+            "previous": "Previous",
+            "next": "Next",
+            "viewImage": "View {title}"
+        },
+        "progress": {
+            "label": "Progress"
+        },
+        "images": [
+            {
+                "src": "/images/1.png",
+                "alt": "Brushed aluminum mechanical keyboard",
+                "title": "Mechanical Keyboard",
+                "desc": "Aluminium & Leather"
+            },
+            {
+                "src": "/images/2.png",
+                "alt": "Architect desk lamp",
+                "title": "Architect Lamp",
+                "desc": "Chrome & Copper"
+            },
+            {
+                "src": "/images/3.png",
+                "alt": "Designer mouse",
+                "title": "Designer Mouse",
+                "desc": "Brushed Steel"
+            },
+            {
+                "src": "/images/4.png",
+                "alt": "Premium USB cable",
+                "title": "Premium Cable",
+                "desc": "Braided Copper"
+            },
+            {
+                "src": "/images/5.png",
+                "alt": "Precision stylus",
+                "title": "Precision Stylus",
+                "desc": "Titanium & Leather"
+            },
+            {
+                "src": "/images/6.png",
+                "alt": "Laptop stand",
+                "title": "Laptop Stand",
+                "desc": "Aluminium Alloy"
+            }
+        ]
+    },
+    "blog": {
+        "title": "Blog",
+        "subtitle": "Articles & Insights",
+        "description": "Thoughts on web development and modern technologies",
+        "readArticle": "Read article",
+        "filterAll": "All",
+        "noPostsInCategory": "No articles found in this category.",
+        "backToBlog": "Back to blog",
+        "notFoundTitle": "Article not found",
+        "authorDescription": "Full-Stack Developer passionate about React, Next.js and Node.js",
+        "publishedOn": "Published on",
+        "readingTime": "min read",
+        "noArticles": "No articles yet",
+        "comingSoon": "Coming soon"
+    },
+    "stats": {
+        "title": "Statistics",
+        "subtitle": "Public Statistics",
+        "description": "Full transparency on my portfolio metrics",
+        "cvDownloads": "CV Downloads",
+        "pageViews": "Page views",
+        "uniqueVisitors": "Unique visitors",
+        "lastUpdated": "Last updated"
+    },
+    "contact": {
+        "title": "Contact",
+        "subtitle": "Let's work together",
+        "description": "Feel free to reach out to discuss your project",
+        "terminal": {
+            "connecting": "Connecting...",
+            "openingChannel": "Opening channel...",
+            "readyToChat": "Ready to chat..."
+        },
+        "status": {
+            "badge": "Available",
+            "title": "Open to opportunities",
+            "description": "Freelance, full-time, or short-term collaboration. Reply within 24h."
+        },
+        "validation": {
+            "required": "Required",
+            "minLength": "Minimum {min} characters",
+            "invalidEmail": "Invalid email"
+        },
+        "form": {
+            "name": "Name",
+            "email": "Email",
+            "subject": "Subject",
+            "message": "Message",
+            "placeholders": {
+                "name": "John Doe",
+                "email": "john@example.com",
+                "subject": "Web project, collaboration...",
+                "message": "Describe your project..."
+            },
+            "submit": "Send message",
+            "sending": "Sending...",
+            "success": "Message sent! I'll reply within 24h.",
+            "error": "Error sending message.",
+            "serverError": "Server error. Please try again later."
+        },
+        "social": {
+            "github": "GitHub",
+            "linkedin": "LinkedIn",
+            "email": "Email"
+        }
+    },
+    "footer": {
+        "rights": "All rights reserved",
+        "madeWith": "Made with",
+        "by": "by",
+        "description": "Passionate Full-Stack Developer building modern, performant, and accessible web experiences.",
+        "navigationTitle": "Navigation",
+        "contactTitle": "Contact",
+        "terminalTexts": [
+            "Building portfolio...",
+            "Ready to collaborate...",
+            "Open for projects..."
+        ]
+    },
+    "meta": {
+        "title": "Abdelbadie Khoubiza | Full-Stack Developer React & Node.js",
+        "description": "Full-Stack Developer specialized in React, Next.js, Node.js and Laravel. Creating performant web applications in Fès, Morocco.",
+        "keywords": [
+            "Full-Stack Developer",
+            "React",
+            "Node.js",
+            "Laravel",
+            "TypeScript",
+            "Next.js",
+            "Morocco",
+            "Fès",
+            "USMBA",
+            "Web Developer",
+            "B.DEV"
+        ],
+        "openGraph": {
+            "title": "B.DEV - Full-Stack Developer",
+            "description": "Professional portfolio of a Full-Stack Developer based in Fès, Morocco"
+        },
+        "twitter": {
+            "title": "B.DEV - Full-Stack Developer",
+            "description": "Professional Full-Stack Developer portfolio"
+        },
+        "jsonLd": {
+            "person": {
+                "jobTitle": "Full-Stack Developer",
+                "description": "Full-Stack Developer specialized in React, Node.js and Laravel."
+            },
+            "website": {
+                "name": "Abdelbadie Khoubiza Portfolio"
+            }
+        }
+    }
+}

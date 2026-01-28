@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
 import { TerminalStatus } from "@/components/ui/TerminalStatus";
+import { useTranslations } from "next-intl";
 
 // ============================================================================
 // TYPES & CONSTANTS
@@ -17,45 +18,6 @@ interface GalleryImage {
     desc: string;
 }
 
-const GALLERY_IMAGES: readonly GalleryImage[] = [
-    {
-        src: "/images/1.png",
-        alt: "Clavier mécanique en aluminium brossé",
-        title: "Mechanical Keyboard",
-        desc: "Aluminium & Leather",
-    },
-    {
-        src: "/images/2.png",
-        alt: "Lampe de bureau architecte",
-        title: "Architect Lamp",
-        desc: "Chrome & Copper",
-    },
-    {
-        src: "/images/3.png",
-        alt: "Souris design",
-        title: "Designer Mouse",
-        desc: "Brushed Steel",
-    },
-    {
-        src: "/images/4.png",
-        alt: "Câble USB premium",
-        title: "Premium Cable",
-        desc: "Braided Copper",
-    },
-    {
-        src: "/images/5.png",
-        alt: "Stylet de précision",
-        title: "Precision Stylus",
-        desc: "Titanium & Leather",
-    },
-    {
-        src: "/images/6.png",
-        alt: "Support pour laptop",
-        title: "Laptop Stand",
-        desc: "Aluminium Alloy",
-    },
-] as const;
-
 const AUTOPLAY_INTERVAL = 5000;
 
 // ============================================================================
@@ -63,18 +25,21 @@ const AUTOPLAY_INTERVAL = 5000;
 // ============================================================================
 
 export function GallerySection() {
+    const tGallery = useTranslations("gallery");
+    const galleryImages = tGallery.raw("images") as GalleryImage[];
+
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isAutoPlaying, setIsAutoPlaying] = useState(true);
     const autoPlayTimerRef = useRef<NodeJS.Timeout | null>(null);
 
     // Navigation
     const nextSlide = useCallback(() => {
-        setCurrentIndex((prev) => (prev + 1) % GALLERY_IMAGES.length);
-    }, []);
+        setCurrentIndex((prev) => (prev + 1) % galleryImages.length);
+    }, [galleryImages.length]);
 
     const prevSlide = useCallback(() => {
-        setCurrentIndex((prev) => (prev - 1 + GALLERY_IMAGES.length) % GALLERY_IMAGES.length);
-    }, []);
+        setCurrentIndex((prev) => (prev - 1 + galleryImages.length) % galleryImages.length);
+    }, [galleryImages.length]);
 
     const goToSlide = useCallback((index: number) => {
         setCurrentIndex(index);
@@ -116,7 +81,7 @@ export function GallerySection() {
     }, [isAutoPlaying, nextSlide]);
 
     return (
-        <section id="gallery" className="py-24 md:py-32" aria-label="Galerie">
+        <section id="gallery" className="py-24 md:py-32" aria-label={tGallery("ariaLabel")}>
             <div className="max-w-7xl mx-auto px-6">
                 {/* Section Header - Harmonisé avec le design system */}
                 <div className="mb-16 lg:mb-20 max-w-2xl">
@@ -127,7 +92,7 @@ export function GallerySection() {
                         transition={{ duration: 0.5 }}
                     >
                         <TerminalStatus
-                            texts={["Generating visuals...", "Running AI model...", "Rendering outputs..."]}
+                            texts={tGallery.raw("terminalTexts") as string[]}
                             className="mb-6"
                         />
                     </motion.div>
@@ -139,7 +104,7 @@ export function GallerySection() {
                         transition={{ duration: 0.5, delay: 0.05 }}
                         className="text-4xl lg:text-5xl font-medium text-ide-accent mb-6 font-heading tracking-tight"
                     >
-                        AI Generated Art
+                        {tGallery("title")}
                     </motion.h2>
 
                     <motion.p
@@ -149,7 +114,7 @@ export function GallerySection() {
                         transition={{ duration: 0.5, delay: 0.1 }}
                         className="text-lg text-ide-muted leading-relaxed font-body"
                     >
-                        Au-delà du code, j&apos;explore les outils de génération IA pour créer des visuels qui reflètent mon esthétique minimaliste et mon attention au détail.
+                        {tGallery("description")}
                     </motion.p>
                 </div>
 
@@ -175,8 +140,8 @@ export function GallerySection() {
                                         className="absolute inset-0 bg-neutral-100"
                                     >
                                         <Image
-                                            src={GALLERY_IMAGES[currentIndex].src}
-                                            alt={GALLERY_IMAGES[currentIndex].alt}
+                                            src={galleryImages[currentIndex].src}
+                                            alt={galleryImages[currentIndex].alt}
                                             fill
                                             className="object-cover"
                                             sizes="(max-width: 1024px) 100vw, 70vw"
@@ -195,7 +160,7 @@ export function GallerySection() {
                                         {String(currentIndex + 1).padStart(2, "0")}
                                     </span>
                                     <span className="text-white/50 text-lg ml-1">
-                                        / {String(GALLERY_IMAGES.length).padStart(2, "0")}
+                                        / {String(galleryImages.length).padStart(2, "0")}
                                     </span>
                                 </div>
                             </div>
@@ -205,21 +170,21 @@ export function GallerySection() {
                                 <button
                                     onClick={() => setIsAutoPlaying((prev) => !prev)}
                                     className="w-12 h-12 rounded-full bg-white border border-ide-border flex items-center justify-center text-ide-muted hover:bg-ide-accent hover:text-white hover:border-transparent transition-all"
-                                    aria-label={isAutoPlaying ? "Pause" : "Play"}
+                                    aria-label={isAutoPlaying ? tGallery("controls.pause") : tGallery("controls.play")}
                                 >
                                     {isAutoPlaying ? <Pause size={16} /> : <Play size={16} />}
                                 </button>
                                 <button
                                     onClick={prevSlide}
                                     className="w-12 h-12 rounded-full bg-white border border-ide-border flex items-center justify-center text-ide-muted hover:bg-ide-accent hover:text-white hover:border-transparent transition-all"
-                                    aria-label="Précédent"
+                                    aria-label={tGallery("controls.previous")}
                                 >
                                     <ChevronLeft size={20} />
                                 </button>
                                 <button
                                     onClick={nextSlide}
                                     className="w-12 h-12 rounded-full bg-ide-accent flex items-center justify-center text-white hover:bg-brand transition-all"
-                                    aria-label="Suivant"
+                                    aria-label={tGallery("controls.next")}
                                 >
                                     <ChevronRight size={20} />
                                 </button>
@@ -238,17 +203,17 @@ export function GallerySection() {
                                     transition={{ duration: 0.3 }}
                                 >
                                     <h3 className="text-xl font-heading font-semibold text-brand mb-1">
-                                        {GALLERY_IMAGES[currentIndex].title}
+                                        {galleryImages[currentIndex].title}
                                     </h3>
                                     <p className="text-ide-muted text-sm font-body">
-                                        {GALLERY_IMAGES[currentIndex].desc}
+                                        {galleryImages[currentIndex].desc}
                                     </p>
                                 </motion.div>
                             </AnimatePresence>
 
                             {/* Thumbnails */}
                             <div className="grid grid-cols-3 lg:grid-cols-2 gap-2 sm:gap-3">
-                                {GALLERY_IMAGES.map((image, index) => (
+                                {galleryImages.map((image, index) => (
                                     <button
                                         key={image.src}
                                         onClick={() => goToSlide(index)}
@@ -256,11 +221,11 @@ export function GallerySection() {
                                             ? "ring-2 ring-ide-accent ring-offset-2"
                                             : "opacity-60 hover:opacity-100"
                                             }`}
-                                        aria-label={`Voir ${image.title}`}
+                                        aria-label={tGallery("controls.viewImage", { title: image.title })}
                                     >
                                         <Image
                                             src={image.src}
-                                            alt={image.title}
+                                            alt={image.alt}
                                             fill
                                             className="object-cover"
                                             sizes="100px"
@@ -275,13 +240,13 @@ export function GallerySection() {
                                 <div className="h-1 bg-ide-border rounded-full overflow-hidden">
                                     <motion.div
                                         className="h-full bg-ide-accent"
-                                        animate={{ width: `${((currentIndex + 1) / GALLERY_IMAGES.length) * 100}%` }}
+                                        animate={{ width: `${((currentIndex + 1) / galleryImages.length) * 100}%` }}
                                         transition={{ duration: 0.3 }}
                                     />
                                 </div>
                                 <div className="flex justify-between text-xs text-ide-muted mt-2 font-mono">
-                                    <span>Progress</span>
-                                    <span>{currentIndex + 1} / {GALLERY_IMAGES.length}</span>
+                                    <span>{tGallery("progress.label")}</span>
+                                    <span>{currentIndex + 1} / {galleryImages.length}</span>
                                 </div>
                             </div>
                         </div>

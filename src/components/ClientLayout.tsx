@@ -3,6 +3,17 @@
 import { useState, useEffect, ReactNode } from 'react';
 import { LoadingScreen } from './LoadingScreen';
 
+const isProd = process.env.NODE_ENV === 'production';
+
+if (isProd) {
+    const noop: (..._args: unknown[]) => void = () => { };
+    console.log = noop;
+    console.info = noop;
+    console.warn = noop;
+    console.error = noop;
+    console.debug = noop;
+}
+
 interface ClientLayoutProps {
     children: ReactNode;
 }

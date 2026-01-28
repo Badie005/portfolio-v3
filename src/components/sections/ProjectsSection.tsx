@@ -1,15 +1,20 @@
 "use client";
 
 import { motion } from "motion/react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { ArrowRight } from "lucide-react";
 import { ProjectCard } from "@/components/ProjectCard";
-import { projects } from "@/data/projects";
+import { getProjects } from "@/data/projects";
 import { Button } from "@/components/ui/button";
+import { useLocale, useTranslations } from "next-intl";
 
 export function ProjectsSection() {
+  const locale = useLocale();
+  const tProjects = useTranslations("projects");
+  const tContact = useTranslations("contact");
+
   // Afficher seulement les 3 premiers projets sur la page d'accueil
-  const featuredProjects = projects.slice(0, 3);
+  const featuredProjects = getProjects(locale).slice(0, 3);
 
   return (
     <section id="projets" className="py-32 px-6">
@@ -22,11 +27,11 @@ export function ProjectsSection() {
         >
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
             <div>
-              <h2 className="mb-6 text-brand font-heading">Mes réalisations</h2>
+              <h2 className="mb-6 text-brand font-heading">{tProjects("home.title")}</h2>
             </div>
             <div>
               <p className="text-ide-muted leading-relaxed font-body">
-                Une sélection de projets où performance, innovation et expérience utilisateur se rencontrent.
+                {tProjects("home.description")}
               </p>
             </div>
           </div>
@@ -46,7 +51,7 @@ export function ProjectsSection() {
         >
           <Button asChild size="lg" className="w-full sm:w-[220px]">
             <Link href="/projects">
-              Voir tous mes projets
+              {tProjects("home.viewAll")}
               <ArrowRight size={16} />
             </Link>
           </Button>
@@ -56,7 +61,7 @@ export function ProjectsSection() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              GitHub
+              {tContact("social.github")}
             </a>
           </Button>
         </motion.div>

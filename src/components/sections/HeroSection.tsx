@@ -1,10 +1,12 @@
 "use client";
 
 import { motion } from "motion/react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { Github, Linkedin, Mail, ArrowRight } from "lucide-react";
+import { useTranslations } from "next-intl";
+
 import { Button } from "@/components/ui/button";
 import { TerminalStatus } from "@/components/ui/TerminalStatus";
 import { GrainyTextLines } from "@/components/ui/GrainyTextReveal";
@@ -21,6 +23,9 @@ const CodeWindow = dynamic(
 );
 
 export function HeroSection() {
+  const tHero = useTranslations("hero");
+  const tContact = useTranslations("contact");
+
   return (
     <section className="min-h-screen flex items-center justify-center relative px-4 sm:px-6 pt-20 overflow-x-hidden overflow-y-visible">
 
@@ -41,11 +46,11 @@ export function HeroSection() {
             className="space-y-4"
           >
             {/* Terminal-style Status */}
-            <TerminalStatus texts={["Available for work...", "Open to projects...", "Ready to code..."]} />
+            <TerminalStatus texts={tHero.raw("terminalTexts") as string[]} />
 
             {/* Name & Role as Code Comment */}
             <div className="font-mono text-sm text-ide-muted" style={{ fontFamily: "'Fira Code', 'Roboto Mono', monospace" }}>
-              <span className="text-ide-accent">{"//"}</span> Abdelbadie Khoubiza <span className="text-neutral-300">|</span> Full-Stack Developer
+              <span className="text-ide-accent">{"//"}</span> {tHero("name")} <span className="text-neutral-300">|</span> {tHero("title")}
             </div>
           </motion.div>
 
@@ -54,8 +59,8 @@ export function HeroSection() {
             <h1 className="text-3xl min-[400px]:text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-medium leading-[1.1] tracking-tight font-heading text-brand break-words hyphens-auto">
               <GrainyTextLines
                 lines={[
-                  { text: "Code with Passion,", highlightWords: ["Passion,"] },
-                  { text: "Build with Purpose", highlightWords: ["Purpose"] },
+                  { text: tHero("headline.line1.text"), highlightWords: [tHero("headline.line1.highlight")] },
+                  { text: tHero("headline.line2.text"), highlightWords: [tHero("headline.line2.highlight")] },
                 ]}
                 baseDelay={0.2}
                 blurAmount={10}
@@ -73,12 +78,12 @@ export function HeroSection() {
           >
             <Button asChild size="lg">
               <Link href="/projects">
-                Voir mes projets
+                {tHero("cta.projects")}
                 <ArrowRight size={18} className="ml-1" />
               </Link>
             </Button>
             <Button asChild variant="glass" size="lg">
-              <Link href="/#contact">Me contacter</Link>
+              <Link href="/#contact">{tHero("cta.contact")}</Link>
             </Button>
           </motion.div>
 
@@ -93,29 +98,29 @@ export function HeroSection() {
               href="https://github.com/Badie005"
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Visiter mon profil GitHub (ouvre dans un nouvel onglet)"
+              aria-label={tHero("social.githubAria")}
               className="group flex items-center gap-2 text-ide-muted hover:text-ide-accent transition-colors duration-300"
             >
               <Github size={20} className="group-hover:stroke-ide-accent transition-colors" />
-              <span className="text-sm font-medium font-mono" style={{ fontFamily: "'Fira Code', 'Roboto Mono', monospace" }}>GitHub</span>
+              <span className="text-sm font-medium font-mono" style={{ fontFamily: "'Fira Code', 'Roboto Mono', monospace" }}>{tContact("social.github")}</span>
             </a>
             <a
               href="https://linkedin.com/in/abdelbadie-khoubiza"
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Visiter mon profil LinkedIn (ouvre dans un nouvel onglet)"
+              aria-label={tHero("social.linkedinAria")}
               className="group flex items-center gap-2 text-ide-muted hover:text-ide-accent transition-colors duration-300"
             >
               <Linkedin size={20} className="group-hover:stroke-ide-accent transition-colors" />
-              <span className="text-sm font-medium font-mono" style={{ fontFamily: "'Fira Code', 'Roboto Mono', monospace" }}>LinkedIn</span>
+              <span className="text-sm font-medium font-mono" style={{ fontFamily: "'Fira Code', 'Roboto Mono', monospace" }}>{tContact("social.linkedin")}</span>
             </a>
             <a
               href="mailto:a.khoubiza.dev@gmail.com"
-              aria-label="M'envoyer un email à a.khoubiza.dev@gmail.com"
+              aria-label={tHero("social.emailAria", { email: "a.khoubiza.dev@gmail.com" })}
               className="group flex items-center gap-2 text-ide-muted hover:text-ide-accent transition-colors duration-300"
             >
               <Mail size={20} className="group-hover:stroke-ide-accent transition-colors" />
-              <span className="text-sm font-medium font-mono" style={{ fontFamily: "'Fira Code', 'Roboto Mono', monospace" }}>Email</span>
+              <span className="text-sm font-medium font-mono" style={{ fontFamily: "'Fira Code', 'Roboto Mono', monospace" }}>{tContact("social.email")}</span>
             </a>
           </motion.div>
         </div>
@@ -141,7 +146,7 @@ export function HeroSection() {
               {/* Background Image Container */}
               <Image
                 src="/background B.411 IDE.jpeg"
-                alt="IDE Background"
+                alt={tHero("imageAlt")}
                 fill
                 className="object-cover rounded-xl"
                 priority

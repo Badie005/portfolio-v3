@@ -22,7 +22,7 @@ interface ChatRequestBody {
 export async function POST(req: NextRequest) {
     try {
         // Rate Limiting
-        const { allowed, reset } = await enforceRateLimit(req, 10, 60);
+        const { allowed, reset } = await enforceRateLimit(req, 10, 60, "chat");
 
         if (!allowed) {
             return new NextResponse(
