@@ -6,7 +6,7 @@ import { routing } from "@/i18n/routing";
 export const runtime = "nodejs";
 export const revalidate = 3600;
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://abdelbadie-khoubiza.com").replace(/\/$/, "");
 
   const toUrl = (pathname: string, locale: string) => {
@@ -61,11 +61,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     }))
   );
 
-  // TODO: Ajouter les articles de blog dynamiquement
-  const blogPages: MetadataRoute.Sitemap = routing.locales.flatMap((locale) => {
-    const blogPosts = getAllPostSlugs(locale)
-      .map((slug) => {
-        const post = getPostBySlug(slug, locale);
+  // Articles de blog dynamiquement
+  const blogPages: MetadataRoute.Sitemap = [];
+  for (const locale of routing.locales) {
+    const slugs = await getAllPostSlugs(locale);
+    const blogPosts = await Promise.all(
+      slugs.map(async (slug) => {
+        const post = await getPostBySlug(slug, locale);
         if (!post) return null;
 
         return {
@@ -73,21 +75,19 @@ export default function sitemap(): MetadataRoute.Sitemap {
           lastModified: new Date(post.updatedAt || post.date),
         };
       })
-      .filter((post): post is { slug: string; lastModified: Date } => post !== null);
+    );
 
-    return blogPosts.map((post) => ({
-      url: toUrl(`/blog/${post.slug}`, locale),
-      lastModified: post.lastModified,
-      changeFrequency: "monthly" as const,
-      priority: 0.7,
-    }));
-  });
-  // const blogPages: MetadataRoute.Sitemap = blogPosts.map((post) => ({
-  //   url: `${baseUrl}/blog/${post.slug}`,
-  //   lastModified: new Date(post.updatedAt),
-  //   changeFrequency: "monthly" as const,
-  //   priority: 0.7,
-  // }));
+    const validPosts = blogPosts.filter((post): post is { slug: string; lastModified: Date } => post !== null);
+
+    for (const post of validPosts) {
+      blogPages.push({
+        url: toUrl(`/blog/${post.slug}`, locale),
+        lastModified: post.lastModified,
+        changeFrequency: "monthly" as const,
+        priority: 0.7,
+      });
+    }
+  }
 
   return [...mainPages, ...projectPages, ...blogPages];
 }

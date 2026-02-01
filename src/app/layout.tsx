@@ -1,11 +1,9 @@
 import "./globals.css";
-import { Outfit, Cormorant_Garamond } from "next/font/google";
+import { Cormorant_Garamond, IBM_Plex_Serif } from "next/font/google";
+import { headers } from "next/headers";
 
-const outfit = Outfit({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-body",
-});
+// Saans is defined as a local font in globals.css (@font-face)
+// We just need to set the CSS variable for it
 
 const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
@@ -14,15 +12,38 @@ const cormorant = Cormorant_Garamond({
   variable: "--font-heading",
 });
 
+const ibmPlexSerif = IBM_Plex_Serif({
+  subsets: ["latin"],
+  display: "swap",
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-blog",
+});
+
 // Root layout - provides required html/body structure for Next.js 16+
 // The [locale] segment provides the content with providers
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const requestHeaders = await headers();
+  const headerLocale = requestHeaders.get("x-next-intl-locale");
+  const pathname = requestHeaders.get("x-pathname") || requestHeaders.get("x-middleware-request-x-pathname") || "";
+
+  // Determine locale from header or pathname
+  let locale: "en" | "fr" = "en";
+  if (headerLocale === "fr" || headerLocale === "en") {
+    locale = headerLocale;
+  } else if (pathname.startsWith("/fr")) {
+    locale = "fr";
+  }
+
   return (
-      <html className={`${outfit.variable} ${cormorant.variable}`} suppressHydrationWarning>
+    <html
+      lang={locale}
+      className={`${cormorant.variable} ${ibmPlexSerif.variable}`}
+      suppressHydrationWarning
+    >
       <head>
         <link rel="manifest" href="/manifest.json" />
         <link rel="icon" href="/favicon.ico" />

@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
 import readingTime from "reading-time";
+import { unstable_cache } from "next/cache";
 
 export interface BlogPost {
     slug: string;
@@ -11,11 +12,13 @@ export interface BlogPost {
     updatedAt?: string;
     author: string;
     image?: string;
+    coverImage?: string;
     tags: string[];
     category: string;
     content: string;
     readingTime: number;
     published: boolean;
+    translationKey?: string;
 }
 
 export interface BlogPostMeta {
@@ -29,6 +32,7 @@ export interface BlogPostMeta {
     category: string;
     readingTime: number;
     published: boolean;
+    translationKey?: string;
 }
 
 const BLOG_BASE_DIR = path.join(process.cwd(), "content/blog");
@@ -42,9 +46,9 @@ const getBlogDir = (locale: string): string => {
 };
 
 /**
- * Get all blog posts metadata (without content)
+ * Internal function to get all blog posts metadata (without content)
  */
-export function getAllPosts(locale: string = "fr"): BlogPostMeta[] {
+function getAllPostsInternal(locale: string = "fr"): BlogPostMeta[] {
     const blogDir = getBlogDir(locale);
 
     // Check if blog directory exists
@@ -80,6 +84,7 @@ export function getAllPosts(locale: string = "fr"): BlogPostMeta[] {
                 category: data.category || (locale === "en" ? "General" : "Général"),
                 readingTime: readingMinutes,
                 published: data.published !== false,
+                translationKey: data.translationKey,
             } as BlogPostMeta;
         })
         .filter((post): post is BlogPostMeta => post !== null)
@@ -89,9 +94,25 @@ export function getAllPosts(locale: string = "fr"): BlogPostMeta[] {
 }
 
 /**
- * Get a single blog post by slug (with content)
+ * Get all blog posts metadata (without content) - cached by locale
  */
-export function getPostBySlug(slug: string, locale: string = "fr"): BlogPost | null {
+export async function getAllPosts(locale: string = "fr"): Promise<BlogPostMeta[]> {
+    // Use unstable_cache to ensure proper caching by locale
+    // This prevents cache collisions between different locales
+    const cachedGetPosts = unstable_cache(
+        async () => getAllPostsInternal(locale),
+        [`posts-${locale}`],
+        { tags: [`posts-${locale}`, `locale-${locale}`] }
+    );
+
+    // Call the cached function - in Server Components this will be cached per locale
+    return cachedGetPosts();
+}
+
+/**
+ * Internal function to get a single blog post by slug (with content)
+ */
+function getPostBySlugInternal(slug: string, locale: string = "fr"): BlogPost | null {
     const blogDir = getBlogDir(locale);
     const filePath = path.join(blogDir, `${slug}.mdx`);
 
@@ -118,18 +139,33 @@ export function getPostBySlug(slug: string, locale: string = "fr"): BlogPost | n
         updatedAt: data.updatedAt,
         author: data.author || "Abdelbadie Khoubiza",
         image: data.image || null,
+        coverImage: data.coverImage || null,
         tags: data.tags || [],
         category: data.category || (locale === "en" ? "General" : "Général"),
         content,
         readingTime: readingMinutes,
         published: data.published !== false,
+        translationKey: data.translationKey,
     };
 }
 
 /**
- * Get all post slugs for static generation
+ * Get a single blog post by slug (with content) - cached by locale and slug
  */
-export function getAllPostSlugs(locale: string = "fr"): string[] {
+export async function getPostBySlug(slug: string, locale: string = "fr"): Promise<BlogPost | null> {
+    const cachedGetPost = unstable_cache(
+        async () => getPostBySlugInternal(slug, locale),
+        [`post-${locale}-${slug}`],
+        { tags: [`post-${locale}-${slug}`, `posts-${locale}`, `locale-${locale}`] }
+    );
+
+    return cachedGetPost();
+}
+
+/**
+ * Internal function to get all post slugs for static generation
+ */
+function getAllPostSlugsInternal(locale: string = "fr"): string[] {
     const blogDir = getBlogDir(locale);
 
     if (!fs.existsSync(blogDir)) {
@@ -143,10 +179,93 @@ export function getAllPostSlugs(locale: string = "fr"): string[] {
 }
 
 /**
+ * Get all post slugs for static generation - cached by locale
+ */
+export async function getAllPostSlugs(locale: string = "fr"): Promise<string[]> {
+    const cachedGetSlugs = unstable_cache(
+        async () => getAllPostSlugsInternal(locale),
+        [`slugs-${locale}`],
+        { tags: [`slugs-${locale}`, `posts-${locale}`, `locale-${locale}`] }
+    );
+
+    return cachedGetSlugs();
+}
+
+/**
+ * Check if a post exists in a specific locale
+ */
+export function postExists(slug: string, locale: string): boolean {
+    const blogDir = getBlogDir(locale);
+    const filePath = path.join(blogDir, `${slug}.mdx`);
+    return fs.existsSync(filePath);
+}
+
+/**
+ * Get the translation of an article by translationKey
+ * Returns the post metadata in the target locale, or null if not found
+ */
+export function getTranslation(translationKey: string, targetLocale: string): BlogPostMeta | null {
+    const blogDir = getBlogDir(targetLocale);
+
+    if (!fs.existsSync(blogDir)) {
+        return null;
+    }
+
+    const files = fs.readdirSync(blogDir).filter((file) => file.endsWith(".mdx"));
+
+    for (const file of files) {
+        const filePath = path.join(blogDir, file);
+        const fileContent = fs.readFileSync(filePath, "utf-8");
+        const { data, content } = matter(fileContent);
+
+        if (data.translationKey === translationKey) {
+            const slug = file.replace(/\.mdx$/, "");
+            const stats = readingTime(content);
+            const readingMinutes = Math.max(1, Math.ceil(stats.minutes));
+
+            return {
+                slug,
+                title: data.title || "Untitled",
+                description: data.description || "",
+                date: data.date || new Date().toISOString(),
+                author: data.author || "Abdelbadie Khoubiza",
+                image: data.image || null,
+                tags: data.tags || [],
+                category: data.category || (targetLocale === "en" ? "General" : "Général"),
+                readingTime: readingMinutes,
+                published: data.published !== false,
+                translationKey: data.translationKey,
+            };
+        }
+    }
+
+    return null;
+}
+
+/**
+ * Get all available locales for a translationKey
+ * Returns an array of locale codes where this translationKey exists
+ */
+export function getAvailableLocales(translationKey: string): string[] {
+    const locales: string[] = [];
+    const allLocales = ["fr", "en"]; // Supported locales
+
+    for (const locale of allLocales) {
+        const translation = getTranslation(translationKey, locale);
+        if (translation) {
+            locales.push(locale);
+        }
+    }
+
+    return locales;
+}
+
+/**
  * Get posts by category
  */
-export function getPostsByCategory(category: string, locale: string = "fr"): BlogPostMeta[] {
-    return getAllPosts(locale).filter(
+export async function getPostsByCategory(category: string, locale: string = "fr"): Promise<BlogPostMeta[]> {
+    const posts = await getAllPosts(locale);
+    return posts.filter(
         (post) => post.category.toLowerCase() === category.toLowerCase()
     );
 }
@@ -154,8 +273,9 @@ export function getPostsByCategory(category: string, locale: string = "fr"): Blo
 /**
  * Get posts by tag
  */
-export function getPostsByTag(tag: string, locale: string = "fr"): BlogPostMeta[] {
-    return getAllPosts(locale).filter((post) =>
+export async function getPostsByTag(tag: string, locale: string = "fr"): Promise<BlogPostMeta[]> {
+    const posts = await getAllPosts(locale);
+    return posts.filter((post) =>
         post.tags.map((t) => t.toLowerCase()).includes(tag.toLowerCase())
     );
 }
@@ -163,8 +283,8 @@ export function getPostsByTag(tag: string, locale: string = "fr"): BlogPostMeta[
 /**
  * Get all unique categories
  */
-export function getAllCategories(locale: string = "fr"): string[] {
-    const posts = getAllPosts(locale);
+export async function getAllCategories(locale: string = "fr"): Promise<string[]> {
+    const posts = await getAllPosts(locale);
     const categories = new Set(posts.map((post) => post.category));
     return Array.from(categories);
 }
@@ -172,8 +292,8 @@ export function getAllCategories(locale: string = "fr"): string[] {
 /**
  * Get all unique tags
  */
-export function getAllTags(locale: string = "fr"): string[] {
-    const posts = getAllPosts(locale);
+export async function getAllTags(locale: string = "fr"): Promise<string[]> {
+    const posts = await getAllPosts(locale);
     const tags = new Set(posts.flatMap((post) => post.tags));
     return Array.from(tags);
 }

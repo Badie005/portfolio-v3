@@ -1,4 +1,8 @@
 import { useMemo, useCallback, useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
+import { motion, useDragControls, useMotionValue, animate, useMotionValueEvent } from 'framer-motion';
+import { RotateCcw } from 'lucide-react';
+
 import { INITIAL_FILES } from './constants';
 import { FileData } from './types';
 import { FileIcon } from './components/FileIcon';
@@ -35,9 +39,11 @@ const COMPACT_LAYOUT_CONFIG = {
 } as const;
 
 export function CodeWindow() {
+    const t = useTranslations('ide');
     const isMobile = useIsMobile();
     const isSidebarBrowser = useIsSidebarBrowser();
     const isCompactView = isMobile || isSidebarBrowser;
+    const dragControls = useDragControls();
 
     // Use compact config for sidebar browsers
     const layoutConfig = isCompactView ? COMPACT_LAYOUT_CONFIG : LAYOUT_CONFIG;
@@ -141,152 +147,204 @@ export function CodeWindow() {
 
     const lineCount = currentFile?.content.split('\n').length || 0;
 
+    // Position state for drag and reset
+    const x = useMotionValue(0);
+    const y = useMotionValue(0);
+
+    // State to track if window moved for button visibility
+    const [isMoved, setIsMoved] = useState(false);
+
+    useMotionValueEvent(x, "change", (latest: number) => {
+        setIsMoved(Math.abs(latest) > 1 || Math.abs(y.get()) > 1);
+    });
+
+    useMotionValueEvent(y, "change", (latest: number) => {
+        setIsMoved(Math.abs(x.get()) > 1 || Math.abs(latest) > 1);
+    });
+
+    const handleResetPosition = useCallback(() => {
+        animate(x, 0, { type: "spring", stiffness: 300, damping: 30 });
+        animate(y, 0, { type: "spring", stiffness: 300, damping: 30 });
+    }, [x, y]);
+
     return (
-        <div className="relative w-full h-full max-w-full bg-ide-bg rounded-xl shadow-2xl flex flex-col overflow-hidden border border-white/40 ring-1 ring-black/5">
+        <>
+            <motion.div
+                style={{ x, y }}
+                drag={!isMobile}
+                dragListener={false}
+                dragControls={dragControls}
+                dragMomentum={false}
+                dragElastic={0}
+                className="relative w-full h-full max-w-full bg-ide-bg rounded-xl shadow-2xl flex flex-col overflow-hidden border border-white/40 ring-1 ring-black/5"
+            >
+                {/* ... existing content ... */}
 
-            {/* ===== COMMAND PALETTE ===== */}
-            <CommandPalette
-                open={isCmdPaletteOpen}
-                onOpenChange={setIsCmdPaletteOpen}
-                files={fileTree}
-                onFileSelect={handleOpenFileByName}
-                actions={{
-                    toggleTerminal,
-                    toggleSidebar,
-                    toggleChat,
-                    downloadCV: handleDownloadCV,
-                    scrollToContact: handleScrollToContact
-                }}
-            />
+                {/* ===== COMMAND PALETTE ===== */}
+                <CommandPalette
+                    open={isCmdPaletteOpen}
+                    onOpenChange={setIsCmdPaletteOpen}
+                    files={fileTree}
+                    onFileSelect={handleOpenFileByName}
+                    actions={{
+                        toggleTerminal,
+                        toggleSidebar,
+                        toggleChat,
+                        downloadCV: handleDownloadCV,
+                        scrollToContact: handleScrollToContact
+                    }}
+                />
 
-            {/* ===== TITLE BAR ===== */}
-            <TitleBar
-                title="B.DEV — Portfolio"
-                onToggleTerminal={toggleTerminal}
-                onToggleSidebar={toggleSidebar}
-                onToggleChat={toggleChat}
-                showMobileMenu={isMobile}
-            />
-
-            {/* ===== MAIN LAYOUT ===== */}
-            <div className="flex-1 flex overflow-hidden min-h-0">
-
-                {/* ========== 1. FILE EXPLORER ========== */}
-                {isSidebarOpen && (
-                    <>
-                        <aside
-                            className="h-full overflow-hidden shrink-0 grow-0 bg-ide-bg"
-                            style={{
-                                width: isMobile ? '100%' : `${leftPanel.width}px`,
-                                minWidth: isMobile ? undefined : `${layoutConfig.leftSidebar.minWidth}px`,
-                                maxWidth: isMobile ? undefined : `${layoutConfig.leftSidebar.maxWidth}px`,
-                            }}
-                        >
-                            <Sidebar
-                                key={`sidebar-${fileTreeVersion}`}
-                                title="Portfolio-v.3.02"
-                                files={filteredFiles}
-                                activeFileName={activeFile}
-                                searchQuery={searchQuery}
-                                onSearchChange={setSearchQuery}
-                                onFileClick={handleFileClick}
-                                isOpen={isSidebarOpen}
-                                onClose={() => setSidebarOpen(false)}
-                                width={isMobile ? 280 : leftPanel.width}
-                                isMobile={isMobile}
-                            />
-
-                        </aside>
-
-                        {/* Left Resize Handle */}
-                        {!isMobile && (
-                            <div
-                                className="w-1 h-full cursor-col-resize bg-ide-border hover:bg-ide-accent active:bg-ide-accent transition-colors shrink-0"
-                                onMouseDown={leftPanel.startResizing}
-                            />
-                        )}
-                    </>
-                )}
-
-                {/* ========== 2 & 3. CENTER: EDITOR + TERMINAL ========== */}
-                <main className="flex-1 flex flex-col bg-white overflow-hidden min-w-0 min-h-0">
-
-                    {/* Tab Bar */}
-                    <TabBar
-                        tabs={tabs}
-                        activeTabId={activeFile}
-                        onTabClick={setActiveFile}
-                        onTabClose={closeFile}
+                {/* ===== TITLE BAR (Drag Handle) ===== */}
+                <div
+                    onPointerDown={(e) => {
+                        if (!isMobile) dragControls.start(e);
+                    }}
+                    className={`flex-none ${!isMobile ? 'cursor-grab active:cursor-grabbing' : ''}`}
+                >
+                    <TitleBar
+                        title={t('titleBar.title')}
+                        onToggleTerminal={toggleTerminal}
+                        onToggleSidebar={toggleSidebar}
+                        onToggleChat={toggleChat}
+                        showMobileMenu={isMobile}
                     />
+                </div>
 
-                    {/* Editor + Terminal Container */}
-                    <div className="flex-1 flex flex-col min-h-0">
+                {/* ===== MAIN LAYOUT ===== */}
+                <div className="flex-1 flex overflow-hidden min-h-0">
 
-                        {/* ===== 2. EDITOR ===== */}
-                        <div
-                            className={`min-h-0 transition-[flex] duration-200 ${isTerminalMaximized
-                                ? 'flex-none h-0 overflow-hidden'
-                                : 'flex-1'
-                                }`}
-                        >
-                            <EditorPane file={currentFile} />
-                        </div>
+                    {/* ========== 1. FILE EXPLORER ========== */}
+                    {isSidebarOpen && (
+                        <>
+                            <aside
+                                className="h-full overflow-hidden shrink-0 grow-0 bg-ide-bg"
+                                style={{
+                                    width: isMobile ? '100%' : `${leftPanel.width}px`,
+                                    minWidth: isMobile ? undefined : `${layoutConfig.leftSidebar.minWidth}px`,
+                                    maxWidth: isMobile ? undefined : `${layoutConfig.leftSidebar.maxWidth}px`,
+                                }}
+                            >
+                                <Sidebar
+                                    key={`sidebar-${fileTreeVersion}`}
+                                    title={t('sidebar.title')}
+                                    files={filteredFiles}
+                                    activeFileName={activeFile}
+                                    searchQuery={searchQuery}
+                                    onSearchChange={setSearchQuery}
+                                    onFileClick={handleFileClick}
+                                    isOpen={isSidebarOpen}
+                                    onClose={() => setSidebarOpen(false)}
+                                    width={isMobile ? 280 : leftPanel.width}
+                                    isMobile={isMobile}
+                                />
+                            </aside>
 
-                        {/* ===== 3. TERMINAL ===== */}
-                        {isTerminalOpen && (
-                            <Terminal
-                                isOpen={isTerminalOpen}
-                                onClose={() => setTerminalOpen(false)}
-                                onOpenFile={handleOpenFileByName}
-                                files={INITIAL_FILES}
-                                isMaximized={isTerminalMaximized}
-                                onToggleMaximize={toggleTerminalMaximize}
-                            />
-                        )}
-                    </div>
-                </main>
+                            {/* Left Resize Handle */}
+                            {!isMobile && (
+                                <div
+                                    className="w-1 h-full cursor-col-resize bg-ide-border hover:bg-ide-accent active:bg-ide-accent transition-colors shrink-0"
+                                    onMouseDown={leftPanel.startResizing}
+                                />
+                            )}
+                        </>
+                    )}
 
-                {/* ========== 4. AI AGENT ========== */}
-                {isChatOpen && !isCompactView && (
-                    <>
-                        {/* Right Resize Handle */}
-                        <div
-                            className="w-1 h-full cursor-col-resize bg-ide-border hover:bg-ide-accent active:bg-ide-accent transition-colors shrink-0"
-                            onMouseDown={rightPanel.startResizing}
+                    {/* ========== 2 & 3. CENTER: EDITOR + TERMINAL ========== */}
+                    <main className="flex-1 flex flex-col bg-white overflow-hidden min-w-0 min-h-0">
+
+                        {/* Tab Bar */}
+                        <TabBar
+                            tabs={tabs}
+                            activeTabId={activeFile}
+                            onTabClick={setActiveFile}
+                            onTabClose={closeFile}
                         />
 
-                        <aside
-                            className="h-full bg-ide-bg border-l border-ide-border flex flex-col shrink-0 grow-0 overflow-hidden"
-                            style={{
-                                width: `${rightPanel.width}px`,
-                                minWidth: `${layoutConfig.rightSidebar.minWidth}px`,
-                                maxWidth: `${layoutConfig.rightSidebar.maxWidth}px`,
-                            }}
-                        >
-                            <ChatPanel
-                                contextFiles={allFiles}
-                                onOpenFile={handleOpenFileByName}
-                                activeFile={currentFile}
-                                onUpdateFile={updateFileContent}
-                                onCreateFile={createFile}
-                                onCreateFileWithPath={createFileWithPath}
-                                onDeleteFile={deleteFile}
-                                onReadFile={readFile}
-                                onCreateFolder={createFolder}
-                                onDeleteFolder={deleteFolder}
-                                onListDirectory={listDirectory}
-                            />
-                        </aside>
-                    </>
-                )}
-            </div>
+                        {/* Editor + Terminal Container */}
+                        <div className="flex-1 flex flex-col min-h-0">
 
-            {/* ===== STATUS BAR ===== */}
-            <StatusBar
-                language={currentFile?.type || 'Plain Text'}
-                lineCount={lineCount}
-            />
-        </div>
+                            {/* ===== 2. EDITOR ===== */}
+                            <div
+                                className={`min-h-0 transition-[flex] duration-200 ${isTerminalMaximized
+                                    ? 'flex-none h-0 overflow-hidden'
+                                    : 'flex-1'
+                                    }`}
+                            >
+                                <EditorPane file={currentFile} />
+                            </div>
+
+                            {/* ===== 3. TERMINAL ===== */}
+                            {isTerminalOpen && (
+                                <Terminal
+                                    isOpen={isTerminalOpen}
+                                    onClose={() => setTerminalOpen(false)}
+                                    onOpenFile={handleOpenFileByName}
+                                    files={INITIAL_FILES}
+                                    isMaximized={isTerminalMaximized}
+                                    onToggleMaximize={toggleTerminalMaximize}
+                                />
+                            )}
+                        </div>
+                    </main>
+
+                    {/* ========== 4. AI AGENT ========== */}
+                    {isChatOpen && !isCompactView && (
+                        <>
+                            {/* Right Resize Handle */}
+                            <div
+                                className="w-1 h-full cursor-col-resize bg-ide-border hover:bg-ide-accent active:bg-ide-accent transition-colors shrink-0"
+                                onMouseDown={rightPanel.startResizing}
+                            />
+
+                            <aside
+                                className="h-full bg-ide-bg border-l border-ide-border flex flex-col shrink-0 grow-0 overflow-hidden"
+                                style={{
+                                    width: `${rightPanel.width}px`,
+                                    minWidth: `${layoutConfig.rightSidebar.minWidth}px`,
+                                    maxWidth: `${layoutConfig.rightSidebar.maxWidth}px`,
+                                }}
+                            >
+                                <ChatPanel
+                                    contextFiles={allFiles}
+                                    onOpenFile={handleOpenFileByName}
+                                    activeFile={currentFile}
+                                    onUpdateFile={updateFileContent}
+                                    onCreateFile={createFile}
+                                    onCreateFileWithPath={createFileWithPath}
+                                    onDeleteFile={deleteFile}
+                                    onReadFile={readFile}
+                                    onCreateFolder={createFolder}
+                                    onDeleteFolder={deleteFolder}
+                                    onListDirectory={listDirectory}
+                                />
+                            </aside>
+                        </>
+                    )}
+                </div>
+
+                {/* ===== STATUS BAR ===== */}
+                <StatusBar
+                    language={currentFile?.type || t('general.plainText')}
+                    lineCount={lineCount}
+                />
+            </motion.div>
+
+            {/* Floating Reset Button - Simple White Refined Circle */}
+            {!isMobile && isMoved && (
+                <motion.button
+                    onClick={handleResetPosition}
+                    className="fixed bottom-8 right-8 z-[100] w-12 h-12 flex items-center justify-center bg-[#FAFAFA] rounded-full shadow-lg border border-black/5 text-gray-600 hover:text-black hover:scale-105 hover:shadow-xl transition-all duration-300"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                    whileTap={{ scale: 0.95 }}
+                    title={t('statusBar.resetPosition') || "Center Window"}
+                >
+                    <RotateCcw size={18} strokeWidth={1.5} />
+                </motion.button>
+            )}
+        </>
     );
 }
 

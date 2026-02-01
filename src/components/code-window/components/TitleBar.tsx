@@ -1,4 +1,5 @@
 import { Menu, Terminal, PanelLeft, MessageSquare } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 
 interface TitleBarProps {
@@ -18,6 +19,8 @@ export function TitleBar({
     showMobileMenu,
     className
 }: TitleBarProps) {
+    const t = useTranslations('ide');
+
     return (
         <header className={cn(
             'h-10 bg-ide-bg border-b border-ide-border',
@@ -38,14 +41,14 @@ export function TitleBar({
                     <button
                         onClick={onToggleSidebar}
                         className="p-1.5 rounded hover:bg-ide-ui text-ide-muted hover:text-ide-text transition-colors"
-                        title="Toggle Sidebar (Ctrl+B)"
+                        title={t('titleBar.toggleSidebar')}
                     >
                         <PanelLeft size={14} />
                     </button>
                     <button
                         onClick={onToggleTerminal}
                         className="p-1.5 rounded hover:bg-ide-ui text-ide-muted hover:text-ide-text transition-colors"
-                        title="Toggle Terminal (Ctrl+J)"
+                        title={t('titleBar.toggleTerminal')}
                     >
                         <Terminal size={14} />
                     </button>
@@ -53,7 +56,7 @@ export function TitleBar({
                         <button
                             onClick={onToggleChat}
                             className="p-1.5 rounded hover:bg-ide-ui text-ide-muted hover:text-ide-text transition-colors"
-                            title="Toggle AI Agent (Ctrl+L)"
+                            title={t('titleBar.toggleChat')}
                         >
                             <MessageSquare size={14} />
                         </button>
@@ -72,7 +75,7 @@ export function TitleBar({
                     <button
                         onClick={onToggleSidebar}
                         className="md:hidden p-1 hover:bg-ide-ui rounded transition-colors"
-                        aria-label="Toggle sidebar"
+                        aria-label={t('titleBar.mobileToggleSidebar')}
                     >
                         <Menu size={18} className="text-ide-muted" />
                     </button>

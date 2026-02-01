@@ -31,6 +31,7 @@ import {
     getGeminiService
 } from '@/lib/gemini';
 import { FileSystemItem, FileData, CodeChange, AgentAction } from '../types';
+import { useTranslations } from 'next-intl';
 
 // ============================================================
 // TYPES & INTERFACES
@@ -79,12 +80,6 @@ interface ParsedCodeBlock {
 
 const MAX_INPUT_LENGTH = 10000;
 const MAX_HISTORY_FOR_API = 20;
-const THINKING_MESSAGES = [
-    'Réflexion en cours...',
-    'Analyse du code...',
-    'Génération de la réponse...',
-    'Traitement de votre demande...',
-];
 
 
 
@@ -171,7 +166,8 @@ const parseCodeBlocks = (text: string): ParsedCodeBlock[] => {
 const parseCodeChanges = (
     text: string,
     defaultFilename: string,
-    modifyActions: AgentAction[]
+    modifyActions: AgentAction[],
+    getDescription: (filename: string) => string = (filename) => filename
 ): CodeChange[] => {
     const blocks = parseCodeBlocks(text);
 
@@ -189,7 +185,7 @@ const parseCodeChanges = (
             filename,
             language: block.language,
             newCode: block.code,
-            description: `Modification de ${filename}`,
+            description: getDescription(filename),
             applied: false,
             linesAdded: lines.length,
         };
@@ -255,7 +251,7 @@ const parseAgentActions = (userInput: string): AgentAction[] => {
                         filename: folderName,
                         status: 'pending',
                         timestamp: Date.now(),
-                        description: type === 'createFolder' ? 'Création dossier' : 'Suppression dossier'
+                        isFolder: true
                     });
                 }
             }
@@ -274,8 +270,7 @@ const parseAgentActions = (userInput: string): AgentAction[] => {
                 type: 'create',
                 filename: 'project-scaffold',
                 status: 'pending',
-                timestamp: Date.now(),
-                description: 'Scaffolding projet'
+                timestamp: Date.now()
             });
             break;
         }
@@ -296,36 +291,65 @@ interface ActionLineProps {
 }
 
 const ActionLine = memo<ActionLineProps>(({ type, text, time, loading }) => {
-    const labels = {
-        thought: 'Thought',
-        read: 'Read',
-        searched: 'Searched',
+    const t = useTranslations('ide');
+    const labels: Record<ActionLineProps['type'], string> = {
+        thought: t('chat.actionLabels.thought'),
+        read: t('chat.actionLabels.read'),
+        searched: t('chat.actionLabels.searched'),
     };
 
+    // Typewriter effect logic
+    const [displayedText, setDisplayedText] = useState(loading ? '' : text);
+
+    useEffect(() => {
+        if (!loading || !text) {
+            setDisplayedText(text);
+            return;
+        }
+
+        setDisplayedText('');
+        let index = 0;
+        const speed = 30; // Faster and smoother
+        const interval = setInterval(() => {
+            if (index < text.length) {
+                setDisplayedText(text.slice(0, index + 1));
+                index++;
+            } else {
+                clearInterval(interval);
+            }
+        }, speed);
+
+        return () => clearInterval(interval);
+    }, [text, loading]);
+
     return (
-        <div className="py-0.5">
-            <div className="text-[12px] text-[#9A9A9A] flex items-center gap-1.5">
-                {/* Label */}
-                <span className="font-medium text-[#37352F]">{labels[type]}</span>
+        <div className="py-0.5 font-mono text-[11px]">
+            <div className={`flex items-center gap-2 ${loading ? 'text-[#D97757]' : 'text-[#9A9A9A]'}`}>
+                {/* Symbol - Diamond for thoughts */}
+                <span className={`text-[10px] ${loading ? 'animate-pulse' : ''}`}>
+                    {type === 'thought' ? '◆' : '›'}
+                </span>
 
-                {/* Time for thought */}
-                {type === 'thought' && time && (
-                    <span className="text-[#D97757]">{time}</span>
-                )}
+                <div className="flex items-center gap-1.5 break-all">
+                    {/* Label */}
+                    <span className="font-semibold uppercase tracking-wide opacity-80">{labels[type]}</span>
 
-                {/* Description for read/searched */}
-                {type !== 'thought' && text && (
-                    <span className="text-[#9A9A9A]">{text}</span>
-                )}
+                    {/* Text content with Typewriter effect */}
+                    {text && (
+                        <span className="opacity-90">
+                            {displayedText}
+                            {/* Cursor for loading state - Smooth pulse instead of blink */}
+                            {loading && (
+                                <span className="inline-block w-[2px] h-3 bg-[#D97757] ml-1 animate-pulse align-middle" />
+                            )}
+                        </span>
+                    )}
 
-                {/* Loading dots */}
-                {loading && (
-                    <div className="flex items-center gap-1 ml-1">
-                        <div className="w-1 h-1 bg-[#D97757] rounded-full animate-pulse" />
-                        <div className="w-1 h-1 bg-[#D97757]/60 rounded-full animate-pulse" style={{ animationDelay: '0.15s' }} />
-                        <div className="w-1 h-1 bg-[#D97757]/30 rounded-full animate-pulse" style={{ animationDelay: '0.3s' }} />
-                    </div>
-                )}
+                    {/* Time */}
+                    {type === 'thought' && time && (
+                        <span className="text-ide-muted opacity-60 ml-1">[{time}]</span>
+                    )}
+                </div>
             </div>
         </div>
     );
@@ -339,13 +363,14 @@ interface AgentActionLineProps {
 }
 
 const AgentActionLine = memo<AgentActionLineProps>(({ action }) => {
+    const t = useTranslations('ide');
     const labels: Record<AgentAction['type'], string> = {
-        read: 'Read',
-        create: 'Created',
-        delete: 'Deleted',
-        modify: 'Modified',
-        thought: 'Thought',
-        search: 'Searched',
+        read: t('chat.actionLabels.read'),
+        create: t('chat.actionLabels.created'),
+        delete: t('chat.actionLabels.deleted'),
+        modify: t('chat.actionLabels.modified'),
+        thought: t('chat.actionLabels.thought'),
+        search: t('chat.actionLabels.searched'),
     };
 
     return (
@@ -388,10 +413,13 @@ InlineFormat.displayName = 'InlineFormat';
 
 // Inline Code Block Component (for code blocks shown in message, not as FileChangeCard)
 const InlineCodeBlock = memo<{ language: string; code: string }>(({ language, code }) => {
+    const t = useTranslations('ide');
     const [copied, setCopied] = useState(false);
     const [isExpanded, setIsExpanded] = useState(false);
     const lineCount = code.split('\n').length;
     const shouldCollapse = lineCount > 15;
+    const lineCountLabel = t('chat.inlineCode.lines', { count: lineCount });
+    const moreLinesLabel = t('chat.inlineCode.moreLines', { count: lineCount - 15 });
 
     const handleCopy = useCallback(async () => {
         try {
@@ -411,7 +439,7 @@ const InlineCodeBlock = memo<{ language: string; code: string }>(({ language, co
             <div className="flex items-center justify-between px-3 py-1.5 bg-ide-ui/40 border-b border-ide-border/50 rounded-t-lg">
                 <div className="flex items-center gap-2">
                     <span className="text-[11px] text-ide-muted font-mono">{language}</span>
-                    <span className="text-[10px] text-ide-muted/70">{lineCount} lines</span>
+                    <span className="text-[10px] text-ide-muted/70">{lineCountLabel}</span>
                 </div>
                 <div className="flex items-center gap-1">
                     {shouldCollapse && (
@@ -419,7 +447,7 @@ const InlineCodeBlock = memo<{ language: string; code: string }>(({ language, co
                             onClick={() => setIsExpanded(!isExpanded)}
                             className="px-2 py-0.5 rounded text-[10px] hover:bg-ide-ui text-ide-muted hover:text-ide-text transition-colors"
                         >
-                            {isExpanded ? 'Réduire' : 'Voir tout'}
+                            {isExpanded ? t('chat.inlineCode.collapse') : t('chat.inlineCode.expand')}
                         </button>
                     )}
                     <button
@@ -445,7 +473,7 @@ const InlineCodeBlock = memo<{ language: string; code: string }>(({ language, co
                     onClick={() => setIsExpanded(true)}
                     className="px-3 py-1.5 bg-ide-ui/30 border-t border-ide-border/30 text-center cursor-pointer hover:bg-ide-ui/50 transition-colors rounded-b-lg"
                 >
-                    <span className="text-[10px] text-ide-muted">+ {lineCount - 15} lignes supplémentaires</span>
+                    <span className="text-[10px] text-ide-muted">{moreLinesLabel}</span>
                 </div>
             )}
         </div>
@@ -635,6 +663,7 @@ interface ErrorBannerProps {
 }
 
 const ErrorBanner = memo<ErrorBannerProps>(({ message, errorCode, onRetry, onDismiss }) => {
+    const t = useTranslations('ide');
     const isRetryable = errorCode && ![
         GeminiErrorCode.API_KEY_INVALID,
         GeminiErrorCode.API_KEY_MISSING,
@@ -642,23 +671,23 @@ const ErrorBanner = memo<ErrorBannerProps>(({ message, errorCode, onRetry, onDis
     ].includes(errorCode);
 
     return (
-        <div className="mx-2 mb-2 p-3 bg-red-50 border border-red-200 rounded-lg">
-            <div className="flex items-start gap-2">
-                <AlertCircle size={16} className="text-red-500 flex-shrink-0 mt-0.5" />
+        <div className="mx-3 mb-4 p-4 bg-[#FAF9F6] border-l-4 border-[#D97757] shadow-sm rounded-r-lg border-y border-r border-[#E8E5DE]">
+            <div className="flex items-start gap-3">
+                <AlertCircle size={18} className="text-[#D97757] flex-shrink-0 mt-0.5" />
                 <div className="flex-1 min-w-0">
-                    <p className="text-[12px] text-red-700 font-medium">Erreur</p>
-                    <p className="text-[11px] text-red-600 mt-0.5">{message}</p>
-                    {errorCode && <p className="text-[10px] text-red-400 mt-1 font-mono">Code: {errorCode}</p>}
+                    <p className="text-[14px] text-[#37352F] font-serif font-medium tracking-tight mb-1">{t('chat.errorBanner.title')}</p>
+                    <p className="text-[13px] text-[#6B6B6B] leading-relaxed">{message}</p>
+                    {errorCode && <p className="text-[11px] text-[#9A9A9A] mt-2 font-mono bg-[#F5F3EE] px-1.5 py-0.5 rounded w-fit">{t('chat.errorBanner.code', { code: errorCode })}</p>}
                 </div>
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-1 -mt-1 -mr-1">
                     {isRetryable && onRetry && (
-                        <button onClick={onRetry} className="p-1.5 hover:bg-red-100 rounded text-red-500 transition-colors" title="Réessayer">
-                            <RefreshCw size={14} />
+                        <button onClick={onRetry} className="p-2 hover:bg-[#D97757]/10 rounded-full text-[#D97757] transition-colors" title={t('chat.errorBanner.retry')}>
+                            <RefreshCw size={15} />
                         </button>
                     )}
                     {onDismiss && (
-                        <button onClick={onDismiss} className="p-1.5 hover:bg-red-100 rounded text-red-400 transition-colors" title="Fermer">
-                            <X size={14} />
+                        <button onClick={onDismiss} className="p-2 hover:bg-[#E8E5DE] rounded-full text-[#9A9A9A] hover:text-[#37352F] transition-colors" title={t('chat.errorBanner.close')}>
+                            <X size={15} />
                         </button>
                     )}
                 </div>
@@ -668,58 +697,147 @@ const ErrorBanner = memo<ErrorBannerProps>(({ message, errorCode, onRetry, onDis
 });
 ErrorBanner.displayName = 'ErrorBanner';
 
-const EmptyState = memo<{ onSuggestionClick?: (suggestion: string) => void }>(({ onSuggestionClick }) => {
-    const suggestions = [
-        { text: "Qui est B.DEV ?", hasIcon: false },
-        { text: "Montre-moi tes projets", hasIcon: false },
-        { text: "Quelles sont tes compétences ?", hasIcon: false },
-        { text: "Crée un fichier hello.ts", hasIcon: true },
-    ];
+const EmptyState = memo<{
+    onSuggestionClick?: (suggestion: string) => void;
+    input: string;
+    setInput: (value: string) => void;
+    onSend: () => void;
+    onKeyDown: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
+    isLoading: boolean;
+    isServiceReady: boolean;
+}>(({ onSuggestionClick, input, setInput, onSend, onKeyDown, isLoading, isServiceReady }) => {
+    const t = useTranslations('ide');
+    const suggestions = (t.raw('chat.emptyState.suggestions') as Array<{ text: string; icon?: string; prompt?: string }>) || [];
+    const [visitorCount, setVisitorCount] = useState<number | null>(null);
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+    // Fetch visitor count on mount or fallback to local simulation
+    useEffect(() => {
+        const handleLocalVisitorCount = () => {
+            const stored = localStorage.getItem('visitor_id');
+            if (stored) {
+                setVisitorCount(parseInt(stored));
+            } else {
+                // Generate random number between 120 and 890 for realism
+                const randomCount = Math.floor(Math.random() * (890 - 120 + 1)) + 120;
+                localStorage.setItem('visitor_id', String(randomCount));
+                setVisitorCount(randomCount);
+            }
+        };
+
+        const fetchVisitorCount = async () => {
+            try {
+                const response = await fetch('/api/stats');
+                const data = await response.json();
+                if (data.success && data.data?.uniqueVisitors > 0) {
+                    setVisitorCount(data.data.uniqueVisitors);
+                } else {
+                    handleLocalVisitorCount();
+                }
+            } catch (error) {
+                console.warn('Using local visitor count fallback');
+                handleLocalVisitorCount();
+            }
+        };
+        fetchVisitorCount();
+    }, []);
+
+    // Format visitor number with leading zeros
+    const formattedVisitorNumber = visitorCount !== null
+        ? String(visitorCount).padStart(3, '0')
+        : '---';
+
+    // Auto-resize textarea based on content
+    useEffect(() => {
+        if (textareaRef.current) {
+            textareaRef.current.style.height = 'auto';
+            textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 200)}px`;
+        }
+    }, [input]);
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        onSend();
+    };
 
     return (
-        <div className="h-full flex flex-col items-center justify-center p-6">
-            {/* Icon - ultra minimal */}
-            <div className="mb-6">
-                <div className="w-14 h-14 bg-white rounded-xl border border-ide-border/50 flex items-center justify-center">
+        <div className="h-full flex flex-col items-center justify-center p-4 sm:p-6 animate-chat-scale-in">
+            {/* B.AI Logo */}
+            <div className="w-full max-w-[480px] text-center mb-6">
+                <div className="flex items-center justify-center mb-4">
                     <Image
-                        src="/logo/SVG/Mini-Logo-B.svg"
-                        alt="B.AI Assistant Logo"
-                        width={28}
-                        height={28}
-                        className="w-7 h-7"
+                        src="/logo/IDE/Logo-AI-illustration.svg"
+                        alt="B.AI"
+                        width={100}
+                        height={100}
+                        priority
                     />
                 </div>
+
+                {/* Main greeting */}
+                <h2 className="text-2xl sm:text-[28px] font-serif font-medium text-[#37352F] tracking-tight">
+                    {t('chat.emptyState.greeting')}
+                    <span className="text-[#D97757]"> {t('chat.emptyState.visitorPrefix')}</span>
+                    <span className="font-mono text-[#D97757]">{formattedVisitorNumber}</span>
+                </h2>
             </div>
 
-            {/* Text */}
-            <div className="text-center mb-8 space-y-2">
-                <h3 className="text-lg font-serif font-medium text-brand">B.AI Agent</h3>
-                <p className="text-xs text-ide-muted max-w-[260px] mx-auto leading-relaxed">
-                    Je connais chaque ligne de ce portfolio.<br />
-                    <span className="opacity-70">Pose une question technique ou explore mes projets.</span>
-                </p>
-            </div>
+            {/* Functional Input container */}
+            <div className="w-full max-w-[480px]">
+                <form onSubmit={handleSubmit} className="relative bg-white/90 backdrop-blur-sm rounded-2xl border border-[#E8E5DE] shadow-[0_8px_32px_-12px_rgba(20,20,19,0.15)] overflow-hidden focus-within:border-[#D97757]/40 focus-within:shadow-lg transition-all">
+                    {/* Real textarea */}
+                    <textarea
+                        ref={textareaRef}
+                        value={input}
+                        onChange={(e) => setInput(e.target.value)}
+                        onKeyDown={onKeyDown}
+                        placeholder={t('chat.emptyState.placeholder')}
+                        className="text-ide-text text-[15px] w-full resize-none bg-transparent px-4 py-4 outline-none placeholder:text-ide-muted/70 min-h-[48px] max-h-[200px] overflow-y-hidden"
+                        rows={1}
+                        spellCheck={false}
+                        disabled={isLoading || !isServiceReady}
+                    />
 
-            {/* Suggestion buttons - minimal */}
-            {onSuggestionClick && (
-                <div className="flex flex-wrap justify-center gap-2 max-w-[380px]">
-                    {suggestions.map((suggestion, idx) => (
+                    {/* Bottom bar with B.AI logo on left, send button on right */}
+                    <div className="px-4 py-3 border-t border-[#E8E5DE]/50 flex items-center justify-between">
+                        <Image src="/logo/IDE/Logo AI.svg" alt="B.AI" width={28} height={12} />
                         <button
-                            key={idx}
-                            onClick={() => onSuggestionClick(suggestion.text)}
-                            className="text-ide-muted hover:text-ide-accent text-[11px] px-3 py-1.5 rounded-md border border-ide-border/50 hover:border-ide-accent/50 bg-white"
+                            type="submit"
+                            disabled={!input.trim() || isLoading || !isServiceReady}
+                            className={`flex items-center justify-center w-7 h-7 rounded-lg transition-all ${input.trim() && !isLoading && isServiceReady
+                                ? 'bg-[#D97757] text-white shadow-sm hover:bg-[#c86a4c]'
+                                : 'bg-ide-ui/50 text-ide-muted cursor-not-allowed'
+                                }`}
                         >
-                            {suggestion.hasIcon && (
-                                <svg className="w-3 h-3 inline mr-1.5 opacity-60" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                    <polyline points="16 18 22 12 16 6" />
-                                    <polyline points="8 6 2 12 8 18" />
-                                </svg>
-                            )}
-                            {suggestion.text}
+                            {isLoading ? <Loader2 size={14} className="animate-spin" /> : <ArrowUp size={14} />}
                         </button>
-                    ))}
-                </div>
-            )}
+                    </div>
+                </form>
+
+                {/* Quick action buttons - with custom icons */}
+                {onSuggestionClick && (
+                    <div className="mt-5 flex flex-wrap justify-center gap-2">
+                        {suggestions.map((suggestion, idx) => (
+                            <button
+                                key={idx}
+                                onClick={() => onSuggestionClick(suggestion.prompt || suggestion.text)}
+                                className="group flex items-center gap-2 text-[13px] px-4 py-2.5 rounded-full border border-[#E8E5DE] bg-white/80 text-[#37352F]/80 shadow-sm transition-all hover:border-[#D97757]/40 hover:bg-white hover:shadow-md hover:text-[#37352F]"
+                            >
+                                {suggestion.icon && (
+                                    <Image
+                                        src={`/icons/IDE-icone/${suggestion.icon}.svg`}
+                                        alt=""
+                                        width={16}
+                                        height={16}
+                                        className="w-4 h-4 opacity-60 group-hover:opacity-80 transition-opacity"
+                                    />
+                                )}
+                                {suggestion.text}
+                            </button>
+                        ))}
+                    </div>
+                )}
+            </div>
         </div>
     );
 });
@@ -747,12 +865,18 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
     maxMessages = 50,
     className = '',
 }) => {
+    const t = useTranslations('ide');
+    const thinkingMessages = useMemo(() => {
+        const messages = t.raw('chat.thinkingMessages') as string[] | undefined;
+        if (Array.isArray(messages) && messages.length > 0) return messages;
+        return [t('chat.message.analyzed')];
+    }, [t]);
     // State
     const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [thinkingTime, setThinkingTime] = useState(0);
-    const [thinkingMessage, setThinkingMessage] = useState(THINKING_MESSAGES[0]);
+    const [thinkingMessage, setThinkingMessage] = useState(() => thinkingMessages[0] ?? t('chat.message.analyzed'));
     const [streamingText, setStreamingText] = useState('');
     const [error, setError] = useState<{ message: string; code?: GeminiErrorCode } | null>(null);
     const [isServiceReady, setIsServiceReady] = useState(false);
@@ -806,6 +930,10 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
         }
     }, [input]);
 
+    useEffect(() => {
+        setThinkingMessage(thinkingMessages[0]);
+    }, [thinkingMessages]);
+
     // Thinking timer
     useEffect(() => {
         if (isLoading) {
@@ -814,8 +942,8 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
 
             thinkingIntervalRef.current = setInterval(() => {
                 setThinkingTime(t => t + 1);
-                msgIndex = (msgIndex + 1) % THINKING_MESSAGES.length;
-                setThinkingMessage(THINKING_MESSAGES[msgIndex]);
+                msgIndex = (msgIndex + 1) % thinkingMessages.length;
+                setThinkingMessage(thinkingMessages[msgIndex]);
             }, 1000);
         } else {
             if (thinkingIntervalRef.current) {
@@ -829,7 +957,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                 clearInterval(thinkingIntervalRef.current);
             }
         };
-    }, [isLoading]);
+    }, [isLoading, thinkingMessages]);
 
     // Get conversation history for API
     const getConversationHistory = useCallback((): GeminiMessage[] => {
@@ -857,7 +985,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
 
         const executedActions = actions.map(action => {
             // Check if it's a folder action
-            const isFolder = action.description?.includes('dossier') ||
+            const isFolder = action.isFolder ||
                 !action.filename?.includes('.') ||
                 action.filename === 'project-scaffold';
 
@@ -870,7 +998,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                             fileContents.set(action.filename, content);
                             return { ...action, status: 'done' as const, content };
                         }
-                        return { ...action, status: 'error' as const, description: 'Fichier non trouvé' };
+                        return { ...action, status: 'error' as const, description: t('chat.actionDescriptions.fileNotFound') };
                     }
                     break;
 
@@ -882,10 +1010,10 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                                 onCreateFolder(action.filename);
                                 pendingFolders.push(action.filename);
                             }
-                            return { ...action, status: 'done' as const, description: `Dossier ${action.filename} créé` };
+                            return { ...action, status: 'done' as const, description: t('chat.actionDescriptions.folderCreated', { folder: action.filename }) };
                         } else if (action.filename === 'project-scaffold') {
                             // Project scaffolding - will be handled by AI response
-                            return { ...action, status: 'pending' as const, description: 'Scaffolding en cours...' };
+                            return { ...action, status: 'pending' as const, description: t('chat.actionDescriptions.scaffoldingPending') };
                         } else {
                             // Create file
                             const ext = getFileExtension(action.filename);
@@ -903,7 +1031,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                             if (onDeleteFolder) {
                                 onDeleteFolder(action.filename);
                             }
-                            return { ...action, status: 'done' as const, description: `Dossier ${action.filename} supprimé` };
+                            return { ...action, status: 'done' as const, description: t('chat.actionDescriptions.folderDeleted', { folder: action.filename }) };
                         } else {
                             pendingDeletes.push(action.filename);
                             return { ...action, status: 'done' as const };
@@ -915,7 +1043,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
         });
 
         return { executedActions, fileContents, pendingCreates, pendingDeletes, pendingFolders };
-    }, [onReadFile, onCreateFolder, onDeleteFolder]);
+    }, [onReadFile, onCreateFolder, onDeleteFolder, t]);
 
     // Apply code change - separated to avoid setState during render
     const applyCodeChange = useCallback((messageId: string, changeIndex: number) => {
@@ -958,7 +1086,54 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
     // Handle sending message
     const handleSend = useCallback(async () => {
         const trimmedInput = sanitizeInput(input);
-        if (!trimmedInput || isLoading || !geminiServiceRef.current?.isReady()) return;
+        if (!trimmedInput) return;
+
+        // DEMO MODE TRIGGER
+        if (trimmedInput === 'test' || trimmedInput === '/demo') {
+            const userMsg: ChatMessage = {
+                id: generateId(),
+                role: 'user',
+                text: trimmedInput,
+                timestamp: new Date(),
+            };
+            setMessages(prev => [...prev, userMsg]);
+            setInput('');
+            setIsLoading(true);
+
+            // Simulation Sequence
+            setTimeout(() => {
+                setIsLoading(false);
+                const demoMsg: ChatMessage = {
+                    id: generateId(),
+                    role: 'model',
+                    text: "I've created a demo component to showcase the syntax highlighting and UI elements. Here is the implementation:",
+                    timestamp: new Date(),
+                    thoughts: "Analyzing design requirements and generating demo assets...",
+                    thinkingTime: 1.8,
+                    actions: [
+                        { type: 'read', filename: 'src/app/page.tsx', status: 'done', timestamp: Date.now() },
+                        { type: 'create', filename: 'components/Demo.tsx', status: 'done', timestamp: Date.now() }
+                    ],
+                    codeChanges: [
+                        {
+                            filename: 'components/Demo.tsx',
+                            language: 'tsx',
+                            description: 'Demo Component',
+                            applied: false,
+                            linesAdded: 15,
+                            linesRemoved: 0,
+                            newCode: `import React from 'react';\n\ninterface DemoProps {\n  title: string;\n  isActive: boolean;\n}\n\nexport const DemoComponent: React.FC<DemoProps> = ({ title, isActive }) => {\n  // This is a comment to test colors\n  const status = isActive ? 'Active' : 'Inactive';\n\n  return (\n    <div className="p-4 bg-white rounded-lg shadow-sm">\n      <h1 className="text-xl font-bold">{title}</h1>\n      <p className="text-gray-600">Status: {status}</p>\n      <button onClick={() => console.log('Clicked!')}>\n        Click Me\n      </button>\n    </div>\n  );\n};`
+                        }
+                    ],
+                    // Simulate an inline error to test the design
+                    error: "Simulation: An optional error message to test the new design."
+                };
+                setMessages(prev => [...prev, demoMsg]);
+            }, 2000);
+            return;
+        }
+
+        if (isLoading || !geminiServiceRef.current?.isReady()) return;
 
         lastInputRef.current = trimmedInput;
         setError(null);
@@ -991,19 +1166,21 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
             });
 
             const fileList = effectiveFiles.join(', ');
-            contextMessage += `\n\n[Système de fichiers (Fichiers et dossiers disponibles): ${fileList}]`;
+            contextMessage += `\n\n[${t('chat.context.filesystem', { list: fileList })}]`;
         }
 
         // Add file contents from actions
         for (const [filename, content] of fileContents) {
             const action = executedActions.find(a => a.filename === filename);
-            const label = action?.type === 'modify' ? 'À MODIFIER' : 'Contenu';
+            const label = action?.type === 'modify'
+                ? t('chat.contextLabels.toModify')
+                : t('chat.contextLabels.content');
             contextMessage += `\n\n[${label} - ${filename}]:\n\`\`\`\n${content}\n\`\`\``;
         }
 
         // ALWAYS include active file context if available and not already included
         if (activeFile && !fileContents.has(activeFile.name)) {
-            contextMessage += `\n\n[📄 Fichier actif dans l'éditeur: ${activeFile.name}]:\n\`\`\`${activeFile.type}\n${activeFile.content}\n\`\`\``;
+            contextMessage += `\n\n[${t('chat.context.activeFile', { filename: activeFile.name })}]:\n\`\`\`${activeFile.type}\n${activeFile.content}\n\`\`\``;
         }
 
         const userMsg: ChatMessage = {
@@ -1059,7 +1236,9 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                 responseText = response.text;
             }
 
-            const codeChanges = responseText ? parseCodeChanges(responseText, defaultFile, modifyActions) : [];
+            const codeChanges = responseText
+                ? parseCodeChanges(responseText, defaultFile, modifyActions, (filename) => t('chat.actionDescriptions.modified', { filename }))
+                : [];
 
             // Build smart actions based on what was done
             const smartActions: AgentAction[] = [];
@@ -1070,12 +1249,13 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
             if (isSearchQuery && contextFiles && contextFiles.length > 0) {
                 // Extract relevant keywords for search description
                 const keywords = trimmedInput.split(/\s+/).filter(w => w.length > 3).slice(0, 3).join(' ');
+                const searchTarget = keywords || t('chat.searchActions.defaultTarget');
                 smartActions.push({
                     type: 'search',
-                    filename: keywords || 'portfolio files',
+                    filename: searchTarget,
                     status: 'done',
                     timestamp: Date.now(),
-                    description: `Searched for: ${keywords}`
+                    description: t('chat.searchActions.description', { query: searchTarget })
                 });
             }
 
@@ -1083,7 +1263,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
             if (activeFile) {
                 smartActions.push({
                     type: 'read',
-                    filename: `${activeFile.name} (current file)`,
+                    filename: t('chat.actionDescriptions.currentFile', { filename: activeFile.name }),
                     status: 'done',
                     timestamp: Date.now()
                 });
@@ -1111,7 +1291,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                 role: 'model',
                 text: responseText,
                 timestamp: new Date(),
-                thoughts: 'Analyzed request',
+                thoughts: t('chat.message.analyzed'),
                 thinkingTime: thinkingTime,
                 codeChanges: codeChanges.length > 0 ? codeChanges : undefined,
                 actions: allActions.length > 0 ? allActions : undefined,
@@ -1123,7 +1303,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
             if (process.env.NODE_ENV !== 'production') {
                 console.error('Chat error:', err);
             }
-            const errorMessage = err instanceof Error ? err.message : 'Erreur inconnue';
+            const errorMessage = err instanceof Error ? err.message : t('chat.errors.unknown');
             setError({ message: errorMessage, code: GeminiErrorCode.UNKNOWN_ERROR });
 
             const errorMsg: ChatMessage = {
@@ -1138,7 +1318,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
             setIsLoading(false);
             setStreamingText('');
         }
-    }, [input, isLoading, activeFile, enableStreaming, maxMessages, executeActions, getConversationHistory, onOpenFile, onCreateFile, onCreateFileWithPath, onDeleteFile, contextFiles, thinkingTime]);
+    }, [input, isLoading, activeFile, enableStreaming, maxMessages, executeActions, getConversationHistory, onOpenFile, onCreateFile, onCreateFileWithPath, onDeleteFile, contextFiles, thinkingTime, t]);
 
     // Retry last message
     const handleRetry = useCallback(() => {
@@ -1180,7 +1360,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
     // Memoized message list
     const messageList = useMemo(() => (
         messages.map((msg) => (
-            <div key={msg.id} className="w-full">
+            <div key={msg.id} className="w-full animate-chat-fade-in-up">
                 {/* User Message - Cursor style beige box */}
                 {msg.role === 'user' && (
                     <div className="mb-3">
@@ -1197,9 +1377,9 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                     <div className="w-full py-2">
                         {msg.error && (
                             <div className="px-1 py-2">
-                                <div className="flex items-center gap-2 text-red-500 text-[12px]">
-                                    <AlertCircle size={14} />
-                                    <span>{msg.error}</span>
+                                <div className="flex items-start gap-2 bg-[#FAF9F6] border-l-2 border-[#D97757] p-2 rounded-r">
+                                    <AlertCircle size={14} className="text-[#D97757] mt-0.5" />
+                                    <span className="text-[12px] text-[#6B6B6B] leading-relaxed">{msg.error}</span>
                                 </div>
                             </div>
                         )}
@@ -1232,7 +1412,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                         {msg.cached && (
                             <div className="px-1 mt-2 text-[10px] text-ide-muted flex items-center gap-1">
                                 <Zap size={10} />
-                                Réponse en cache
+                                {t('chat.cached')}
                             </div>
                         )}
 
@@ -1253,23 +1433,23 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                 )}
             </div>
         ))
-    ), [messages, applyCodeChange, onOpenFile]);
+    ), [messages, applyCodeChange, onOpenFile, t]);
 
     return (
         <div className={`flex flex-col h-full w-full bg-ide-sidebar overflow-hidden ${className}`}>
             {/* Header - Simplified */}
             <div className="h-9 border-b border-ide-border flex items-center">
                 <div className="mx-auto w-full max-w-[580px] px-3 flex items-center justify-between">
-                    <span className="text-[13px] font-medium text-ide-text">B.AI Agent</span>
+                    <span className="text-[16px] font-heading font-semibold text-ide-text tracking-normal">{t('chat.title')}</span>
                     <div className="flex items-center gap-1">
                         {!isServiceReady && (
-                            <span className="text-[10px] text-red-500 bg-red-50 px-2 py-0.5 rounded">Non connecté</span>
+                            <span className="text-[10px] text-red-500 bg-red-50 px-2 py-0.5 rounded">{t('chat.disconnected')}</span>
                         )}
                         {messages.length > 0 && (
                             <button
                                 onClick={handleClear}
                                 className="p-1 hover:bg-ide-ui/50 rounded text-ide-muted hover:text-ide-text transition-colors"
-                                title="Effacer la conversation"
+                                title={t('chat.clearConversation')}
                             >
                                 <Trash2 size={14} />
                             </button>
@@ -1312,7 +1492,15 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
 
                     {/* Empty state */}
                     {messages.length === 0 && !isLoading && (
-                        <EmptyState onSuggestionClick={handleSuggestionClick} />
+                        <EmptyState
+                            onSuggestionClick={handleSuggestionClick}
+                            input={input}
+                            setInput={setInput}
+                            onSend={handleSend}
+                            onKeyDown={handleKeyDown}
+                            isLoading={isLoading}
+                            isServiceReady={isServiceReady}
+                        />
                     )}
 
                     <div ref={messagesEndRef} />
@@ -1320,55 +1508,40 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                 </div>
             </div>
 
-            {/* Input Area - Glassmorphism style */}
-            <div className="p-3 pt-2 bg-white/60 backdrop-blur-md border-t border-white/40">
-                <div className="mx-auto w-full max-w-[580px]">
-                    <div className={`border rounded-xl overflow-hidden transition-all bg-white/80 backdrop-blur-sm shadow-sm ${isLoading
-                        ? 'border-ide-muted/50'
-                        : 'border-white/60 focus-within:border-ide-accent/60 focus-within:shadow-lg focus-within:ring-2 focus-within:ring-ide-accent/20'
-                        }`}>
-                        <form className="flex flex-col" onSubmit={(e) => { e.preventDefault(); handleSend(); }}>
+            {/* Input Area - Only show when there are messages (hide when EmptyState is visible) */}
+            {messages.length > 0 && (
+                <div className="p-3 pt-2 bg-white/60 backdrop-blur-md border-t border-white/40 animate-chat-input-slide-up">
+                    <div className="mx-auto w-full max-w-[580px]">
+                        <form onSubmit={(e) => { e.preventDefault(); handleSend(); }} className="relative bg-white/90 backdrop-blur-sm rounded-2xl border border-[#E8E5DE] shadow-[0_8px_32px_-12px_rgba(20,20,19,0.15)] overflow-hidden focus-within:border-[#D97757]/40 focus-within:shadow-lg transition-all">
                             <textarea
                                 ref={textareaRef}
                                 name="message"
                                 value={input}
                                 onChange={(e) => setInput(e.target.value)}
                                 onKeyDown={handleKeyDown}
-                                placeholder={isServiceReady ? "Planifier, rechercher, construire..." : "Service non disponible..."}
-                                className="text-ide-text text-[13px] max-h-[200px] w-full resize-none bg-transparent px-3 pt-2.5 pb-1.5 outline-none placeholder:text-ide-muted/60"
+                                placeholder={isServiceReady ? t('chat.placeholderReady') : t('chat.placeholderUnavailable')}
+                                className="text-ide-text text-[15px] w-full resize-none bg-transparent px-4 py-4 outline-none placeholder:text-ide-muted/70 min-h-[48px] max-h-[200px] overflow-y-hidden"
                                 rows={1}
                                 spellCheck={false}
                                 disabled={isLoading || !isServiceReady}
                             />
-                            <div className="px-3 py-2 pt-1">
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-2">
-                                        <Image src="/logo/SVG/Mini-Logo-B.svg" alt="Agent Logo" width={16} height={16} className="w-4 h-4" />
-                                        <span className="text-[11px] text-ide-muted font-medium">Agent</span>
-                                    </div>
-
-                                    <button
-                                        type="submit"
-                                        disabled={!input.trim() || isLoading || !isServiceReady}
-                                        className={`flex h-7 w-7 items-center justify-center rounded-full transition-all ${input.trim() && !isLoading && isServiceReady
-                                            ? 'bg-ide-accent text-white hover:bg-ide-accent/90 shadow-sm hover:shadow'
-                                            : 'bg-ide-ui/50 text-ide-muted cursor-not-allowed'
-                                            }`}
-                                    >
-                                        {isLoading ? <Loader2 size={14} className="animate-spin" /> : <ArrowUp size={14} />}
-                                    </button>
-                                </div>
+                            <div className="px-4 py-3 border-t border-[#E8E5DE]/50 flex items-center justify-between">
+                                <Image src="/logo/IDE/Logo AI.svg" alt="B.AI" width={28} height={12} />
+                                <button
+                                    type="submit"
+                                    disabled={!input.trim() || isLoading || !isServiceReady}
+                                    className={`flex items-center justify-center w-7 h-7 rounded-lg transition-all ${input.trim() && !isLoading && isServiceReady
+                                        ? 'bg-[#D97757] text-white shadow-sm hover:bg-[#c86a4c]'
+                                        : 'bg-ide-ui/50 text-ide-muted cursor-not-allowed'
+                                        }`}
+                                >
+                                    {isLoading ? <Loader2 size={14} className="animate-spin" /> : <ArrowUp size={14} />}
+                                </button>
                             </div>
                         </form>
                     </div>
-
-                    {input.length > MAX_INPUT_LENGTH * 0.8 && (
-                        <p className={`text-[10px] mt-1 text-right ${input.length >= MAX_INPUT_LENGTH ? 'text-red-500' : 'text-ide-muted'}`}>
-                            {input.length}/{MAX_INPUT_LENGTH}
-                        </p>
-                    )}
                 </div>
-            </div>
+            )}
         </div>
     );
 };

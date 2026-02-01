@@ -1,24 +1,57 @@
 <svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="1200" height="630" fill="#171717"/>
-  
-  <!-- Background blob -->
-  <ellipse cx="1000" cy="100" rx="400" ry="400" fill="url(#gradient3)" opacity="0.3"/>
-  
-  <!-- Content -->
-  <rect x="80" y="180" width="80" height="36" rx="18" fill="rgba(139, 92, 246, 0.2)"/>
-  <text x="120" y="205" font-family="system-ui, sans-serif" font-size="18" fill="#8B5CF6" text-anchor="middle">Blog</text>
-  
-  <text x="80" y="290" font-family="system-ui, sans-serif" font-size="56" font-weight="700" fill="#FAFAFA">Articles &amp; Insights</text>
-  <text x="80" y="360" font-family="system-ui, sans-serif" font-size="24" fill="#A3A3A3">Développement web, tech et bonnes pratiques</text>
-  
-  <!-- Footer -->
-  <text x="80" y="580" font-family="system-ui, sans-serif" font-size="20" font-weight="600" fill="#F97316">B.DEV</text>
-  <text x="145" y="580" font-family="system-ui, sans-serif" font-size="20" fill="#525252">Blog</text>
-  
+  <rect width="1200" height="630" fill="#FDE8DC"/>
+
+  <rect width="1200" height="630" fill="url(#dots)"/>
+
+  <rect x="40" y="40" width="1120" height="550" rx="32" stroke="#26251E" stroke-width="3" opacity="0.12"/>
+
+  <path
+    d="M930 170C930 156 941 145 955 145H1085C1099 145 1110 156 1110 170V330C1110 344 1099 355 1085 355H955C941 355 930 344 930 330V170Z"
+    stroke="#26251E"
+    stroke-width="3"
+    opacity="0.16"
+  />
+  <path
+    d="M965 175H1075C1083 175 1090 182 1090 190V325C1090 333 1083 340 1075 340H965"
+    stroke="#26251E"
+    stroke-width="3"
+    opacity="0.16"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+  <path
+    d="M965 205H1060"
+    stroke="#26251E"
+    stroke-width="3"
+    opacity="0.16"
+    stroke-linecap="round"
+  />
+  <path
+    d="M965 235H1045"
+    stroke="#26251E"
+    stroke-width="3"
+    opacity="0.16"
+    stroke-linecap="round"
+  />
+
+  <rect x="80" y="120" width="92" height="36" rx="18" fill="rgba(205, 124, 91, 0.14)" stroke="#CD7C5B" stroke-width="2"/>
+  <text x="126" y="145" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="18" font-weight="600" fill="#CD7C5B" text-anchor="middle">Blog</text>
+
+  <text x="80" y="270" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="56" font-weight="700" fill="#26251E">Articles &amp; Insights</text>
+  <text x="80" y="340" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="24" fill="#4A4A4A">Web dev notes, patterns &amp; learning logs</text>
+
+  <rect x="80" y="540" width="210" height="10" rx="5" fill="url(#accent)" opacity="0.9"/>
+
+  <text x="80" y="580" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="20" font-weight="700" fill="#26251E">B.DEV</text>
+  <text x="150" y="580" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="20" fill="#4A4A4A">Blog</text>
+
   <defs>
-    <linearGradient id="gradient3" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#8B5CF6"/>
-      <stop offset="100%" style="stop-color:#06B6D4"/>
+    <pattern id="dots" x="0" y="0" width="24" height="24" patternUnits="userSpaceOnUse">
+      <circle cx="1" cy="1" r="1" fill="#26251E" opacity="0.08" />
+    </pattern>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#CD7C5B" />
+      <stop offset="100%" stop-color="#E8997A" />
     </linearGradient>
   </defs>
 </svg>

@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Command } from "cmdk";
 import { Search, File, Terminal, Layout, User, Download, Github, Laptop } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { FileSystemItem } from "../types";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
@@ -27,6 +28,13 @@ export function CommandPalette({
   actions
 }: CommandPaletteProps) {
   const [search, setSearch] = useState("");
+  const t = useTranslations("ide");
+  const hint = t("commandPalette.hint");
+  const [hintLabel, hintText] = React.useMemo(() => {
+    const parts = hint.split(":");
+    if (parts.length === 1) return [parts[0], ""];
+    return [parts[0].trim(), parts.slice(1).join(":").trim()];
+  }, [hint]);
 
   // Toggle with keyboard shortcut is handled in parent, 
   // but we need to handle closing with Esc inside the component via onOpenChange
@@ -81,7 +89,7 @@ export function CommandPalette({
             className="relative w-full max-w-xl overflow-hidden rounded-xl border border-ide-border bg-ide-bg shadow-2xl"
           >
             <Command
-              label="Command Menu"
+              label={t("commandPalette.title")}
               className="w-full bg-transparent"
               shouldFilter={true}
               loop
@@ -91,20 +99,20 @@ export function CommandPalette({
                 <Command.Input
                   value={search}
                   onValueChange={setSearch}
-                  placeholder="Type a command or search files..."
+                  placeholder={t("commandPalette.placeholder")}
                   className="flex-1 bg-transparent text-sm text-ide-text placeholder:text-ide-muted outline-none"
                 />
                 <kbd className="ml-2 pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border border-ide-border bg-surface-2 px-1.5 font-mono text-[10px] font-medium text-ide-muted opacity-100">
-                  <span className="text-xs">ESC</span>
+                  <span className="text-xs">{t("commandPalette.esc")}</span>
                 </kbd>
               </div>
 
               <Command.List className="max-h-[300px] overflow-y-auto p-2 scrollbar-thin scrollbar-thumb-ide-border scrollbar-track-transparent">
                 <Command.Empty className="py-6 text-center text-sm text-ide-muted">
-                  No results found.
+                  {t("commandPalette.noResults")}
                 </Command.Empty>
 
-                <Command.Group heading="Files" className="mb-2 px-2 text-[10px] font-medium text-ide-muted uppercase tracking-wider">
+                <Command.Group heading={t("commandPalette.groups.files")} className="mb-2 px-2 text-[10px] font-medium text-ide-muted uppercase tracking-wider">
                   {flatFiles.map((file) => (
                     <Command.Item
                       key={file}
@@ -119,14 +127,14 @@ export function CommandPalette({
                       <File className="mr-2 h-4 w-4 text-ide-muted group-aria-selected:text-ide-accent" />
                       <span>{file}</span>
                       {/* Simulate path hint */}
-                      <span className="ml-auto text-xs text-ide-muted/50 group-aria-selected:text-ide-accent/50">src/</span>
+                      <span className="ml-auto text-xs text-ide-muted/50 group-aria-selected:text-ide-accent/50">{t("commandPalette.filePathHint")}</span>
                     </Command.Item>
                   ))}
                 </Command.Group>
 
                 <Command.Separator className="my-1 h-px bg-ide-border" />
 
-                <Command.Group heading="Actions" className="mb-2 px-2 text-[10px] font-medium text-ide-muted uppercase tracking-wider">
+                <Command.Group heading={t("commandPalette.groups.actions")} className="mb-2 px-2 text-[10px] font-medium text-ide-muted uppercase tracking-wider">
                   <Command.Item
                     onSelect={() => {
                       actions.toggleTerminal();
@@ -135,7 +143,7 @@ export function CommandPalette({
                     className="relative flex cursor-default select-none items-center rounded-md px-2 py-2 text-sm text-ide-text aria-selected:bg-ide-accent/20 aria-selected:text-ide-accent outline-none transition-colors group"
                   >
                     <Terminal className="mr-2 h-4 w-4 text-ide-muted group-aria-selected:text-ide-accent" />
-                    <span>Toggle Terminal</span>
+                    <span>{t("commandPalette.actions.toggleTerminal")}</span>
                     <kbd className="ml-auto text-xs text-ide-muted/50 font-mono">Ctrl+J</kbd>
                   </Command.Item>
 
@@ -147,7 +155,7 @@ export function CommandPalette({
                     className="relative flex cursor-default select-none items-center rounded-md px-2 py-2 text-sm text-ide-text aria-selected:bg-ide-accent/20 aria-selected:text-ide-accent outline-none transition-colors group"
                   >
                     <Layout className="mr-2 h-4 w-4 text-ide-muted group-aria-selected:text-ide-accent" />
-                    <span>Toggle Sidebar</span>
+                    <span>{t("commandPalette.actions.toggleSidebar")}</span>
                     <kbd className="ml-auto text-xs text-ide-muted/50 font-mono">Ctrl+B</kbd>
                   </Command.Item>
 
@@ -159,14 +167,14 @@ export function CommandPalette({
                     className="relative flex cursor-default select-none items-center rounded-md px-2 py-2 text-sm text-ide-text aria-selected:bg-ide-accent/20 aria-selected:text-ide-accent outline-none transition-colors group"
                   >
                     <Laptop className="mr-2 h-4 w-4 text-ide-muted group-aria-selected:text-ide-accent" />
-                    <span>Toggle AI Chat</span>
+                    <span>{t("commandPalette.actions.toggleChat")}</span>
                     <kbd className="ml-auto text-xs text-ide-muted/50 font-mono">Ctrl+L</kbd>
                   </Command.Item>
                 </Command.Group>
 
                 <Command.Separator className="my-1 h-px bg-ide-border" />
 
-                <Command.Group heading="General" className="px-2 text-[10px] font-medium text-ide-muted uppercase tracking-wider">
+                <Command.Group heading={t("commandPalette.groups.general")} className="px-2 text-[10px] font-medium text-ide-muted uppercase tracking-wider">
                   <Command.Item
                     onSelect={() => {
                       actions.scrollToContact();
@@ -175,7 +183,7 @@ export function CommandPalette({
                     className="relative flex cursor-default select-none items-center rounded-md px-2 py-2 text-sm text-ide-text aria-selected:bg-ide-accent/20 aria-selected:text-ide-accent outline-none transition-colors group"
                   >
                     <User className="mr-2 h-4 w-4 text-ide-muted group-aria-selected:text-ide-accent" />
-                    <span>Contact Me</span>
+                    <span>{t("commandPalette.actions.contact")}</span>
                   </Command.Item>
 
                   <Command.Item
@@ -186,7 +194,7 @@ export function CommandPalette({
                     className="relative flex cursor-default select-none items-center rounded-md px-2 py-2 text-sm text-ide-text aria-selected:bg-ide-accent/20 aria-selected:text-ide-accent outline-none transition-colors group"
                   >
                     <Download className="mr-2 h-4 w-4 text-ide-muted group-aria-selected:text-ide-accent" />
-                    <span>Download Resume</span>
+                    <span>{t("commandPalette.actions.download")}</span>
                   </Command.Item>
 
                   <Command.Item
@@ -197,16 +205,16 @@ export function CommandPalette({
                     className="relative flex cursor-default select-none items-center rounded-md px-2 py-2 text-sm text-ide-text aria-selected:bg-ide-accent/20 aria-selected:text-ide-accent outline-none transition-colors group"
                   >
                     <Github className="mr-2 h-4 w-4 text-ide-muted group-aria-selected:text-ide-accent" />
-                    <span>View GitHub Profile</span>
+                    <span>{t("commandPalette.actions.github")}</span>
                   </Command.Item>
                 </Command.Group>
               </Command.List>
 
               <div className="border-t border-ide-border px-4 py-2 text-[10px] text-ide-muted flex items-center justify-between">
                 <span>
-                  <span className="text-ide-accent">ProTip:</span> Use arrows to navigate, Enter to select
+                  <span className="text-ide-accent">{hintLabel}{hintText ? ':' : ''}</span>{hintText ? ` ${hintText}` : ''}
                 </span>
-                <span>B.DEV IDE v3.02</span>
+                <span>{t("commandPalette.version")}</span>
               </div>
             </Command>
           </motion.div>

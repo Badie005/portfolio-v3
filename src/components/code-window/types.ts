@@ -50,6 +50,7 @@ export interface AgentAction {
     filename?: string;
     content?: string;
     description?: string;
+    isFolder?: boolean;
     status: 'pending' | 'done' | 'error';
     time?: number;
     timestamp?: number;

@@ -1,4 +1,5 @@
 import { X, Search } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { FileSystemItem, FileData } from '../types';
 import FileTree from './FileTree';
@@ -30,6 +31,8 @@ export function Sidebar({
     isMobile,
     className,
 }: SidebarProps) {
+    const t = useTranslations('ide');
+
     return (
         <aside
             style={{ width: isMobile && isOpen ? '100%' : width }}
@@ -50,7 +53,7 @@ export function Sidebar({
                     <button
                         onClick={onClose}
                         className="text-ide-muted hover:text-ide-text transition-colors"
-                        aria-label="Close sidebar"
+                        aria-label={t('sidebar.closeSidebar')}
                     >
                         <X size={14} />
                     </button>
@@ -66,7 +69,7 @@ export function Sidebar({
                     />
                     <input
                         type="text"
-                        placeholder="Search files..."
+                        placeholder={t('sidebar.searchPlaceholder')}
                         value={searchQuery}
                         onChange={(e) => onSearchChange(e.target.value)}
                         className={cn(
@@ -82,7 +85,7 @@ export function Sidebar({
                         <button
                             onClick={() => onSearchChange('')}
                             className="absolute right-2 top-1/2 -translate-y-1/2 text-ide-muted hover:text-ide-text"
-                            aria-label="Clear search"
+                            aria-label={t('sidebar.clearSearch')}
                         >
                             <X size={10} />
                         </button>

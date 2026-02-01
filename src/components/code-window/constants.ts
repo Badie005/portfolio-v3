@@ -15,7 +15,7 @@ export const INITIAL_FILES: FileSystemItem[] = [
     "alias": "B.DEV",
     "role": "Full Stack Developer",
     "status": "Open to Work",
-    "version": "3.0.2"
+    "version": "3.0.3"
   },
   "contact": {
     "email": "a.khoubiza.dev@gmail.com",
@@ -43,12 +43,12 @@ export const INITIAL_FILES: FileSystemItem[] = [
   "design_system": {
     "colors": {
       "primary": "#1A1A1A",
-      "accent": "#CD7C5B",
+      "accent": "#D97757",
       "surface": "#FAFAFA"
     },
     "typography": {
-      "heading": "Outfit",
-      "body": "Inter",
+      "heading": "Cormorant Garamond",
+      "body": "Saans",
       "mono": "JetBrains Mono"
     }
   },
@@ -356,7 +356,7 @@ a.khoubiza.dev@gmail.com`
     type: 'json',
     content: `{
   "name": "portfolio-abdelbadie",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "author": "Abdelbadie Khoubiza",
   "scripts": {
     "dev": "next dev --turbo",

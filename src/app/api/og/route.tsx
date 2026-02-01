@@ -134,7 +134,9 @@ export async function GET(request: NextRequest) {
                             flexDirection: "column",
                             alignItems: "center",
                             justifyContent: "center",
-                            backgroundColor: "#171717",
+                            backgroundColor: "#FDE8DC",
+                            position: "relative",
+                            overflow: "hidden",
                             fontFamily,
                         }}
                     >
@@ -142,14 +144,12 @@ export async function GET(request: NextRequest) {
                         <div
                             style={{
                                 position: "absolute",
-                                top: -100,
-                                right: -100,
-                                width: 500,
-                                height: 500,
-                                borderRadius: "50%",
-                                background: "linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)",
-                                filter: "blur(100px)",
-                                opacity: 0.4,
+                                top: 40,
+                                left: 40,
+                                right: 40,
+                                bottom: 40,
+                                borderRadius: 32,
+                                border: "3px solid rgba(38, 37, 30, 0.12)",
                             }}
                         />
 
@@ -172,12 +172,13 @@ export async function GET(request: NextRequest) {
                                     alignItems: "center",
                                     gap: 8,
                                     padding: "8px 20px",
-                                    backgroundColor: "rgba(139, 92, 246, 0.2)",
+                                    backgroundColor: "rgba(205, 124, 91, 0.14)",
+                                    border: "2px solid #CD7C5B",
                                     borderRadius: 100,
                                     marginBottom: 24,
                                 }}
                             >
-                                <span style={{ color: "#8b5cf6", fontSize: 18 }}>Blog</span>
+                                <span style={{ color: "#CD7C5B", fontSize: 18, fontWeight: 600 }}>Blog</span>
                             </div>
 
                             {/* Title */}
@@ -185,7 +186,7 @@ export async function GET(request: NextRequest) {
                                 style={{
                                     fontSize: 52,
                                     fontWeight: 700,
-                                    color: "#FAFAFA",
+                                    color: "#26251E",
                                     lineHeight: 1.3,
                                     marginBottom: 16,
                                     maxWidth: 900,
@@ -198,7 +199,7 @@ export async function GET(request: NextRequest) {
                             <p
                                 style={{
                                     fontSize: 22,
-                                    color: "#a3a3a3",
+                                    color: "#4A4A4A",
                                     maxWidth: 800,
                                     lineHeight: 1.5,
                                 }}
@@ -217,8 +218,8 @@ export async function GET(request: NextRequest) {
                                     gap: 12,
                                 }}
                             >
-                                <span style={{ fontSize: 20, color: "#f97316", fontWeight: 600 }}>B.DEV</span>
-                                <span style={{ fontSize: 20, color: "#525252" }}>Blog</span>
+                                <span style={{ fontSize: 20, color: "#26251E", fontWeight: 700 }}>B.DEV</span>
+                                <span style={{ fontSize: 20, color: "#4A4A4A" }}>Blog</span>
                             </div>
                         </div>
                     </div>

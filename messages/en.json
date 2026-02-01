@@ -31,6 +31,8 @@
         "contact": "Contact",
         "gallery": "Gallery",
         "startProject": "Start a project",
+        "downloadCV": "Download CV",
+        "contactMe": "Contact me",
         "openMenu": "Open menu",
         "closeMenu": "Close menu",
         "changeLanguage": "Change language"
@@ -392,7 +394,12 @@
         "publishedOn": "Published on",
         "readingTime": "min read",
         "noArticles": "No articles yet",
-        "comingSoon": "Coming soon"
+        "comingSoon": "Coming soon",
+        "featured": "Featured",
+        "notAvailableInLanguage": "This article is not available in {language}.",
+        "availableIn": "Available in:",
+        "switchLanguage": "Read in another language",
+        "noTranslation": "Untranslated article"
     },
     "stats": {
         "title": "Statistics",
@@ -401,7 +408,14 @@
         "cvDownloads": "CV Downloads",
         "pageViews": "Page views",
         "uniqueVisitors": "Unique visitors",
-        "lastUpdated": "Last updated"
+        "lastUpdated": "Last updated",
+        "aboutTitle": "About these statistics",
+        "aboutItems": [
+            "Data is collected anonymously and respects your privacy.",
+            "No personal data is stored or shared.",
+            "Statistics are updated in real-time via Upstash Redis.",
+            "This page refreshes every 60 seconds."
+        ]
     },
     "contact": {
         "title": "Contact",
@@ -457,6 +471,215 @@
             "Ready to collaborate...",
             "Open for projects..."
         ]
+    },
+    "ide": {
+        "general": {
+            "plainText": "Plain Text"
+        },
+        "titleBar": {
+            "title": "B.DEV — Portfolio",
+            "toggleSidebar": "Toggle Sidebar (Ctrl+B)",
+            "toggleTerminal": "Toggle Terminal (Ctrl+J)",
+            "toggleChat": "Toggle AI Agent (Ctrl+L)",
+            "mobileToggleSidebar": "Toggle sidebar"
+        },
+        "sidebar": {
+            "title": "Portfolio-v.3.02",
+            "searchPlaceholder": "Search files...",
+            "clearSearch": "Clear search",
+            "closeSidebar": "Close sidebar"
+        },
+        "tabBar": {
+            "closeTab": "Close {tab}"
+        },
+        "statusBar": {
+            "branch": "main*",
+            "lineCol": "Ln {line}, Col {col}",
+            "encoding": "UTF-8",
+            "json": "JSON",
+            "resetPosition": "Reset Position"
+        },
+        "terminal": {
+            "tabs": {
+                "terminal": "TERMINAL",
+                "console": "CONSOLE",
+                "output": "OUTPUT",
+                "problems": "PROBLEMS",
+                "debug": "DEBUG"
+            },
+            "controls": {
+                "restore": "Restore",
+                "maximize": "Maximize",
+                "close": "Close"
+            },
+            "consoleFilters": {
+                "all": "All",
+                "errors": "Errors ({count})",
+                "warnings": "Warnings ({count})",
+                "logs": "Logs"
+            },
+            "consoleSearchPlaceholder": "Filter...",
+            "consoleClear": "Clear",
+            "consoleEmpty": "No console output",
+            "consoleNoMatches": "No matching messages",
+            "output": {
+                "title": "Build Output - Next.js",
+                "compiled": "Compiled successfully",
+                "ready": "Ready in {seconds}s",
+                "version": "Next.js {version}",
+                "local": "- Local: {url}",
+                "network": "- Network: {url}"
+            },
+            "problems": {
+                "errors": "Errors:",
+                "warnings": "Warnings:",
+                "empty": "No problems detected"
+            },
+            "debug": {
+                "title": "Debug Console",
+                "lines": {
+                    "attached": "[INF] Debugger attached",
+                    "sourceMaps": "[INF] Source maps loaded",
+                    "started": "[LOG] Application started"
+                }
+            },
+            "statusBar": {
+                "terminal": "Terminal",
+                "terminalHint": "Tab: autocomplete | Ctrl+L: clear",
+                "console": "Console: {count} messages",
+                "consoleSummary": "Errors: {errors} | Warnings: {warnings}",
+                "output": "Build Output",
+                "problems": "Problems",
+                "noIssues": "No issues",
+                "debug": "Debug",
+                "ready": "Ready"
+            }
+        },
+        "commandPalette": {
+            "title": "Command Menu",
+            "placeholder": "Type a command or search files...",
+            "noResults": "No results found.",
+            "groups": {
+                "files": "Files",
+                "actions": "Actions",
+                "general": "General"
+            },
+            "actions": {
+                "toggleTerminal": "Toggle Terminal",
+                "toggleSidebar": "Toggle Sidebar",
+                "toggleChat": "Toggle AI Chat",
+                "contact": "Contact Me",
+                "download": "Download Resume",
+                "github": "View GitHub Profile"
+            },
+            "hint": "ProTip: Use arrows to navigate, Enter to select",
+            "version": "B.DEV IDE v3.02",
+            "esc": "ESC",
+            "filePathHint": "src/"
+        },
+        "chat": {
+            "title": "B.AI Agent",
+            "disconnected": "Not connected",
+            "clearConversation": "Clear conversation",
+            "placeholderReady": "Plan, search, build...",
+            "placeholderUnavailable": "Service unavailable...",
+            "agentLabel": "Agent",
+            "cached": "Cached response",
+            "agentLogoAlt": "Agent logo",
+            "context": {
+                "filesystem": "File system (available files and folders): {list}",
+                "activeFile": "Active file in editor: {filename}"
+            },
+            "contextLabels": {
+                "toModify": "TO MODIFY",
+                "content": "CONTENT"
+            },
+            "thinkingMessages": [
+                "Thinking...",
+                "Analyzing code...",
+                "Generating response...",
+                "Processing your request..."
+            ],
+            "actionLabels": {
+                "thought": "Thought",
+                "read": "Read",
+                "searched": "Searched",
+                "created": "Created",
+                "deleted": "Deleted",
+                "modified": "Modified"
+            },
+            "actionDescriptions": {
+                "fileNotFound": "File not found",
+                "folderCreated": "Folder {folder} created",
+                "folderDeleted": "Folder {folder} deleted",
+                "scaffoldingPending": "Scaffolding in progress...",
+                "modified": "Modified {filename}",
+                "currentFile": "{filename} (current file)"
+            },
+            "searchActions": {
+                "defaultTarget": "portfolio files",
+                "description": "Searched for: {query}"
+            },
+            "inlineCode": {
+                "collapse": "Collapse",
+                "expand": "View all",
+                "lines": "{count} lines",
+                "moreLines": "+ {count} more lines"
+            },
+            "errorBanner": {
+                "title": "Error",
+                "code": "Code: {code}",
+                "retry": "Retry",
+                "close": "Close"
+            },
+            "emptyState": {
+                "greeting": "Hello, Visitor",
+                "visitorPrefix": "N°",
+                "placeholder": "How can I help you?",
+                "logoAlt": "B.AI Assistant Logo",
+                "suggestions": [
+                    {
+                        "text": "Code",
+                        "icon": "idea",
+                        "prompt": "Analyze this portfolio's code and show me the technologies used. What best practices are applied?"
+                    },
+                    {
+                        "text": "Create",
+                        "icon": "developer",
+                        "prompt": "Create a new modern and reusable React component for this portfolio. Give me creative ideas with TypeScript code."
+                    },
+                    {
+                        "text": "Strategize",
+                        "icon": "coffee",
+                        "prompt": "As a technical consultant, analyze this portfolio and propose an improvement strategy: performance, SEO, UX and new features."
+                    },
+                    {
+                        "text": "Write",
+                        "icon": "pencil",
+                        "prompt": "Generate professional content for this portfolio: a compelling bio, project descriptions or marketing copy to attract clients."
+                    },
+                    {
+                        "text": "Learn",
+                        "icon": "graduation-cap",
+                        "prompt": "Explain the key technologies used in this portfolio (Next.js, React, TypeScript, Tailwind). How can I master them?"
+                    }
+                ]
+            },
+            "message": {
+                "analyzed": "Analyzed request"
+            },
+            "errors": {
+                "unknown": "Unknown error"
+            }
+        },
+        "editorEmptyState": {
+            "title": "No file opened",
+            "description": "Select a file in the explorer to view the source code.",
+            "shortcuts": {
+                "terminal": "Terminal",
+                "files": "Files"
+            }
+        }
     },
     "meta": {
         "title": "Abdelbadie Khoubiza | Full-Stack Developer React & Node.js",

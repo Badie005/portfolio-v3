@@ -16,9 +16,9 @@ function setRequestNonce(response: NextResponse, nonce: string): void {
   const existing = response.headers.get("x-middleware-override-headers");
   const keys = existing
     ? existing
-        .split(",")
-        .map((k) => k.trim())
-        .filter(Boolean)
+      .split(",")
+      .map((k) => k.trim())
+      .filter(Boolean)
     : [];
 
   if (!keys.includes("x-nonce")) {
@@ -155,6 +155,24 @@ export function middleware(req: NextRequest, event: NextFetchEvent) {
 
   // Apply intl middleware for pages
   const intlResponse = intlMiddleware(req);
+
+  // Get the locale that was determined by next-intl middleware
+  const locale = intlResponse.headers.get("x-next-intl-locale") || routing.defaultLocale;
+
+  // Add locale header for server components
+  intlResponse.headers.set("x-next-intl-locale", locale);
+
+  // Add pathname header for locale resolution in layouts
+  intlResponse.headers.set("x-pathname", pathname);
+  const existingOverride = intlResponse.headers.get("x-middleware-override-headers") || "";
+  const overrideKeys = existingOverride.split(",").map(k => k.trim()).filter(Boolean);
+  if (!overrideKeys.includes("x-pathname")) {
+    overrideKeys.push("x-pathname");
+  }
+  if (!overrideKeys.includes("x-next-intl-locale")) {
+    overrideKeys.push("x-next-intl-locale");
+  }
+  intlResponse.headers.set("x-middleware-override-headers", overrideKeys.join(","));
 
   // Add nonce to request headers
   setRequestNonce(intlResponse, nonce);

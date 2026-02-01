@@ -21,50 +21,52 @@ export function BlogCard({ post }: BlogCardProps) {
     });
 
     return (
-        <article className="group relative bg-white dark:bg-neutral-900 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-neutral-200 dark:border-neutral-800">
+        <article className="group relative overflow-hidden rounded-2xl border border-ide-border bg-surface-1 shadow-sm transition-all duration-300 hover:border-ide-accent/50 hover:shadow-xl">
             {/* Image */}
             {post.image && (
-                <Link href={`/blog/${post.slug}`} className="block aspect-video relative overflow-hidden">
-                    <Image
-                        src={post.image}
-                        alt={post.title}
-                        fill
-                        className="object-cover transition-transform duration-500 group-hover:scale-105"
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                <Link href={`/blog/${post.slug}`} className="block">
+                    <div className="relative aspect-video w-full overflow-hidden bg-surface-2 border-b border-ide-border/50">
+                        <Image
+                            src={post.image}
+                            alt={post.title}
+                            fill
+                            className="absolute inset-0 w-full h-full object-cover"
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        />
+                        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
+                    </div>
                 </Link>
             )}
 
             {/* Content */}
-            <div className="p-6">
+            <div className="relative p-6 flex flex-col">
                 {/* Category & Tags */}
                 <div className="flex items-center gap-2 mb-3">
-                    <span className="px-3 py-1 text-xs font-medium bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 rounded-full">
+                    <span className="px-2 py-1 text-[10px] font-mono font-medium uppercase tracking-wider text-ide-muted bg-surface-2 rounded border border-ide-border">
                         {post.category}
                     </span>
                 </div>
 
                 {/* Title */}
-                <Link href={`/blog/${post.slug}`}>
-                    <h2 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100 mb-2 group-hover:text-orange-500 transition-colors line-clamp-2">
+                <Link href={`/blog/${post.slug}`} className="block">
+                    <h2 className="text-xl font-heading font-bold text-ide-text tracking-tight mb-2 group-hover:text-ide-accent transition-colors line-clamp-2">
                         {post.title}
                     </h2>
                 </Link>
 
                 {/* Description */}
-                <p className="text-neutral-600 dark:text-neutral-400 text-sm mb-4 line-clamp-2">
+                <p className="text-ide-muted text-sm leading-relaxed mb-5 line-clamp-2">
                     {post.description}
                 </p>
 
                 {/* Meta */}
-                <div className="flex items-center justify-between text-xs text-neutral-500 dark:text-neutral-500">
+                <div className="mt-auto flex items-center justify-between gap-4 text-xs text-ide-muted">
                     <div className="flex items-center gap-4">
-                        <span className="flex items-center gap-1">
+                        <span className="flex items-center gap-1.5">
                             <Calendar className="w-3.5 h-3.5" />
                             {formattedDate}
                         </span>
-                        <span className="flex items-center gap-1">
+                        <span className="flex items-center gap-1.5">
                             <Clock className="w-3.5 h-3.5" />
                             {post.readingTime} {t("readingTime")}
                         </span>
@@ -72,10 +74,10 @@ export function BlogCard({ post }: BlogCardProps) {
 
                     <Link
                         href={`/blog/${post.slug}`}
-                        className="flex items-center gap-1 text-orange-500 hover:text-orange-600 font-medium transition-colors"
+                        className="inline-flex items-center gap-2 font-mono text-[11px] font-medium uppercase tracking-wider text-ide-accent hover:opacity-80 transition-opacity"
                     >
                         {t("readArticle")}
-                        <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                        <ArrowRight className="w-4 h-4" />
                     </Link>
                 </div>
             </div>

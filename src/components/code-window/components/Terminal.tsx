@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { X, Maximize2, Minimize2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useTerminal } from '../hooks/useTerminal';
 import { useConsoleCapture, ConsoleMessage } from '../hooks/useConsoleCapture';
 import { FileSystemItem, TerminalMessage } from '../types';
@@ -90,6 +91,11 @@ const Terminal: React.FC<TerminalProps> = ({
     isMaximized = false,
     onToggleMaximize
 }) => {
+    const t = useTranslations('ide');
+    const nextVersion = '14.1.0';
+    const buildReadySeconds = 1.2;
+    const localUrl = 'http://localhost:3000';
+    const networkUrl = 'http://192.168.1.100:3000';
     const {
         history,
         setHistory,
@@ -116,6 +122,9 @@ const Terminal: React.FC<TerminalProps> = ({
 
     // Console capture hook
     const { messages: consoleMessages, clearMessages: clearConsole } = useConsoleCapture();
+
+    const errorCount = consoleMessages.filter(m => m.type === 'error').length;
+    const warnCount = consoleMessages.filter(m => m.type === 'warn').length;
 
     // Filtered console messages
     const filteredConsoleMessages = consoleMessages.filter(msg => {
@@ -352,7 +361,7 @@ const Terminal: React.FC<TerminalProps> = ({
                                 : 'text-ide-muted hover:text-ide-text border-transparent'
                             }`}
                     >
-                        TERMINAL
+                        {t('terminal.tabs.terminal')}
                     </button>
 
                     {/* Console Tab */}
@@ -364,7 +373,7 @@ const Terminal: React.FC<TerminalProps> = ({
                                 : 'text-ide-muted hover:text-ide-text border-transparent'
                             }`}
                     >
-                        CONSOLE
+                        {t('terminal.tabs.console')}
                         {consoleMessages.length > 0 && (
                             <span className="text-[9px] px-1 bg-ide-border text-ide-muted rounded">
                                 {consoleMessages.length}
@@ -381,7 +390,7 @@ const Terminal: React.FC<TerminalProps> = ({
                                 : 'text-ide-muted hover:text-ide-text border-transparent'
                             }`}
                     >
-                        OUTPUT
+                        {t('terminal.tabs.output')}
                     </button>
 
                     {/* Problems Tab */}
@@ -393,7 +402,7 @@ const Terminal: React.FC<TerminalProps> = ({
                                 : 'text-ide-muted hover:text-ide-text border-transparent'
                             }`}
                     >
-                        PROBLEMS
+                        {t('terminal.tabs.problems')}
                         <span className="text-[9px] px-1 bg-ide-border text-ide-muted rounded">0</span>
                     </button>
 
@@ -406,7 +415,7 @@ const Terminal: React.FC<TerminalProps> = ({
                                 : 'text-ide-muted hover:text-ide-text border-transparent'
                             }`}
                     >
-                        DEBUG
+                        {t('terminal.tabs.debug')}
                     </button>
                 </div>
 
@@ -414,14 +423,14 @@ const Terminal: React.FC<TerminalProps> = ({
                     <button
                         onClick={onToggleMaximize}
                         className="p-1 hover:text-ide-text hover:bg-ide-ui rounded transition-colors"
-                        title={isMaximized ? "Restore" : "Maximize"}
+                        title={isMaximized ? t('terminal.controls.restore') : t('terminal.controls.maximize')}
                     >
                         {isMaximized ? <Minimize2 size={12} /> : <Maximize2 size={12} />}
                     </button>
                     <button
                         onClick={onClose}
                         className="p-1 hover:text-ide-text hover:bg-ide-ui rounded transition-colors"
-                        title="Close"
+                        title={t('terminal.controls.close')}
                     >
                         <X size={12} />
                     </button>
@@ -507,28 +516,28 @@ const Terminal: React.FC<TerminalProps> = ({
                                     className={`px-2 py-0.5 rounded transition-colors ${consoleFilter === 'all' ? 'bg-ide-ui text-ide-text' : 'text-ide-muted hover:text-ide-text'
                                         }`}
                                 >
-                                    All
+                                    {t('terminal.consoleFilters.all')}
                                 </button>
                                 <button
                                     onClick={() => setConsoleFilter('error')}
                                     className={`px-2 py-0.5 rounded transition-colors ${consoleFilter === 'error' ? 'bg-ide-hover text-ide-error' : 'text-ide-muted hover:text-ide-error'
                                         }`}
                                 >
-                                    Errors ({consoleMessages.filter(m => m.type === 'error').length})
+                                    {t('terminal.consoleFilters.errors', { count: errorCount })}
                                 </button>
                                 <button
                                     onClick={() => setConsoleFilter('warn')}
                                     className={`px-2 py-0.5 rounded transition-colors ${consoleFilter === 'warn' ? 'bg-ide-hover text-ide-warning' : 'text-ide-muted hover:text-ide-warning'
                                         }`}
                                 >
-                                    Warnings ({consoleMessages.filter(m => m.type === 'warn').length})
+                                    {t('terminal.consoleFilters.warnings', { count: warnCount })}
                                 </button>
                                 <button
                                     onClick={() => setConsoleFilter('log')}
                                     className={`px-2 py-0.5 rounded transition-colors ${consoleFilter === 'log' ? 'bg-ide-hover text-ide-text' : 'text-ide-muted hover:text-ide-text'
                                         }`}
                                 >
-                                    Logs
+                                    {t('terminal.consoleFilters.logs')}
                                 </button>
                             </div>
 
@@ -538,14 +547,14 @@ const Terminal: React.FC<TerminalProps> = ({
                                     type="text"
                                     value={consoleSearch}
                                     onChange={(e) => setConsoleSearch(e.target.value)}
-                                    placeholder="Filter..."
+                                    placeholder={t('terminal.consoleSearchPlaceholder')}
                                     className="w-24 px-2 py-0.5 text-[10px] bg-ide-bg border border-ide-border rounded text-ide-text placeholder-ide-muted focus:outline-none focus:border-ide-accent"
                                 />
                                 <button
                                     onClick={clearConsole}
                                     className="px-2 py-0.5 text-[10px] text-ide-muted hover:text-ide-text rounded transition-colors"
                                 >
-                                    Clear
+                                    {t('terminal.consoleClear')}
                                 </button>
                             </div>
                         </div>
@@ -554,7 +563,7 @@ const Terminal: React.FC<TerminalProps> = ({
                         <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-ide-border scrollbar-track-transparent">
                             {filteredConsoleMessages.length === 0 ? (
                                 <div className="flex items-center justify-center h-full text-ide-muted text-[11px]">
-                                    {consoleMessages.length === 0 ? 'No console output' : 'No matching messages'}
+                                    {consoleMessages.length === 0 ? t('terminal.consoleEmpty') : t('terminal.consoleNoMatches')}
                                 </div>
                             ) : (
                                 filteredConsoleMessages.map((msg) => (
@@ -569,13 +578,13 @@ const Terminal: React.FC<TerminalProps> = ({
                 {/* Output Panel - IDE style */}
                 {activeTab === 'output' && (
                     <div className="h-full overflow-y-auto p-2 font-mono text-[11px] scrollbar-thin scrollbar-thumb-ide-border scrollbar-track-transparent">
-                        <div className="text-ide-muted">Build Output - Next.js</div>
+                        <div className="text-ide-muted">{t('terminal.output.title')}</div>
                         <div className="mt-2 space-y-0.5">
-                            <div className="text-ide-accent">Compiled successfully</div>
-                            <div className="text-ide-muted">Ready in 1.2s</div>
-                            <div className="text-ide-muted mt-2">Next.js 14.1.0</div>
-                            <div className="text-ide-muted">- Local: http://localhost:3000</div>
-                            <div className="text-ide-muted">- Network: http://192.168.1.100:3000</div>
+                            <div className="text-ide-accent">{t('terminal.output.compiled')}</div>
+                            <div className="text-ide-muted">{t('terminal.output.ready', { seconds: buildReadySeconds })}</div>
+                            <div className="text-ide-muted mt-2">{t('terminal.output.version', { version: nextVersion })}</div>
+                            <div className="text-ide-muted">{t('terminal.output.local', { url: localUrl })}</div>
+                            <div className="text-ide-muted">{t('terminal.output.network', { url: networkUrl })}</div>
                         </div>
                     </div>
                 )}
@@ -584,11 +593,11 @@ const Terminal: React.FC<TerminalProps> = ({
                 {activeTab === 'problems' && (
                     <div className="h-full overflow-y-auto p-2 font-mono text-[11px] scrollbar-thin scrollbar-thumb-ide-border scrollbar-track-transparent">
                         <div className="flex items-center gap-4 mb-2 pb-2 border-b border-ide-border">
-                            <span className="text-ide-muted">Errors: <span className="text-ide-text">0</span></span>
-                            <span className="text-ide-muted">Warnings: <span className="text-ide-text">0</span></span>
+                            <span className="text-ide-muted">{t('terminal.problems.errors')} <span className="text-ide-text">0</span></span>
+                            <span className="text-ide-muted">{t('terminal.problems.warnings')} <span className="text-ide-text">0</span></span>
                         </div>
                         <div className="flex items-center justify-center h-20 text-ide-muted">
-                            No problems detected
+                            {t('terminal.problems.empty')}
                         </div>
                     </div>
                 )}
@@ -596,11 +605,11 @@ const Terminal: React.FC<TerminalProps> = ({
                 {/* Debug Panel - IDE style */}
                 {activeTab === 'debug' && (
                     <div className="h-full overflow-y-auto p-2 font-mono text-[11px] scrollbar-thin scrollbar-thumb-ide-border scrollbar-track-transparent">
-                        <div className="text-ide-muted mb-2">Debug Console</div>
+                        <div className="text-ide-muted mb-2">{t('terminal.debug.title')}</div>
                         <div className="space-y-0.5">
-                            <div className="text-ide-muted"><span className="text-ide-muted/50">10:30:01</span> [INF] Debugger attached</div>
-                            <div className="text-ide-muted"><span className="text-ide-muted/50">10:30:01</span> [INF] Source maps loaded</div>
-                            <div className="text-ide-muted"><span className="text-ide-muted/50">10:30:02</span> [LOG] Application started</div>
+                            <div className="text-ide-muted"><span className="text-ide-muted/50">10:30:01</span> {t('terminal.debug.lines.attached')}</div>
+                            <div className="text-ide-muted"><span className="text-ide-muted/50">10:30:01</span> {t('terminal.debug.lines.sourceMaps')}</div>
+                            <div className="text-ide-muted"><span className="text-ide-muted/50">10:30:02</span> {t('terminal.debug.lines.started')}</div>
                         </div>
                     </div>
                 )}
@@ -610,32 +619,32 @@ const Terminal: React.FC<TerminalProps> = ({
             <div className="h-5 border-t border-ide-border bg-ide-sidebar flex items-center justify-between px-3 text-[10px] text-ide-muted shrink-0">
                 {activeTab === 'terminal' && (
                     <>
-                        <span>Terminal</span>
-                        <span>Tab: autocomplete | Ctrl+L: clear</span>
+                        <span>{t('terminal.statusBar.terminal')}</span>
+                        <span>{t('terminal.statusBar.terminalHint')}</span>
                     </>
                 )}
                 {activeTab === 'console' && (
                     <>
-                        <span>Console: {consoleMessages.length} messages</span>
-                        <span>Errors: {consoleMessages.filter(m => m.type === 'error').length} | Warnings: {consoleMessages.filter(m => m.type === 'warn').length}</span>
+                        <span>{t('terminal.statusBar.console', { count: consoleMessages.length })}</span>
+                        <span>{t('terminal.statusBar.consoleSummary', { errors: errorCount, warnings: warnCount })}</span>
                     </>
                 )}
                 {activeTab === 'output' && (
                     <>
-                        <span>Build Output</span>
-                        <span>Next.js 14.1.0</span>
+                        <span>{t('terminal.statusBar.output')}</span>
+                        <span>{t('terminal.output.version', { version: nextVersion })}</span>
                     </>
                 )}
                 {activeTab === 'problems' && (
                     <>
-                        <span>Problems</span>
-                        <span>No issues</span>
+                        <span>{t('terminal.statusBar.problems')}</span>
+                        <span>{t('terminal.statusBar.noIssues')}</span>
                     </>
                 )}
                 {activeTab === 'debug' && (
                     <>
-                        <span>Debug</span>
-                        <span>Ready</span>
+                        <span>{t('terminal.statusBar.debug')}</span>
+                        <span>{t('terminal.statusBar.ready')}</span>
                     </>
                 )}
             </div>

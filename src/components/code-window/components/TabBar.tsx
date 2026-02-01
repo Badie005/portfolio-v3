@@ -1,5 +1,6 @@
 import React from 'react';
 import { X } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 
 interface Tab {
@@ -26,6 +27,7 @@ export function TabBar({
     onTabContextMenu,
     className
 }: TabBarProps) {
+    const t = useTranslations('ide');
     const handleClose = (e: React.MouseEvent, tabId: string) => {
         e.stopPropagation();
         onTabClose(tabId);
@@ -64,7 +66,7 @@ export function TabBar({
                                 'p-0.5 rounded hover:bg-ide-ui transition-opacity',
                                 isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
                             )}
-                            aria-label={`Close ${tab.label}`}
+                            aria-label={t('tabBar.closeTab', { tab: tab.label })}
                         >
                             <X size={12} />
                         </button>
