@@ -203,7 +203,7 @@ const SyntaxHighlighter: React.FC<SyntaxHighlighterProps> = ({ content, language
                     // Improved tokenizer for TS/JS
                     const tokens = line.split(/(\/\/.*$|\/\*[\s\S]*?\*\/|`(?:[^`\\]|\\.)*`|'(?:[^'\\]|\\.)*'|"(?:[^"\\]|\\.)*"|[(){}[\].,;:]|[+\-*/%=&|<>!^?]+|\s+)/g).filter(Boolean);
 
-                    let isTypeContext = false;
+
 
                     return (
                         <div key={i} className="whitespace-pre">
@@ -219,7 +219,7 @@ const SyntaxHighlighter: React.FC<SyntaxHighlighterProps> = ({ content, language
 
                                 // Keywords
                                 if (['import', 'from', 'export', 'const', 'let', 'var', 'function', 'return', 'interface', 'type', 'default', 'async', 'await', 'if', 'else', 'for', 'while', 'switch', 'case', 'break', 'continue', 'try', 'catch', 'throw', 'new', 'class', 'extends', 'implements', 'public', 'private', 'protected', 'static', 'readonly', 'as', 'null', 'undefined', 'true', 'false', 'void', 'any'].includes(token.trim())) {
-                                    if (token.trim() === 'type' || token.trim() === 'interface') isTypeContext = true;
+
                                     return <span key={idx} className="text-ide-keyword font-medium">{token}</span>;
                                 }
 
