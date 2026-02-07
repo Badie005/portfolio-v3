@@ -98,7 +98,7 @@ function addSecurityHeaders(response: NextResponse, nonce: string, isDev: boolea
     "https://api.resend.com",
     "https://vitals.vercel-insights.com",
     "https://va.vercel-scripts.com",
-    "https://*.sentry.io",
+    "https://va.vercel-scripts.com",
     isDev ? "ws:" : "",
   ]
     .filter(Boolean)
@@ -145,7 +145,6 @@ export function middleware(req: NextRequest) {
     pathname.startsWith("/api/") ||
     pathname.startsWith("/_next/") ||
     pathname.startsWith("/_vercel/") ||
-    pathname.startsWith("/monitoring") ||
     pathname.includes(".");
 
   if (shouldSkipIntl) {
