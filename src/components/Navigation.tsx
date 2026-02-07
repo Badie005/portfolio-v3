@@ -131,9 +131,10 @@ export function Navigation() {
                   className="rounded-full border-[#2D2A24]/20 text-[#2D2A24] hover:bg-[#2D2A24]/10 hover:border-[#2D2A24]/40 transition-all duration-300 font-medium px-4 h-8 text-[13px]"
                   style={{ fontFamily: "'Saans', sans-serif" }}
                 >
-                  <Link href="/api/cv">
+                  {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+                  <a href="/api/cv">
                     {t("downloadCV")}
-                  </Link>
+                  </a>
                 </Button>
 
                 <Button
@@ -237,9 +238,10 @@ export function Navigation() {
                 variant="outline"
                 className="w-full rounded-full border-[#1A1A1A]/15 text-[#1A1A1A] hover:bg-[#F0F0EB]/50 py-5 text-[15px]"
               >
-                <Link href="/api/cv" onClick={() => setIsMobileMenuOpen(false)}>
+                {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+                <a href="/api/cv" onClick={() => setIsMobileMenuOpen(false)}>
                   {t("downloadCV")}
-                </Link>
+                </a>
               </Button>
               <Button
                 asChild

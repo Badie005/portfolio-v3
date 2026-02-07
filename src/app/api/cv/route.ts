@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { promises as fs } from "fs";
 import path from "path";
-import { incrementCVDownloads } from "@/lib/stats";
 
 export async function GET(request: NextRequest) {
     try {
@@ -22,7 +21,7 @@ export async function GET(request: NextRequest) {
         const fileBuffer = await fs.readFile(cvPath);
 
         // Track the download
-        await incrementCVDownloads();
+        // await incrementCVDownloads();
 
         // Get filename from query or use default
         const searchParams = request.nextUrl.searchParams;

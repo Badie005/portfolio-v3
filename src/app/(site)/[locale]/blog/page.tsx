@@ -5,7 +5,7 @@ import { BlogList } from "@/components/blog/BlogList";
 import { BookOpen } from "lucide-react";
 
 // Force dynamic rendering to ensure locale-specific data is fetched correctly
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 type Props = {
@@ -22,7 +22,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         openGraph: {
             title: `${t("title")} | B.DEV`,
             description: t("description"),
-            images: ["/og/og-blog.svg"],
+            images: [{ url: "/api/og?type=blog&title=Blog", width: 1200, height: 630 }],
+        },
+        twitter: {
+            card: "summary_large_image",
+            title: `${t("title")} | B.DEV`,
+            description: t("description"),
+            images: ["/api/og?type=blog&title=Blog"],
         },
     };
 }

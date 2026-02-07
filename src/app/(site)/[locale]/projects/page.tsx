@@ -12,8 +12,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const t = await getTranslations({ locale, namespace: "projects" });
 
     return {
-        title: t("title"),
-        description: t("description"),
+        openGraph: {
+            title: t("title"),
+            description: t("description"),
+            images: [{ url: "/api/og?type=default&title=Projects", width: 1200, height: 630 }],
+        },
+        twitter: {
+            card: "summary_large_image",
+            title: t("title"),
+            description: t("description"),
+            images: ["/api/og?type=default&title=Projects"],
+        },
     };
 }
 

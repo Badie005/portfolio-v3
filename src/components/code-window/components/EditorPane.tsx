@@ -24,17 +24,30 @@ export function EditorPane({ file, className }: EditorPaneProps) {
 
             {file ? (
                 <>
-                    {/* Line Numbers - sticky to left */}
-                    <div className="sticky left-0 bg-white z-10">
-                        <LineNumbers count={lineCount} />
-                    </div>
+                    {/* Line Numbers - sticky to left (hide for images) */}
+                    {file.type !== 'image' && file.type !== 'svg' && (
+                        <div className="sticky left-0 bg-white z-10">
+                            <LineNumbers count={lineCount} />
+                        </div>
+                    )}
 
-                    {/* Code Content */}
-                    <div className="flex-1 pr-8 animate-in fade-in duration-300 pb-20 min-w-0">
-                        <SyntaxHighlighter
-                            content={file.content}
-                            language={file.type}
-                        />
+                    {/* Content */}
+                    <div className="flex-1 pr-8 animate-in fade-in duration-300 pb-20 min-w-0 flex">
+                        {(file.type === 'image' || file.type === 'svg') ? (
+                            <div className="flex items-center justify-center min-h-[500px] w-full">
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img
+                                    src={file.content}
+                                    alt={file.name}
+                                    className="max-w-full h-auto object-contain shadow-sm"
+                                />
+                            </div>
+                        ) : (
+                            <SyntaxHighlighter
+                                content={file.content}
+                                language={file.type}
+                            />
+                        )}
                     </div>
                 </>
             ) : (

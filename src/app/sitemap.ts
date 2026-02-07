@@ -3,6 +3,7 @@ import { projects } from "@/data/projects";
 import { getAllPostSlugs, getPostBySlug } from "@/lib/blog";
 import { routing } from "@/i18n/routing";
 
+// Sitemap configuration
 export const runtime = "nodejs";
 export const revalidate = 3600;
 

@@ -1,21 +1,32 @@
 import type { Metadata } from "next";
 import { setRequestLocale, getTranslations } from "next-intl/server";
-import { getAllStats } from "@/lib/stats";
 import { BarChart3, Download, Eye, Users } from "lucide-react";
+
+// Revalidate stats page every minute
+export const revalidate = 60;
 
 type Props = {
     params: Promise<{ locale: string }>;
 };
 
-export const revalidate = 60;
+
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const { locale } = await params;
     const t = await getTranslations({ locale, namespace: "stats" });
 
     return {
-        title: t("title"),
-        description: t("description"),
+        openGraph: {
+            title: t("title"),
+            description: t("description"),
+            images: [{ url: "/api/og?type=default&title=Stats", width: 1200, height: 630 }],
+        },
+        twitter: {
+            card: "summary_large_image",
+            title: t("title"),
+            description: t("description"),
+            images: ["/api/og?type=default&title=Stats"],
+        },
     };
 }
 
@@ -24,7 +35,12 @@ export default async function StatsPage({ params }: Props) {
     setRequestLocale(locale);
 
     const t = await getTranslations({ locale, namespace: "stats" });
-    const stats = await getAllStats();
+    // Mocked stats since we dismantled the tracking system
+    const stats = {
+        cvDownloads: 0,
+        pageViews: 0,
+        uniqueVisitors: 0
+    };
 
     const statsCards = [
         {

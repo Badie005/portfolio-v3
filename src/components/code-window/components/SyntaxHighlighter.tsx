@@ -297,8 +297,18 @@ const SyntaxHighlighter: React.FC<SyntaxHighlighterProps> = ({ content, language
                 {parts.map((part, index) => {
                     let className = 'text-ide-text';
                     if (part.startsWith('"')) {
-                        const restOfLine = line.substring(line.indexOf(part) + part.length).trim();
-                        if (restOfLine.startsWith(':')) {
+                        // Check if it's a key by looking ahead for a colon
+                        let isKey = false;
+                        for (let j = index + 1; j < parts.length; j++) {
+                            const p = parts[j].trim();
+                            if (p === '') continue; // skip pure whitespace
+                            if (p === ':') {
+                                isKey = true;
+                            }
+                            break; // Stop checking after first non-whitespace token
+                        }
+
+                        if (isKey) {
                             className = 'text-ide-keyword font-medium'; // Key (Blue)
                         } else {
                             className = 'text-ide-string'; // Value (Green)

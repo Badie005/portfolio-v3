@@ -1,4 +1,4 @@
-export type FileType = 'json' | 'markdown' | 'lock' | 'typescript' | 'css' | 'javascript' | 'xml';
+export type FileType = 'json' | 'markdown' | 'lock' | 'typescript' | 'css' | 'javascript' | 'xml' | 'image' | 'svg';
 
 export interface FileData {
     name: string;

@@ -83,8 +83,8 @@ export function CodeWindow() {
         listDirectory,
     } = useFileSystem({
         initialFiles: INITIAL_FILES,
-        initialOpenFiles: ['README.md'],
-        initialActiveFile: 'README.md',
+        initialOpenFiles: ['BAI_logo.svg'],
+        initialActiveFile: 'BAI_logo.svg',
     });
 
     // Search - include fileTreeVersion to force update

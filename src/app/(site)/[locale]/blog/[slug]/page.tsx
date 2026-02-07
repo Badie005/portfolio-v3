@@ -11,7 +11,7 @@ import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 
 // Force dynamic rendering to ensure locale-specific data is fetched correctly
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 interface PageProps {
@@ -58,6 +58,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
                 height: 630,
                 alt: post.title,
             }],
+        },
+        twitter: {
+            card: "summary_large_image",
+            title: post.title,
+            description: post.description,
+            images: [post.image || `${siteUrl}/api/og?type=blog&title=${encodeURIComponent(post.title)}`],
         },
     };
 }

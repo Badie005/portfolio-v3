@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createParser, type EventSourceMessage } from "eventsource-parser";
 
 // Using Edge Runtime for better streaming performance
-export const runtime = 'edge';
+export const runtime = "edge";
 
 // Initialisation du service avec la clé OpenRouter (côté serveur uniquement)
 const gemini = new GeminiService({

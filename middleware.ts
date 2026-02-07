@@ -1,42 +1,16 @@
 import { NextResponse } from "next/server";
-import type { NextFetchEvent, NextRequest } from "next/server";
+import type { NextRequest } from "next/server";
 import createIntlMiddleware from "next-intl/middleware";
 import { routing } from "@/i18n/routing";
-import { incrementPageViews, trackVisitor } from "@/lib/stats";
+// import { incrementPageViews, trackVisitor } from "@/lib/stats";
 
 // Create the intl middleware
 const intlMiddleware = createIntlMiddleware(routing);
 
+/*
+// Visitor tracking code - commented out, re-enable when stats tracking is needed
 const VISITOR_COOKIE_NAME = "bdev_vid";
 const VISITOR_COOKIE_MAX_AGE = 60 * 60 * 24 * 30;
-
-function setRequestNonce(response: NextResponse, nonce: string): void {
-  response.headers.set("x-middleware-request-x-nonce", nonce);
-
-  const existing = response.headers.get("x-middleware-override-headers");
-  const keys = existing
-    ? existing
-      .split(",")
-      .map((k) => k.trim())
-      .filter(Boolean)
-    : [];
-
-  if (!keys.includes("x-nonce")) {
-    keys.push("x-nonce");
-  }
-
-  response.headers.set("x-middleware-override-headers", keys.join(","));
-}
-
-function generateNonce(): string {
-  const bytes = new Uint8Array(16);
-  crypto.getRandomValues(bytes);
-  let binary = "";
-  for (let i = 0; i < bytes.length; i++) {
-    binary += String.fromCharCode(bytes[i]);
-  }
-  return btoa(binary);
-}
 
 function generateVisitorId(): string {
   if (typeof crypto.randomUUID === "function") {
@@ -74,6 +48,35 @@ function shouldTrackPageView(req: NextRequest): boolean {
   if (isBot(userAgent)) return false;
 
   return true;
+}
+*/
+
+function setRequestNonce(response: NextResponse, nonce: string): void {
+  response.headers.set("x-middleware-request-x-nonce", nonce);
+
+  const existing = response.headers.get("x-middleware-override-headers");
+  const keys = existing
+    ? existing
+      .split(",")
+      .map((k) => k.trim())
+      .filter(Boolean)
+    : [];
+
+  if (!keys.includes("x-nonce")) {
+    keys.push("x-nonce");
+  }
+
+  response.headers.set("x-middleware-override-headers", keys.join(","));
+}
+
+function generateNonce(): string {
+  const bytes = new Uint8Array(16);
+  crypto.getRandomValues(bytes);
+  let binary = "";
+  for (let i = 0; i < bytes.length; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary);
 }
 
 function addSecurityHeaders(response: NextResponse, nonce: string, isDev: boolean): void {
@@ -121,6 +124,7 @@ function addSecurityHeaders(response: NextResponse, nonce: string, isDev: boolea
 
   // Security Headers
   response.headers.set("Content-Security-Policy", csp);
+  response.headers.set("X-Permitted-Cross-Domain-Policies", "none");
 
   // HSTS - Only in production
   if (!isDev) {
@@ -131,7 +135,7 @@ function addSecurityHeaders(response: NextResponse, nonce: string, isDev: boolea
   }
 }
 
-export function middleware(req: NextRequest, event: NextFetchEvent) {
+export function middleware(req: NextRequest) {
   const nonce = generateNonce();
   const isDev = process.env.NODE_ENV !== "production";
   const { pathname } = req.nextUrl;
@@ -180,6 +184,7 @@ export function middleware(req: NextRequest, event: NextFetchEvent) {
   // Add security headers to the response
   addSecurityHeaders(intlResponse, nonce, isDev);
 
+  /*
   const hasRedisConfig = Boolean(
     process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN
   );
@@ -198,10 +203,9 @@ export function middleware(req: NextRequest, event: NextFetchEvent) {
       });
     }
 
-    event.waitUntil(
-      Promise.all([incrementPageViews(), trackVisitor(visitorId)])
-    );
+    // specific stats tracking removed
   }
+  */
 
   return intlResponse;
 }

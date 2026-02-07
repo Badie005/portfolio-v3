@@ -96,18 +96,13 @@ function getAllPostsInternal(locale: string = "fr"): BlogPostMeta[] {
 /**
  * Get all blog posts metadata (without content) - cached by locale
  */
-export async function getAllPosts(locale: string = "fr"): Promise<BlogPostMeta[]> {
-    // Use unstable_cache to ensure proper caching by locale
-    // This prevents cache collisions between different locales
-    const cachedGetPosts = unstable_cache(
-        async () => getAllPostsInternal(locale),
-        [`posts-${locale}`],
-        { tags: [`posts-${locale}`, `locale-${locale}`] }
-    );
-
-    // Call the cached function - in Server Components this will be cached per locale
-    return cachedGetPosts();
-}
+export const getAllPosts = unstable_cache(
+    async (locale: string = "fr"): Promise<BlogPostMeta[]> => {
+        return getAllPostsInternal(locale);
+    },
+    ["blog-posts"],
+    { revalidate: 3600, tags: ["blog", "posts"] }
+);
 
 /**
  * Internal function to get a single blog post by slug (with content)
@@ -152,15 +147,13 @@ function getPostBySlugInternal(slug: string, locale: string = "fr"): BlogPost | 
 /**
  * Get a single blog post by slug (with content) - cached by locale and slug
  */
-export async function getPostBySlug(slug: string, locale: string = "fr"): Promise<BlogPost | null> {
-    const cachedGetPost = unstable_cache(
-        async () => getPostBySlugInternal(slug, locale),
-        [`post-${locale}-${slug}`],
-        { tags: [`post-${locale}-${slug}`, `posts-${locale}`, `locale-${locale}`] }
-    );
-
-    return cachedGetPost();
-}
+export const getPostBySlug = unstable_cache(
+    async (slug: string, locale: string = "fr"): Promise<BlogPost | null> => {
+        return getPostBySlugInternal(slug, locale);
+    },
+    ["blog-post"],
+    { revalidate: 3600, tags: ["blog", "post"] }
+);
 
 /**
  * Internal function to get all post slugs for static generation
@@ -181,15 +174,13 @@ function getAllPostSlugsInternal(locale: string = "fr"): string[] {
 /**
  * Get all post slugs for static generation - cached by locale
  */
-export async function getAllPostSlugs(locale: string = "fr"): Promise<string[]> {
-    const cachedGetSlugs = unstable_cache(
-        async () => getAllPostSlugsInternal(locale),
-        [`slugs-${locale}`],
-        { tags: [`slugs-${locale}`, `posts-${locale}`, `locale-${locale}`] }
-    );
-
-    return cachedGetSlugs();
-}
+export const getAllPostSlugs = unstable_cache(
+    async (locale: string = "fr"): Promise<string[]> => {
+        return getAllPostSlugsInternal(locale);
+    },
+    ["blog-slugs"],
+    { revalidate: 3600, tags: ["blog", "slugs"] }
+);
 
 /**
  * Check if a post exists in a specific locale

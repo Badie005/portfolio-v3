@@ -1,6 +1,7 @@
-import { ImageResponse } from "@vercel/og";
+import { ImageResponse } from "next/og";
 import { NextRequest } from "next/server";
 
+// Edge runtime for OG image generation
 export const runtime = "edge";
 
 // Fallback font (system fonts)

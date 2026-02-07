@@ -18,6 +18,10 @@ bun.lock
 /playwright-report
 playwright-results.json
 
+.agent/
+/.agent/
+.claude/
+
 # next.js
 /.next/
 /out/

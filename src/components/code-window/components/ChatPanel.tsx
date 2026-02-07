@@ -708,44 +708,7 @@ const EmptyState = memo<{
 }>(({ onSuggestionClick, input, setInput, onSend, onKeyDown, isLoading, isServiceReady }) => {
     const t = useTranslations('ide');
     const suggestions = (t.raw('chat.emptyState.suggestions') as Array<{ text: string; icon?: string; prompt?: string }>) || [];
-    const [visitorCount, setVisitorCount] = useState<number | null>(null);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
-
-    // Fetch visitor count on mount or fallback to local simulation
-    useEffect(() => {
-        const handleLocalVisitorCount = () => {
-            const stored = localStorage.getItem('visitor_id');
-            if (stored) {
-                setVisitorCount(parseInt(stored));
-            } else {
-                // Generate random number between 120 and 890 for realism
-                const randomCount = Math.floor(Math.random() * (890 - 120 + 1)) + 120;
-                localStorage.setItem('visitor_id', String(randomCount));
-                setVisitorCount(randomCount);
-            }
-        };
-
-        const fetchVisitorCount = async () => {
-            try {
-                const response = await fetch('/api/stats');
-                const data = await response.json();
-                if (data.success && data.data?.uniqueVisitors > 0) {
-                    setVisitorCount(data.data.uniqueVisitors);
-                } else {
-                    handleLocalVisitorCount();
-                }
-            } catch (error) {
-                console.warn('Using local visitor count fallback');
-                handleLocalVisitorCount();
-            }
-        };
-        fetchVisitorCount();
-    }, []);
-
-    // Format visitor number with leading zeros
-    const formattedVisitorNumber = visitorCount !== null
-        ? String(visitorCount).padStart(3, '0')
-        : '---';
 
     // Auto-resize textarea based on content
     useEffect(() => {
@@ -775,10 +738,9 @@ const EmptyState = memo<{
                 </div>
 
                 {/* Main greeting */}
-                <h2 className="text-2xl sm:text-[28px] font-serif font-medium text-[#37352F] tracking-tight">
-                    {t('chat.emptyState.greeting')}
-                    <span className="text-[#D97757]"> {t('chat.emptyState.visitorPrefix')}</span>
-                    <span className="font-mono text-[#D97757]">{formattedVisitorNumber}</span>
+                <h2 className="text-base sm:text-lg font-mono font-medium text-[#37352F] tracking-tight">
+                    <span className="text-[#37352F]">{t('chat.emptyState.prompt')}</span>
+                    <span className="inline-block w-2.5 h-5 bg-[#D97757] ml-2 animate-pulse align-middle"></span>
                 </h2>
             </div>
 

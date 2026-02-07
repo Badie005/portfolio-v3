@@ -13,8 +13,8 @@ interface HealthStatus {
   }[];
 }
 
-export const runtime = 'edge';
-
+// Edge runtime for faster health checks
+export const runtime = "edge";
 export async function GET(): Promise<NextResponse<HealthStatus>> {
   const startTime = Date.now();
   const checks: HealthStatus['checks'] = [];

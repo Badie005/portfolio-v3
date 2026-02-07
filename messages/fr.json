@@ -636,6 +636,7 @@
                 "greeting": "Bonjour, Visiteur",
                 "visitorPrefix": "N°",
                 "placeholder": "Comment puis-je vous aider ?",
+                "prompt": "visiteur@portfolio:~$",
                 "logoAlt": "Logo de l'assistant B.AI",
                 "suggestions": [
                     {
