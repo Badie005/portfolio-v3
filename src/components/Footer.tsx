@@ -14,6 +14,7 @@ export function Footer() {
 
   const navItems = [
     { name: tNav("projects"), href: "/projects" },
+    { name: tNav("blog"), href: "/blog" },
     { name: tNav("about"), href: "/#about" },
     { name: tNav("skills"), href: "/#skills" },
     { name: tNav("contact"), href: "/#contact" },
@@ -38,7 +39,7 @@ export function Footer() {
           {/* Brand Column */}
           <div className="lg:col-span-2">
             <Image
-              src="/logo/SVG/Logo-B.svg"
+              src="/logo/SVG/BDEV_Logo_B.svg"
               alt="B.DEV"
               width={100}
               height={32}

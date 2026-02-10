@@ -4,7 +4,7 @@ export const INITIAL_FILES: FileSystemItem[] = [
   {
     name: 'BAI_logo.svg',
     type: 'svg',
-    content: '/logo/IDE/ASCII Art BAI.svg'
+    content: '/logo/IDE/ASCII Art BAI.png'
   },
   {
     name: '.config',

@@ -76,7 +76,7 @@ export async function generateMetadata(): Promise<Metadata> {
         { url: "/favicon-dark.svg", type: "image/svg+xml", media: "(prefers-color-scheme: dark)" },
         { url: "/favicon-light.svg", type: "image/svg+xml", media: "(prefers-color-scheme: light)" },
       ],
-      apple: [{ url: "/logo/SVG/Logo-B.svg", type: "image/svg+xml" }],
+      apple: [{ url: "/logo/SVG/BDEV_Logo_B.svg", type: "image/svg+xml" }],
       shortcut: "/favicon-dark.svg",
     },
     openGraph: {

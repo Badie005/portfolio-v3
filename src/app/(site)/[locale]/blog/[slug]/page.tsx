@@ -194,7 +194,10 @@ export default async function BlogPostPage({ params }: PageProps) {
                             </div>
 
                             <div className="pt-1">
-                                <h1 className="text-3xl md:text-4xl lg:text-[3.25rem] font-sans font-medium tracking-tight text-ide-text leading-[1.12] text-pretty">
+                                <h1
+                                    className="text-3xl md:text-4xl lg:text-[3.25rem] tracking-tight text-ide-text leading-[1.12] text-pretty"
+                                    style={{ fontFamily: "'Saans', sans-serif", fontWeight: 500 }}
+                                >
                                     {post.title}
                                 </h1>
                             </div>
@@ -205,7 +208,7 @@ export default async function BlogPostPage({ params }: PageProps) {
                         {/* Date + Description Grid (like Anthropic) */}
                         <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] xl:grid-cols-[380px_1fr] gap-4 lg:gap-x-16">
                             {/* Date (left column on desktop) */}
-                            <div className="text-sm text-ide-muted space-y-2 leading-relaxed">
+                            <div className="text-sm text-ide-muted space-y-2 leading-relaxed" style={{ fontFamily: "'Saans', sans-serif" }}>
                                 <p>
                                     {t("publishedOn")} {formattedDate}
                                 </p>
@@ -215,7 +218,7 @@ export default async function BlogPostPage({ params }: PageProps) {
                             </div>
 
                             {/* Description (right column, larger) */}
-                            <p className="text-xl lg:text-2xl font-sans text-ide-text leading-[1.6] text-pretty">
+                            <p className="text-xl lg:text-2xl text-ide-text leading-[1.6] text-pretty" style={{ fontFamily: "'Saans', sans-serif" }}>
                                 {post.description}
                             </p>
                         </div>
@@ -262,8 +265,14 @@ export default async function BlogPostPage({ params }: PageProps) {
                                         />
 
                                         <div className="relative z-10 flex items-center gap-4">
-                                            <div className="w-14 h-14 rounded-xl bg-surface-1 border border-ide-border flex items-center justify-center text-ide-accent text-2xl font-mono font-bold">
-                                                {post.author ? post.author.slice(0, 1).toUpperCase() : "A"}
+                                            <div className="w-14 h-14 rounded-xl bg-surface-1 border border-ide-border flex items-center justify-center overflow-hidden">
+                                                <Image
+                                                    src="/logo/SVG/Mini_BDEV_Logo_B.svg"
+                                                    alt="B.DEV"
+                                                    width={40}
+                                                    height={40}
+                                                    className="object-contain"
+                                                />
                                             </div>
                                             <div>
                                                 <h3 className="font-heading font-semibold text-ide-text">{post.author}</h3>

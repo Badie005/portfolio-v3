@@ -17,11 +17,6 @@ export function EditorPane({ file, className }: EditorPaneProps) {
             'scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent hover:scrollbar-thumb-gray-400',
             className
         )}>
-            {/* Watermark */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[120px] font-bold text-gray-900 opacity-[0.02] pointer-events-none select-none z-0">
-                B.DEV
-            </div>
-
             {file ? (
                 <>
                     {/* Line Numbers - sticky to left (hide for images) */}
@@ -32,14 +27,19 @@ export function EditorPane({ file, className }: EditorPaneProps) {
                     )}
 
                     {/* Content */}
-                    <div className="flex-1 pr-8 animate-in fade-in duration-300 pb-20 min-w-0 flex">
+                    <div className={cn(
+                        "flex-1 animate-in fade-in duration-300 min-w-0",
+                        (file.type === 'image' || file.type === 'svg')
+                            ? "flex items-center justify-center p-8"
+                            : "pr-8 pb-20 flex"
+                    )}>
                         {(file.type === 'image' || file.type === 'svg') ? (
-                            <div className="flex items-center justify-center min-h-[500px] w-full">
+                            <div className="flex items-center justify-center w-full h-full">
                                 {/* eslint-disable-next-line @next/next/no-img-element */}
                                 <img
                                     src={file.content}
                                     alt={file.name}
-                                    className="max-w-full h-auto object-contain shadow-sm"
+                                    className="max-w-[90%] max-h-[80vh] w-auto h-auto object-contain rounded-lg"
                                 />
                             </div>
                         ) : (

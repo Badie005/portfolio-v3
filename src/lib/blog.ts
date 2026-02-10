@@ -28,6 +28,7 @@ export interface BlogPostMeta {
     date: string;
     author: string;
     image?: string;
+    coverImage?: string;
     tags: string[];
     category: string;
     readingTime: number;
@@ -80,6 +81,7 @@ function getAllPostsInternal(locale: string = "fr"): BlogPostMeta[] {
                 date: data.date || new Date().toISOString(),
                 author: data.author || "Abdelbadie Khoubiza",
                 image: data.image || null,
+                coverImage: data.coverImage || null,
                 tags: data.tags || [],
                 category: data.category || (locale === "en" ? "General" : "Général"),
                 readingTime: readingMinutes,
@@ -221,6 +223,7 @@ export function getTranslation(translationKey: string, targetLocale: string): Bl
                 date: data.date || new Date().toISOString(),
                 author: data.author || "Abdelbadie Khoubiza",
                 image: data.image || null,
+                coverImage: data.coverImage || null,
                 tags: data.tags || [],
                 category: data.category || (targetLocale === "en" ? "General" : "Général"),
                 readingTime: readingMinutes,

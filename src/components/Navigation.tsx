@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Link, usePathname } from "@/i18n/navigation";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AnimatedLogo } from "@/components/AnimatedLogo";
@@ -13,6 +13,7 @@ export function Navigation() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
   const t = useTranslations("nav");
+  const locale = useLocale();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -89,13 +90,13 @@ export function Navigation() {
       >
         <div className="w-full px-6 lg:px-[276px]">
           <div className="flex items-center justify-between h-[68px]">
-            {/* Logo */}
-            <Link
-              href="/"
+            {/* Logo - Links to localized home */}
+            <a
+              href={`/${locale}`}
               className="flex items-center"
             >
               <AnimatedLogo isScrolled={isScrolled} className="h-5 text-[#1A1A1A]" />
-            </Link>
+            </a>
 
             {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center gap-4">
