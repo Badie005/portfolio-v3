@@ -64,7 +64,7 @@ export type StreamCallback = (chunk: string, done: boolean) => void;
 
 // Google AI Studio API (Primary)
 const GOOGLE_AI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models';
-const GOOGLE_AI_MODEL = 'gemini-2.5-pro-exp-03-25';
+const GOOGLE_AI_MODEL = 'gemini-2.5-flash';
 
 // OpenRouter fallback (if Google AI fails)
 const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
