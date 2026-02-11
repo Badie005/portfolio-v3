@@ -669,6 +669,16 @@
             "message": {
                 "analyzed": "Requête analysée"
             },
+            "quickActions": {
+                "explain": "Expliquer",
+                "refactor": "Refactoriser",
+                "debug": "Déboguer",
+                "tests": "Tests",
+                "explainPrompt": "Explique le code dans {filename} en détail. Que fait-il ? Comment fonctionne-t-il ?",
+                "refactorPrompt": "Analyse {filename} et suggère des améliorations pour la lisibilité, la performance et les bonnes pratiques.",
+                "debugPrompt": "Analyse {filename} pour détecter les bugs potentiels, les cas limites et les problèmes. Propose des corrections.",
+                "testsPrompt": "Génère des tests unitaires pour {filename} en utilisant un framework de test moderne."
+            },
             "errors": {
                 "unknown": "Erreur inconnue"
             }

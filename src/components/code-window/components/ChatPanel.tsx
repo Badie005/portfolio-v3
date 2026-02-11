@@ -21,7 +21,11 @@ import {
     RefreshCw,
     Loader2,
     X,
-    Zap
+    Zap,
+    Wand2,
+    Bug,
+    TestTube,
+    BookOpen
 } from 'lucide-react';
 import Image from 'next/image';
 import {
@@ -80,6 +84,16 @@ interface ParsedCodeBlock {
 
 const MAX_INPUT_LENGTH = 10000;
 const MAX_HISTORY_FOR_API = 20;
+const STORAGE_KEY = 'bai-chat-history';
+const MAX_STORED_MESSAGES = 100;
+
+// Quick actions configuration
+const QUICK_ACTIONS = [
+    { id: 'explain', icon: BookOpen },
+    { id: 'refactor', icon: Wand2 },
+    { id: 'debug', icon: Bug },
+    { id: 'tests', icon: TestTube },
+] as const;
 
 
 
@@ -88,6 +102,44 @@ const MAX_HISTORY_FOR_API = 20;
 // ============================================================
 
 const generateId = (): string => `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+
+// LocalStorage helpers for persistence
+const saveMessagesToStorage = (messages: ChatMessage[]): void => {
+    if (typeof window === 'undefined') return;
+    try {
+        const serialized = messages.slice(-MAX_STORED_MESSAGES).map(msg => ({
+            ...msg,
+            timestamp: msg.timestamp instanceof Date ? msg.timestamp.toISOString() : msg.timestamp,
+        }));
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(serialized));
+    } catch {
+        console.warn('Failed to save chat history');
+    }
+};
+
+const loadMessagesFromStorage = (): ChatMessage[] => {
+    if (typeof window === 'undefined') return [];
+    try {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (!stored) return [];
+        const parsed = JSON.parse(stored);
+        return parsed.map((msg: ChatMessage) => ({
+            ...msg,
+            timestamp: new Date(msg.timestamp),
+        }));
+    } catch {
+        return [];
+    }
+};
+
+const clearMessagesFromStorage = (): void => {
+    if (typeof window === 'undefined') return;
+    try {
+        localStorage.removeItem(STORAGE_KEY);
+    } catch {
+        console.warn('Failed to clear chat history');
+    }
+};
 
 const sanitizeInput = (input: string): string => {
     return input.trim().slice(0, MAX_INPUT_LENGTH);
@@ -298,7 +350,6 @@ const ActionLine = memo<ActionLineProps>(({ type, text, time, loading }) => {
         searched: t('chat.actionLabels.searched'),
     };
 
-    // Typewriter effect logic
     const [displayedText, setDisplayedText] = useState(loading ? '' : text);
 
     useEffect(() => {
@@ -309,7 +360,7 @@ const ActionLine = memo<ActionLineProps>(({ type, text, time, loading }) => {
 
         setDisplayedText('');
         let index = 0;
-        const speed = 30; // Faster and smoother
+        const speed = 25;
         const interval = setInterval(() => {
             if (index < text.length) {
                 setDisplayedText(text.slice(0, index + 1));
@@ -322,34 +373,36 @@ const ActionLine = memo<ActionLineProps>(({ type, text, time, loading }) => {
         return () => clearInterval(interval);
     }, [text, loading]);
 
+    const getIcon = () => {
+        switch (type) {
+            case 'thought': return '◆';
+            case 'read': return '◉';
+            case 'searched': return '◎';
+            default: return '○';
+        }
+    };
+
     return (
-        <div className="py-0.5 font-mono text-[11px]">
-            <div className={`flex items-center gap-2 ${loading ? 'text-[#D97757]' : 'text-[#9A9A9A]'}`}>
-                {/* Symbol - Diamond for thoughts */}
-                <span className={`text-[10px] ${loading ? 'animate-pulse' : ''}`}>
-                    {type === 'thought' ? '◆' : '›'}
+        <div className="flex items-center gap-2 py-1 px-1">
+            <div className={`flex items-center justify-center w-5 h-5 rounded-full text-[10px] font-bold
+                ${loading ? 'bg-[#D97757]/10 text-[#D97757] animate-pulse' : 'bg-[#F5F3EE] text-[#9A9A9A]'}`}>
+                {getIcon()}
+            </div>
+            <div className="flex items-center gap-1.5 text-[12px]">
+                <span className={`font-medium uppercase tracking-wide ${loading ? 'text-[#D97757]' : 'text-[#6B6B6B]'}`}>
+                    {labels[type]}
                 </span>
-
-                <div className="flex items-center gap-1.5 break-all">
-                    {/* Label */}
-                    <span className="font-semibold uppercase tracking-wide opacity-80">{labels[type]}</span>
-
-                    {/* Text content with Typewriter effect */}
-                    {text && (
-                        <span className="opacity-90">
-                            {displayedText}
-                            {/* Cursor for loading state - Smooth pulse instead of blink */}
-                            {loading && (
-                                <span className="inline-block w-[2px] h-3 bg-[#D97757] ml-1 animate-pulse align-middle" />
-                            )}
-                        </span>
-                    )}
-
-                    {/* Time */}
-                    {type === 'thought' && time && (
-                        <span className="text-ide-muted opacity-60 ml-1">[{time}]</span>
-                    )}
-                </div>
+                {text && (
+                    <span className="text-[#37352F]">
+                        {displayedText}
+                        {loading && (
+                            <span className="inline-block w-[2px] h-3 bg-[#D97757] ml-1 animate-pulse align-middle" />
+                        )}
+                    </span>
+                )}
+                {time && (
+                    <span className="text-[#9A9A9A] text-[11px] ml-1">({time})</span>
+                )}
             </div>
         </div>
     );
@@ -373,12 +426,27 @@ const AgentActionLine = memo<AgentActionLineProps>(({ action }) => {
         search: t('chat.actionLabels.searched'),
     };
 
+    const getIcon = () => {
+        switch (action.type) {
+            case 'read': return '◉';
+            case 'create': return '+';
+            case 'delete': return '−';
+            case 'modify': return '✎';
+            case 'search': return '◎';
+            default: return '○';
+        }
+    };
+
     return (
-        <div className="py-0.5">
-            <div className="text-[12px] flex items-center gap-1.5">
-                <span className="font-medium text-[#37352F]">{labels[action.type]}</span>
+        <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-medium bg-[#F5F3EE] text-[#37352F]">
+            <span className="text-[10px]">{getIcon()}</span>
+            <span>{labels[action.type]}</span>
+            {action.filename && (
                 <span className="text-[#9A9A9A]">{action.filename}</span>
-            </div>
+            )}
+            {action.status === 'pending' && (
+                <Loader2 size={10} className="animate-spin text-[#D97757]" />
+            )}
         </div>
     );
 });
@@ -805,6 +873,46 @@ const EmptyState = memo<{
 });
 EmptyState.displayName = 'EmptyState';
 
+// Quick Actions Toolbar
+interface QuickActionsProps {
+    onAction: (prompt: string) => void;
+    activeFile: FileData | null | undefined;
+    disabled?: boolean;
+}
+
+const QuickActionsToolbar = memo<QuickActionsProps>(({ onAction, activeFile, disabled }) => {
+    const t = useTranslations('ide');
+
+    const handleAction = useCallback((actionId: string) => {
+        const prompts: Record<string, string> = {
+            explain: t('chat.quickActions.explainPrompt', { filename: activeFile?.name || 'this file' }),
+            refactor: t('chat.quickActions.refactorPrompt', { filename: activeFile?.name || 'this file' }),
+            debug: t('chat.quickActions.debugPrompt', { filename: activeFile?.name || 'this file' }),
+            tests: t('chat.quickActions.testsPrompt', { filename: activeFile?.name || 'this file' }),
+        };
+        onAction(prompts[actionId] || '');
+    }, [onAction, activeFile, t]);
+
+    if (!activeFile) return null;
+
+    return (
+        <div className="flex items-center gap-1.5 px-3 py-2 border-t border-[#E8E5DE]/50 bg-[#FAF9F6]/50">
+            {QUICK_ACTIONS.map(({ id, icon: Icon }) => (
+                <button
+                    key={id}
+                    onClick={() => handleAction(id)}
+                    disabled={disabled}
+                    className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-medium text-[#6B6B6B] bg-white border border-[#E8E5DE] hover:border-[#D97757]/40 hover:text-[#D97757] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    <Icon size={12} />
+                    {t(`chat.quickActions.${id}`)}
+                </button>
+            ))}
+        </div>
+    );
+});
+QuickActionsToolbar.displayName = 'QuickActionsToolbar';
+
 
 
 // ============================================================
@@ -834,7 +942,12 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
         return [t('chat.message.analyzed')];
     }, [t]);
     // State
-    const [messages, setMessages] = useState<ChatMessage[]>([]);
+    const [messages, setMessages] = useState<ChatMessage[]>(() => {
+        if (typeof window !== 'undefined') {
+            return loadMessagesFromStorage();
+        }
+        return [];
+    });
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [thinkingTime, setThinkingTime] = useState(0);
@@ -865,6 +978,13 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
             }
         };
     }, []);
+
+    // Persist messages to localStorage
+    useEffect(() => {
+        if (messages.length > 0) {
+            saveMessagesToStorage(messages);
+        }
+    }, [messages]);
 
     // Ref for the messages container
     const messagesContainerRef = useRef<HTMLDivElement>(null);
@@ -1299,6 +1419,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
     const handleClear = useCallback(() => {
         abortControllerRef.current?.abort();
         setMessages([]);
+        clearMessagesFromStorage();
         setStreamingText('');
         setError(null);
         setIsLoading(false);
@@ -1472,35 +1593,47 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
 
             {/* Input Area - Only show when there are messages (hide when EmptyState is visible) */}
             {messages.length > 0 && (
-                <div className="p-3 pt-2 bg-white/60 backdrop-blur-md border-t border-white/40 animate-chat-input-slide-up">
-                    <div className="mx-auto w-full max-w-[580px]">
-                        <form onSubmit={(e) => { e.preventDefault(); handleSend(); }} className="relative bg-white/90 backdrop-blur-sm rounded-2xl border border-[#E8E5DE] shadow-[0_8px_32px_-12px_rgba(20,20,19,0.15)] overflow-hidden focus-within:border-[#D97757]/40 focus-within:shadow-lg transition-all">
-                            <textarea
-                                ref={textareaRef}
-                                name="message"
-                                value={input}
-                                onChange={(e) => setInput(e.target.value)}
-                                onKeyDown={handleKeyDown}
-                                placeholder={isServiceReady ? t('chat.placeholderReady') : t('chat.placeholderUnavailable')}
-                                className="text-ide-text text-[15px] w-full resize-none bg-transparent px-4 py-4 outline-none placeholder:text-ide-muted/70 min-h-[48px] max-h-[200px] overflow-y-hidden"
-                                rows={1}
-                                spellCheck={false}
-                                disabled={isLoading || !isServiceReady}
-                            />
-                            <div className="px-4 py-3 border-t border-[#E8E5DE]/50 flex items-center justify-between">
-                                <Image src="/logo/IDE/Logo AI.svg" alt="B.AI" width={28} height={12} />
-                                <button
-                                    type="submit"
-                                    disabled={!input.trim() || isLoading || !isServiceReady}
-                                    className={`flex items-center justify-center w-7 h-7 rounded-lg transition-all ${input.trim() && !isLoading && isServiceReady
-                                        ? 'bg-[#D97757] text-white shadow-sm hover:bg-[#c86a4c]'
-                                        : 'bg-ide-ui/50 text-ide-muted cursor-not-allowed'
-                                        }`}
-                                >
-                                    {isLoading ? <Loader2 size={14} className="animate-spin" /> : <ArrowUp size={14} />}
-                                </button>
-                            </div>
-                        </form>
+                <div className="bg-white/60 backdrop-blur-md border-t border-white/40">
+                    {/* Quick Actions Toolbar */}
+                    <QuickActionsToolbar
+                        onAction={(prompt) => {
+                            setInput(prompt);
+                            textareaRef.current?.focus();
+                        }}
+                        activeFile={activeFile}
+                        disabled={isLoading || !isServiceReady}
+                    />
+                    
+                    <div className="p-3 pt-2">
+                        <div className="mx-auto w-full max-w-[580px]">
+                            <form onSubmit={(e) => { e.preventDefault(); handleSend(); }} className="relative bg-white/90 backdrop-blur-sm rounded-2xl border border-[#E8E5DE] shadow-[0_8px_32px_-12px_rgba(20,20,19,0.15)] overflow-hidden focus-within:border-[#D97757]/40 focus-within:shadow-lg transition-all">
+                                <textarea
+                                    ref={textareaRef}
+                                    name="message"
+                                    value={input}
+                                    onChange={(e) => setInput(e.target.value)}
+                                    onKeyDown={handleKeyDown}
+                                    placeholder={isServiceReady ? t('chat.placeholderReady') : t('chat.placeholderUnavailable')}
+                                    className="text-ide-text text-[15px] w-full resize-none bg-transparent px-4 py-4 outline-none placeholder:text-ide-muted/70 min-h-[48px] max-h-[200px] overflow-y-hidden"
+                                    rows={1}
+                                    spellCheck={false}
+                                    disabled={isLoading || !isServiceReady}
+                                />
+                                <div className="px-4 py-3 border-t border-[#E8E5DE]/50 flex items-center justify-between">
+                                    <Image src="/logo/IDE/Logo AI.svg" alt="B.AI" width={28} height={12} />
+                                    <button
+                                        type="submit"
+                                        disabled={!input.trim() || isLoading || !isServiceReady}
+                                        className={`flex items-center justify-center w-7 h-7 rounded-lg transition-all ${input.trim() && !isLoading && isServiceReady
+                                            ? 'bg-[#D97757] text-white shadow-sm hover:bg-[#c86a4c]'
+                                            : 'bg-ide-ui/50 text-ide-muted cursor-not-allowed'
+                                            }`}
+                                    >
+                                        {isLoading ? <Loader2 size={14} className="animate-spin" /> : <ArrowUp size={14} />}
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
             )}

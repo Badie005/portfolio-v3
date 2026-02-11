@@ -669,6 +669,16 @@
             "message": {
                 "analyzed": "Analyzed request"
             },
+            "quickActions": {
+                "explain": "Explain",
+                "refactor": "Refactor",
+                "debug": "Debug",
+                "tests": "Tests",
+                "explainPrompt": "Explain the code in {filename} in detail. What does it do? How does it work?",
+                "refactorPrompt": "Review {filename} and suggest improvements for readability, performance, and best practices.",
+                "debugPrompt": "Analyze {filename} for potential bugs, edge cases, and issues. Provide fixes.",
+                "testsPrompt": "Generate unit tests for {filename} using a modern testing framework."
+            },
             "errors": {
                 "unknown": "Unknown error"
             }
