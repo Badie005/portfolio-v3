@@ -73,6 +73,8 @@ export function chatReducer(state: ChatState, action: ChatAction): ChatState {
                     timestamp: new Date(),
                 }].slice(-MAX_STORED),
                 input: '',
+                status: 'idle',
+                streamingText: '',
             };
 
         case 'ADD_BOT_MESSAGE':
@@ -84,6 +86,8 @@ export function chatReducer(state: ChatState, action: ChatAction): ChatState {
                     timestamp: new Date(),
                     ...action.payload,
                 }].slice(-MAX_STORED),
+                status: 'idle',
+                streamingText: '',
             };
 
         case 'START_LOADING':
