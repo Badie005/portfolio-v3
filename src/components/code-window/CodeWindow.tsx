@@ -21,7 +21,7 @@ import { TitleBar } from './components/TitleBar';
 import { Sidebar } from './components/Sidebar';
 import { TabBar } from './components/TabBar';
 import { EditorPane } from './components/EditorPane';
-import ChatPanel from './components/ChatPanel';
+import ChatPanel from '@/components/chat/ChatPanel';
 import Terminal from './components/Terminal';
 import StatusBar from './components/StatusBar';
 import { CommandPalette } from './components/CommandPalette';

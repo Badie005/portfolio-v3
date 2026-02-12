@@ -9,7 +9,7 @@ export const projectsFr: Project[] = [
       "Application web complète et sécurisée pour l'Université Sidi Mohamed Ben Abdellah. Digitalisation de l'orientation académique et génération de documents officiels.",
     fullDescription:
       "Une plateforme intuitive qui modernise la gestion universitaire : administration des parcours académiques, inscriptions automatisées, validation des prérequis et génération de documents sécurisés par QR Code. Interface 'Glassmorphism' responsive respectant les normes WCAG.",
-    image: "/projet-image/USMBA x B.DEV FR.svg",
+    image: "/images/projects/USMBA-BDEV-FR.svg",
     imageAlt: "Interface du portail de gestion étudiant USMBA",
     period: "Mars - Juin 2025",
     technologies: ["Laravel 12", "PHP 8.2+", "MySQL 8.0", "Tailwind CSS 3", "Alpine.js", "Blade", "Sanctum", "Vite"],
@@ -53,7 +53,7 @@ export const projectsFr: Project[] = [
       "Application web éducative (LMS) moderne conçue pour moderniser le suivi pédagogique avec une expérience utilisateur fluide et interactive.",
     fullDescription:
       "AYJI est une Single Page Application éducative offrant un espace étudiant complet (dashboard, catalogue de cours, quiz interactifs) et un back-office administrateur. Construite avec Angular 19 et NgRx pour une gestion d'état robuste, elle intègre Socket.io pour les notifications en temps réel.",
-    image: "/projet-image/B.DEV%20%C3%97%20AYJI%20FR.svg",
+    image: "/images/projects/BDEV-AYJI-FR.svg",
     imageAlt: "Dashboard de la plateforme e-learning AYJI",
     period: "Sept - Déc 2025",
     technologies: ["Angular 19", "TypeScript", "NgRx", "RxJS", "Node.js", "MongoDB", "Mongoose", "Redis", "Socket.io", "PouchDB", "Cypress", "SCSS"],
@@ -100,7 +100,7 @@ export const projectsFr: Project[] = [
       "Stage de découverte de l'infrastructure informatique au sein d'un établissement public. Observation, maintenance et support technique.",
     fullDescription:
       "Stage de 15 jours à l'Agence Urbaine de Taza pour découvrir le fonctionnement d'une infrastructure IT professionnelle. Observation de l'audit serveurs/réseau, initiation à la virtualisation VMware, pratique du diagnostic réseau et support utilisateurs.",
-    image: "/projet-image/AUT x B.DEV FR.svg",
+    image: "/images/projects/AUT-BDEV-FR.svg",
     imageAlt: "Infrastructure IT et diagnostic réseau",
     period: "Juin 2024",
     technologies: ["Windows Server", "VMware vSphere", "RAID", "Active Directory", "TCP/IP", "Diagnostic Réseau"],
@@ -172,7 +172,7 @@ export const projectsEn: Project[] = [
       "Complete and secure web application for Sidi Mohamed Ben Abdellah University. Digitization of academic orientation and generation of official documents.",
     fullDescription:
       "An intuitive platform that modernizes university management: administration of academic tracks, automated enrollments, prerequisite validation, and generation of QR-code secured documents. Responsive glassmorphism interface compliant with WCAG.",
-    image: "/projet-image/USMBA x B.DEV ENG.svg",
+    image: "/images/projects/USMBA-BDEV-ENG.svg",
     imageAlt: "USMBA student management portal interface",
     period: "March - June 2025",
     technologies: ["Laravel 12", "PHP 8.2+", "MySQL 8.0", "Tailwind CSS 3", "Alpine.js", "Blade", "Sanctum", "Vite"],
@@ -214,7 +214,7 @@ export const projectsEn: Project[] = [
       "Modern educational (LMS) web application designed to improve learning tracking with a smooth and interactive user experience.",
     fullDescription:
       "AYJI is an educational Single Page Application offering a complete student space (dashboard, course catalog, interactive quizzes) and an admin back office. Built with Angular 19 and NgRx for robust state management, it integrates Socket.io for real-time notifications.",
-    image: "/projet-image/B.DEV%20%C3%97%20AYJI%20ENG.svg",
+    image: "/images/projects/BDEV-AYJI-ENG.svg",
     imageAlt: "AYJI e-learning platform dashboard",
     period: "September - December 2025",
     technologies: ["Angular 19", "TypeScript", "NgRx", "RxJS", "Node.js", "MongoDB", "Mongoose", "Redis", "Socket.io", "PouchDB", "Cypress", "SCSS"],
@@ -259,7 +259,7 @@ export const projectsEn: Project[] = [
       "Introductory internship discovering IT infrastructure within a public institution. Observation, maintenance and technical support.",
     fullDescription:
       "15-day internship at the Urban Agency of Taza to discover how a professional IT infrastructure operates. Observed server/network audits, got introduced to VMware virtualization, practiced network diagnostics and provided user support.",
-    image: "/projet-image/AUT x B.DEV ENG.svg",
+    image: "/images/projects/AUT-BDEV-ENG.svg",
     imageAlt: "IT infrastructure and network diagnostics",
     period: "June 2024",
     technologies: ["Windows Server", "VMware vSphere", "RAID", "Active Directory", "TCP/IP", "Network Diagnostics"],

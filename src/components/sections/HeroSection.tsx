@@ -145,7 +145,7 @@ export function HeroSection() {
             >
               {/* Background Image Container */}
               <Image
-                src="/background B.411 IDE.jpeg"
+                src="/images/backgrounds/ide-background.jpeg"
                 alt={tHero("imageAlt")}
                 fill
                 className="object-cover rounded-xl"

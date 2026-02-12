@@ -61,6 +61,7 @@ interface ChatPanelProps {
     onReadFile?: (filename: string) => string | null;
     onCreateFolder?: (folderPath: string) => boolean;
     onDeleteFolder?: (folderPath: string) => boolean;
+    onListDirectory?: (dirPath?: string) => string[];
     onSearchFiles?: (query: string, options?: SearchOptions) => SearchResult[];
     onExecuteCommand?: (command: string) => TerminalCommandResult;
     onFocusPanel?: (panel: IdePanel) => void;
@@ -81,6 +82,7 @@ export default function ChatPanel({
     onReadFile,
     onCreateFolder,
     onDeleteFolder,
+    onListDirectory,
     onSearchFiles,
     onExecuteCommand,
     onFocusPanel,

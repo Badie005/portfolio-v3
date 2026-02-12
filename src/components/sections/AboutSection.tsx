@@ -6,7 +6,7 @@ import Image from "next/image";
 import Lottie, { LottieRefCurrentProps } from "lottie-react";
 import { TerminalStatus } from "@/components/ui/TerminalStatus";
 import { useTranslations } from "next-intl";
-import animationData from "../../../public/video-a-propos.json";
+import animationData from "../../../public/videos/about.json";
 
 export function AboutSection() {
   const [isMounted, setIsMounted] = useState(false);

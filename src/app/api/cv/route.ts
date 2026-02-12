@@ -5,7 +5,7 @@ import path from "path";
 export async function GET(request: NextRequest) {
     try {
         // Path to CV file
-        const cvPath = path.join(process.cwd(), "public", "CV.pdf");
+        const cvPath = path.join(process.cwd(), "public", "documents", "CV.pdf");
 
         // Check if file exists
         try {

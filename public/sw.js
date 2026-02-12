@@ -15,7 +15,7 @@ const STATIC_ASSETS = [
     '/favicon-light.svg',
     '/android-chrome-192x192.png',
     '/android-chrome-512x512.png',
-    '/logo/SVG/Logo-B.svg',
+    '/logo/SVG/-BLogo.svg',
 ];
 
 // Cache size limits
