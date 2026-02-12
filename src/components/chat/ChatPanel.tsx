@@ -10,13 +10,27 @@ import { ErrorBanner, ChatMessageList, EmptyState, QuickActionsToolbar, CommandA
 import { FileSystemItem, FileData, SearchOptions, SearchResult, TerminalCommandResult, IdePanel, DownloadOptions } from '@/components/code-window/types';
 
 const STORAGE_KEY = 'bai-chat-history';
+const MAX_HISTORY_MESSAGES = 20;
+const MAX_HISTORY_AGE_MS = 24 * 60 * 60 * 1000; // 24 hours
 
 function loadMessages(): ChatMessage[] {
     if (typeof window === 'undefined') return [];
     try {
         const stored = localStorage.getItem(STORAGE_KEY);
         if (!stored) return [];
-        return JSON.parse(stored).map((m: ChatMessage) => ({ ...m, timestamp: new Date(m.timestamp) }));
+        const parsed = JSON.parse(stored);
+        if (!Array.isArray(parsed)) return [];
+        
+        const now = Date.now();
+        const recentMessages = parsed
+            .map((m: ChatMessage) => ({ ...m, timestamp: new Date(m.timestamp) }))
+            .filter((m: ChatMessage) => {
+                const msgTime = m.timestamp instanceof Date ? m.timestamp.getTime() : new Date(m.timestamp).getTime();
+                return now - msgTime < MAX_HISTORY_AGE_MS;
+            })
+            .slice(-MAX_HISTORY_MESSAGES);
+        
+        return recentMessages;
     } catch {
         return [];
     }
@@ -24,7 +38,16 @@ function loadMessages(): ChatMessage[] {
 
 function saveMessages(messages: ChatMessage[]): void {
     if (typeof window === 'undefined') return;
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(messages.slice(-100))); } catch { /* */ }
+    try { 
+        const now = Date.now();
+        const recentMessages = messages
+            .filter(m => {
+                const msgTime = m.timestamp instanceof Date ? m.timestamp.getTime() : new Date(m.timestamp).getTime();
+                return now - msgTime < MAX_HISTORY_AGE_MS;
+            })
+            .slice(-MAX_HISTORY_MESSAGES);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(recentMessages)); 
+    } catch { /* */ }
 }
 
 interface ChatPanelProps {
@@ -146,8 +169,21 @@ export default function ChatPanel({
         if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
     }, [showAutocomplete, autocompleteCommands.length, selectNext, selectPrev, getSelectedCommand, handleCommandSelect, hideAutocomplete, navigateUp, navigateDown, handleSend]);
 
-    const handleClear = useCallback(() => { abortControllerRef.current?.abort(); dispatch({ type: 'CLEAR_ALL' }); localStorage.removeItem(STORAGE_KEY); }, []);
-    const handleSuggestionClick = useCallback((suggestion: string) => { dispatch({ type: 'SET_INPUT', payload: suggestion }); textareaRef.current?.focus(); }, []);
+    const handleClear = useCallback(() => { 
+        abortControllerRef.current?.abort(); 
+        dispatch({ type: 'CLEAR_ALL' }); 
+        localStorage.removeItem(STORAGE_KEY); 
+    }, []);
+    
+    const handleSuggestionClick = useCallback((suggestion: string) => { 
+        dispatch({ type: 'SET_INPUT', payload: suggestion });
+        setTimeout(() => {
+            const trimmed = suggestion.trim();
+            if (trimmed) {
+                sendAI(suggestion, 'idle');
+            }
+        }, 0);
+    }, [sendAI]);
 
     const isLoading = state.status === 'loading' || state.status === 'streaming';
 
@@ -179,7 +215,19 @@ export default function ChatPanel({
             </div>
             {state.messages.length > 0 && (
                 <div className="bg-white/60 backdrop-blur-md border-t border-white/40">
-                    <QuickActionsToolbar onAction={(prompt) => { dispatch({ type: 'SET_INPUT', payload: prompt }); textareaRef.current?.focus(); }} activeFile={activeFile} disabled={isLoading} />
+                    <QuickActionsToolbar 
+                        onAction={(prompt) => { 
+                            dispatch({ type: 'SET_INPUT', payload: prompt });
+                            setTimeout(() => {
+                                const trimmed = prompt.trim();
+                                if (trimmed && state.status !== 'loading' && state.status !== 'streaming') {
+                                    sendAI(prompt, state.status);
+                                }
+                            }, 0);
+                        }} 
+                        activeFile={activeFile} 
+                        disabled={isLoading} 
+                    />
                     <div className="p-3 pt-2">
                         <div className="mx-auto w-full max-w-[580px]">
                             <form onSubmit={(e) => { e.preventDefault(); handleSend(); }} className="relative bg-white/90 backdrop-blur-sm rounded-2xl border border-[#E8E5DE] shadow-[0_8px_32px_-12px_rgba(20,20,19,0.15)] overflow-hidden focus-within:border-[#D97757]/40 focus-within:shadow-lg transition-all">

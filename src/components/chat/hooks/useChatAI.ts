@@ -2,7 +2,7 @@ import { useRef, useCallback } from 'react';
 import { ChatMessage, MAX_MESSAGES, ChatAction } from '../ChatReducer';
 import { CommandContext, buildCodeChanges } from '../ChatContext';
 import { registry } from '../ChatCommands';
-import { chatRateLimiter, parseAgentActions } from '../utils';
+import { parseAgentActions } from '../utils';
 import { FileSystemItem, FileData, SearchOptions, SearchResult, TerminalCommandResult, IdePanel, DownloadOptions } from '@/components/code-window/types';
 import { getGeminiService, GeminiMessage } from '@/lib/gemini';
 import { useTranslations } from 'next-intl';
@@ -73,8 +73,10 @@ export function useChatAI({
     const handleSend = useCallback(async (input: string, status: string) => {
         const trimmedInput = input.trim();
         if (!trimmedInput || status === 'loading' || status === 'streaming') return false;
-        if (!chatRateLimiter.canProceed()) return false;
-        if (!geminiServiceRef.current?.isReady()) return false;
+        if (!geminiServiceRef.current?.isReady()) {
+            dispatch({ type: 'ADD_BOT_MESSAGE', payload: { text: 'Service non disponible. Vérifiez votre connexion.' } });
+            return false;
+        }
 
         lastInputRef.current = trimmedInput;
         addToHistory(trimmedInput);
