@@ -82,7 +82,7 @@ export default function ChatPanel({
     onReadFile,
     onCreateFolder,
     onDeleteFolder,
-    onListDirectory,
+    onListDirectory: _onListDirectory,
     onSearchFiles,
     onExecuteCommand,
     onFocusPanel,
