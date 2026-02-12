@@ -127,6 +127,16 @@ export default function ChatPanel({
     useEffect(() => { registerAllCommands(); }, []);
     useEffect(() => { saveMessages(state.messages); }, [state.messages]);
 
+    // Safety timeout: reset status if stuck in loading for more than 3 minutes
+    useEffect(() => {
+        if (state.status === 'loading' || state.status === 'streaming') {
+            const safetyTimeout = setTimeout(() => {
+                dispatch({ type: 'FINISH_RESPONSE', payload: { text: state.streamingText || 'La requête a pris trop de temps. Veuillez réessayer.' } });
+            }, 180000); // 3 minutes
+            return () => clearTimeout(safetyTimeout);
+        }
+    }, [state.status, state.streamingText]);
+
     const applyCodeChange = useCallback((messageId: string, changeIndex: number) => {
         const message = messagesRef.current.find(m => m.id === messageId);
         const change = message?.codeChanges?.[changeIndex];

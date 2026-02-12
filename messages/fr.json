@@ -344,37 +344,37 @@
         },
         "images": [
             {
-                "src": "/images/1.png",
+                "src": "/images/ai-art/1.png",
                 "alt": "Clavier mécanique en aluminium brossé",
                 "title": "Clavier mécanique",
                 "desc": "Aluminium & cuir"
             },
             {
-                "src": "/images/2.png",
+                "src": "/images/ai-art/2.png",
                 "alt": "Lampe de bureau architecte",
                 "title": "Lampe d'architecte",
                 "desc": "Chrome & cuivre"
             },
             {
-                "src": "/images/3.png",
+                "src": "/images/ai-art/3.png",
                 "alt": "Souris design",
                 "title": "Souris design",
                 "desc": "Acier brossé"
             },
             {
-                "src": "/images/4.png",
+                "src": "/images/ai-art/4.png",
                 "alt": "Câble USB premium",
                 "title": "Câble premium",
                 "desc": "Cuivre tressé"
             },
             {
-                "src": "/images/5.png",
+                "src": "/images/ai-art/5.png",
                 "alt": "Stylet de précision",
                 "title": "Stylet de précision",
                 "desc": "Titane & cuir"
             },
             {
-                "src": "/images/6.png",
+                "src": "/images/ai-art/6.png",
                 "alt": "Support pour laptop",
                 "title": "Support laptop",
                 "desc": "Alliage d'aluminium"

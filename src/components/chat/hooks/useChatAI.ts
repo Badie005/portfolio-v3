@@ -120,6 +120,12 @@ export function useChatAI({
 
         dispatch({ type: 'START_LOADING' });
 
+        const TIMEOUT_MS = 120000; // 2 minutes max
+        const timeoutId = setTimeout(() => {
+            controller.abort();
+            dispatch({ type: 'FINISH_RESPONSE', payload: { text: 'Délai d\'attente dépassé. Veuillez réessayer.' } });
+        }, TIMEOUT_MS);
+
         try {
             const conversationHistory = getConversationHistory();
             const parsedActions = parseAgentActions(trimmedInput);
@@ -215,6 +221,8 @@ export function useChatAI({
             dispatch({ type: 'SET_ERROR', payload: { message: errorMessage } });
             dispatch({ type: 'ADD_BOT_MESSAGE', payload: { text: '', error: errorMessage } });
             return true;
+        } finally {
+            clearTimeout(timeoutId);
         }
     }, [
         activeFile, contextFiles, enableStreaming, getConversationHistory, onOpenFile, onReadFile,

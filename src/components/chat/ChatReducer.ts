@@ -130,6 +130,7 @@ export function chatReducer(state: ChatState, action: ChatAction): ChatState {
                 ...state,
                 status: 'error',
                 error: action.payload,
+                streamingText: '',
             };
 
         case 'DISMISS_ERROR':

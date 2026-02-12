@@ -1,0 +1,79 @@
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\android-chrome-192x192.png
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\android-chrome-512x512.png
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\background B.411 IDE.jpeg
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\BDEV_Logo_B.svg
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\CV.pdf
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\favicon-dark.svg
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\favicon-light.svg
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\favicon.ico
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\google1e1fe79093e0af9f.html
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\manifest.json
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\Mini-Logo-B.ico
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\offline.html
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\og-projects.jpg
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\profile.jpg
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\sw.js
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\video-a-propos.json
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\video-a-propos.mp4
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\fonts\Saans-Light.woff2
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\fonts\Saans-Medium.woff2
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\fonts\Saans-Regular.woff2
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\icons\bar-graph-icon.svg
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\icons\book-icon.svg
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\icons\building-icon.svg
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\icons\code-icon.svg
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\icons\copy-icon.svg
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\icons\download-icon.svg
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\icons\eye-icon.svg
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\icons\globe-icon.svg
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\icons\help-circle-icon.svg
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\icons\lightbulb-icon.svg
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\icons\link-icon.svg
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\icons\mailbox-icon.svg
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\icons\map-pin-icon.svg
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\icons\megaphone-icon.svg
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\icons\padlock-icon.svg
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\icons\projects-icon.svg
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\icons\server-icon.svg
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\icons\settings-icon.svg
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\icons\sparkles-icon.svg
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\icons\team-icon.svg
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\icons\user-icon.svg
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\icons\workflow-icon.svg
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\icons\IDE-icone\coffee.svg
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\icons\IDE-icone\developer.svg
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\icons\IDE-icone\graduation-cap.svg
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\icons\IDE-icone\idea.svg
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\icons\IDE-icone\pencil.svg
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\images\ai-art\1.png
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\images\ai-art\2.png
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\images\ai-art\3.png
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\images\ai-art\4.png
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\images\ai-art\5.png
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\images\ai-art\6.png
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\images\blog\bdev-signature\content.png
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\images\blog\bdev-signature\cover.png
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\images\blog\clustering-algorithms-analysis\content.png
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\images\blog\clustering-algorithms-analysis\cover.png
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\images\blog\welcome\content.png
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\images\blog\welcome\cover.png
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\logo\Logo-B.json
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\logo\Logo-w.json
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\logo\IDE\ASCII Art BAI.png
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\logo\IDE\ASCII Art BAI.svg
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\logo\IDE\ascii-art.png
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\logo\IDE\Logo AI.svg
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\logo\IDE\Logo-AI-illustration.svg
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\logo\SVG\BDEV_Logo_B.svg
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\logo\SVG\BDEV_Logo_W.svg
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\logo\SVG\Logo-B.svg
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\logo\SVG\Logo-w.svg
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\logo\SVG\Mini_BDEV_Logo_B.svg
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\logo\SVG\Mini_BDEV_Logo_W.svg
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\og\og-projects.svg
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\projet-image\AUT x B.DEV ENG.svg
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\projet-image\AUT x B.DEV FR.svg
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\projet-image\B.DEV × AYJI ENG.svg
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\projet-image\B.DEV × AYJI FR.svg
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\projet-image\USMBA x B.DEV ENG.svg
+C:\Users\B.LAPTOP\Dev\Projects\portfolio-v3\public\projet-image\USMBA x B.DEV FR.svg

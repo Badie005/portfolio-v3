@@ -133,7 +133,7 @@ export default async function BlogPostPage({ params }: PageProps) {
     };
 
     const authorDesc = t("authorDescription");
-    const heroImage = post.coverImage || post.image;
+    const heroImage = post.image || post.coverImage;
 
     return (
         <>
