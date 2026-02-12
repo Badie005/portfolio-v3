@@ -34,7 +34,8 @@ import {
     GeminiErrorCode,
     getGeminiService
 } from '@/lib/gemini';
-import { FileSystemItem, FileData, CodeChange, AgentAction } from '../types';
+import { FileSystemItem, FileData, CodeChange, AgentAction, SearchResult, SearchOptions, TerminalCommandResult, IdePanel, DownloadOptions } from '../types';
+import { formatSearchResults, executeTerminalCommand, computePortfolioStats, formatPortfolioStats } from '@/lib/fileSearch';
 import { useTranslations } from 'next-intl';
 
 // ============================================================
@@ -67,6 +68,11 @@ export interface ChatPanelProps {
     onCreateFolder?: (folderPath: string) => boolean;
     onDeleteFolder?: (folderPath: string) => boolean;
     onListDirectory?: (dirPath?: string) => string[];
+    onSearchFiles?: (query: string, options?: SearchOptions) => SearchResult[];
+    onExecuteCommand?: (command: string) => TerminalCommandResult;
+    onFocusPanel?: (panel: IdePanel) => void;
+    onCloseTab?: (filePath: string) => void;
+    onDownload?: (options: DownloadOptions) => boolean;
     enableStreaming?: boolean;
     maxMessages?: number;
     className?: string;
@@ -85,7 +91,9 @@ interface ParsedCodeBlock {
 const MAX_INPUT_LENGTH = 10000;
 const MAX_HISTORY_FOR_API = 20;
 const STORAGE_KEY = 'bai-chat-history';
+const INPUT_HISTORY_KEY = 'bai-input-history';
 const MAX_STORED_MESSAGES = 100;
+const MAX_INPUT_HISTORY = 50;
 
 // Quick actions configuration
 const QUICK_ACTIONS = [
@@ -93,6 +101,30 @@ const QUICK_ACTIONS = [
     { id: 'refactor', icon: Wand2 },
     { id: 'debug', icon: Bug },
     { id: 'tests', icon: TestTube },
+] as const;
+
+// Slash commands configuration
+const SLASH_COMMANDS = [
+    { command: '/tour', description: 'Visite guidée du portfolio', category: 'navigation', hasArg: false },
+    { command: '/interview', description: 'Mode simulation d\'entretien', category: 'mode', hasArg: false },
+    { command: '/recruiter', description: 'Mode recruteur optimisé', category: 'mode', hasArg: false },
+    { command: '/casual', description: 'Mode conversation décontractée', category: 'mode', hasArg: false },
+    { command: '/search', description: 'Rechercher dans les fichiers', category: 'file', hasArg: true },
+    { command: '/run', description: 'Exécuter une commande terminal', category: 'terminal', hasArg: true },
+    { command: '/terminal', description: 'Ouvrir le terminal', category: 'panel', hasArg: false },
+    { command: '/explorer', description: 'Ouvrir l\'explorateur', category: 'panel', hasArg: false },
+    { command: '/close', description: 'Fermer un onglet', category: 'panel', hasArg: true },
+    { command: '/download', description: 'Télécharger un fichier', category: 'export', hasArg: true },
+    { command: '/resume', description: 'Générer et télécharger le CV', category: 'export', hasArg: false },
+    { command: '/stats', description: 'Statistiques du portfolio', category: 'info', hasArg: false },
+    { command: '/projects', description: 'Lister les projets', category: 'info', hasArg: false },
+    { command: '/stack', description: 'Afficher la stack technique', category: 'info', hasArg: false },
+    { command: '/contact', description: 'Afficher les contacts', category: 'info', hasArg: false },
+    { command: '/help', description: 'Liste des commandes', category: 'info', hasArg: false },
+    { command: '/tests', description: 'Générer des tests pour le fichier actif', category: 'code', hasArg: false },
+    { command: '/review', description: 'Review du code du fichier actif', category: 'code', hasArg: false },
+    { command: '/doc', description: 'Générer la documentation', category: 'code', hasArg: false },
+    { command: '/clear', description: 'Effacer la conversation', category: 'chat', hasArg: false },
 ] as const;
 
 
@@ -139,6 +171,38 @@ const clearMessagesFromStorage = (): void => {
     } catch {
         console.warn('Failed to clear chat history');
     }
+};
+
+const saveInputHistory = (input: string): void => {
+    if (typeof window === 'undefined' || !input.trim()) return;
+    try {
+        const stored = localStorage.getItem(INPUT_HISTORY_KEY);
+        const history: string[] = stored ? JSON.parse(stored) : [];
+        const filtered = history.filter(h => h !== input);
+        const updated = [input, ...filtered].slice(0, MAX_INPUT_HISTORY);
+        localStorage.setItem(INPUT_HISTORY_KEY, JSON.stringify(updated));
+    } catch {
+        // Silently fail
+    }
+};
+
+const loadInputHistory = (): string[] => {
+    if (typeof window === 'undefined') return [];
+    try {
+        const stored = localStorage.getItem(INPUT_HISTORY_KEY);
+        return stored ? JSON.parse(stored) : [];
+    } catch {
+        return [];
+    }
+};
+
+const filterCommands = (input: string): Array<typeof SLASH_COMMANDS[number]> => {
+    if (!input.startsWith('/')) return [];
+    const query = input.toLowerCase();
+    return SLASH_COMMANDS.filter(cmd =>
+        cmd.command.toLowerCase().startsWith(query) ||
+        cmd.description.toLowerCase().includes(query.slice(1))
+    ).slice(0, 6);
 };
 
 const sanitizeInput = (input: string): string => {
@@ -264,6 +328,10 @@ const parseAgentActions = (userInput: string): AgentAction[] => {
         {
             type: 'modify',
             regex: /(?:modifier?|modify|changer?|change|update|éditer?|edit|mettre\s+à\s+jour)\s+(?:le\s+)?(?:fichier\s+|file\s+|code\s+)?([^\s,]+\.[a-z0-9]+)/gi
+        },
+        {
+            type: 'search',
+            regex: /(?:cherche|search|grep|trouve|find)\s+(.+)/gi
         },
     ];
 
@@ -913,6 +981,74 @@ const QuickActionsToolbar = memo<QuickActionsProps>(({ onAction, activeFile, dis
 });
 QuickActionsToolbar.displayName = 'QuickActionsToolbar';
 
+// Command Autocomplete Dropdown
+interface CommandAutocompleteProps {
+    input: string;
+    commands: Array<typeof SLASH_COMMANDS[number]>;
+    selectedIndex: number;
+    onSelect: (command: typeof SLASH_COMMANDS[number]) => void;
+    visible: boolean;
+}
+
+const CommandAutocomplete = memo<CommandAutocompleteProps>(({
+    commands,
+    selectedIndex,
+    onSelect,
+    visible
+}) => {
+    const t = useTranslations('ide');
+
+    if (!visible || commands.length === 0) return null;
+
+    const categoryIcons: Record<string, string> = {
+        navigation: '→',
+        mode: '◉',
+        file: '📄',
+        terminal: '⌘',
+        panel: '▦',
+        export: '↓',
+        info: 'ℹ',
+        code: '⟨⟩',
+        chat: '💬',
+    };
+
+    return (
+        <div className="absolute bottom-full left-0 right-0 mb-1 bg-white rounded-lg border border-[#E8E5DE] shadow-lg overflow-hidden z-50">
+            <div className="max-h-[200px] overflow-y-auto">
+                {commands.map((cmd, idx) => (
+                    <button
+                        key={cmd.command}
+                        onClick={() => onSelect(cmd)}
+                        className={`w-full flex items-center gap-2 px-3 py-2 text-left transition-colors ${idx === selectedIndex
+                                ? 'bg-[#D97757]/10 border-l-2 border-[#D97757]'
+                                : 'hover:bg-[#F5F3EE]'
+                            }`}
+                    >
+                        <span className="text-[14px] w-6 text-center text-[#9A9A9A]">
+                            {categoryIcons[cmd.category] || '•'}
+                        </span>
+                        <div className="flex-1 min-w-0">
+                            <span className="text-[13px] font-mono font-medium text-[#37352F]">
+                                {cmd.command}
+                            </span>
+                            {cmd.hasArg && (
+                                <span className="text-[11px] text-[#9A9A9A] ml-1">&lt;arg&gt;</span>
+                            )}
+                        </div>
+                        <span className="text-[11px] text-[#6B6B6B] truncate max-w-[150px]">
+                            {cmd.description}
+                        </span>
+                    </button>
+                ))}
+            </div>
+            <div className="px-3 py-1.5 bg-[#F5F3EE] border-t border-[#E8E5DE] text-[10px] text-[#9A9A9A]">
+                {t('chat.autocomplete.hint')}
+            </div>
+        </div>
+    );
+});
+CommandAutocomplete.displayName = 'CommandAutocomplete';
+
 
 
 // ============================================================
@@ -930,7 +1066,11 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
     onReadFile,
     onCreateFolder,
     onDeleteFolder,
-
+    onSearchFiles,
+    onExecuteCommand,
+    onFocusPanel,
+    onCloseTab,
+    onDownload,
     enableStreaming = true,
     maxMessages = 50,
     className = '',
@@ -955,6 +1095,13 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
     const [streamingText, setStreamingText] = useState('');
     const [error, setError] = useState<{ message: string; code?: GeminiErrorCode } | null>(null);
     const [isServiceReady, setIsServiceReady] = useState(false);
+
+    // Autocomplete & History state
+    const [autocompleteCommands, setAutocompleteCommands] = useState<Array<typeof SLASH_COMMANDS[number]>>([]);
+    const [autocompleteIndex, setAutocompleteIndex] = useState(0);
+    const [showAutocomplete, setShowAutocomplete] = useState(false);
+    const [inputHistory, setInputHistory] = useState<string[]>(() => loadInputHistory());
+    const [historyIndex, setHistoryIndex] = useState(-1);
 
     // Refs
     const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -1170,6 +1317,12 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
         const trimmedInput = sanitizeInput(input);
         if (!trimmedInput) return;
 
+        // Save to input history
+        saveInputHistory(trimmedInput);
+        setInputHistory(prev => [trimmedInput, ...prev.filter(h => h !== trimmedInput)].slice(0, MAX_INPUT_HISTORY));
+        setHistoryIndex(-1);
+        setShowAutocomplete(false);
+
         // DEMO MODE TRIGGER
         if (trimmedInput === 'test' || trimmedInput === '/demo') {
             const userMsg: ChatMessage = {
@@ -1212,6 +1365,447 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                 };
                 setMessages(prev => [...prev, demoMsg]);
             }, 2000);
+            return;
+        }
+
+        // SEARCH COMMAND - Direct /search handling
+        if (trimmedInput.startsWith('/search ')) {
+            const query = trimmedInput.slice(8).trim();
+            if (!query) {
+                const userMsg: ChatMessage = { id: generateId(), role: 'user', text: trimmedInput, timestamp: new Date() };
+                setMessages(prev => [...prev, userMsg]);
+                setInput('');
+                setMessages(prev => [...prev, { id: generateId(), role: 'model', text: 'Veuillez spécifier un terme de recherche. Ex: `/search useState`', timestamp: new Date() }]);
+                return;
+            }
+            if (onSearchFiles) {
+                const userMsg: ChatMessage = {
+                    id: generateId(),
+                    role: 'user',
+                    text: trimmedInput,
+                    timestamp: new Date(),
+                };
+                setMessages(prev => [...prev, userMsg]);
+                setInput('');
+
+                const results = onSearchFiles(query);
+                const formattedResults = formatSearchResults(results, query);
+
+                const searchMsg: ChatMessage = {
+                    id: generateId(),
+                    role: 'model',
+                    text: formattedResults,
+                    timestamp: new Date(),
+                    actions: [{ type: 'search', filename: query, status: 'done', timestamp: Date.now() }],
+                };
+                setMessages(prev => [...prev, searchMsg]);
+                return;
+            }
+        }
+
+        // RUN COMMAND - Direct terminal command execution
+        if (trimmedInput.startsWith('/run ')) {
+            const cmd = trimmedInput.slice(5).trim();
+            if (cmd) {
+                const userMsg: ChatMessage = {
+                    id: generateId(),
+                    role: 'user',
+                    text: trimmedInput,
+                    timestamp: new Date(),
+                };
+                setMessages(prev => [...prev, userMsg]);
+                setInput('');
+
+                const result = onExecuteCommand
+                    ? onExecuteCommand(cmd)
+                    : executeTerminalCommand(cmd, { files: contextFiles?.filter((f): f is FileData => 'content' in f) || [] });
+
+                const outputMsg: ChatMessage = {
+                    id: generateId(),
+                    role: 'model',
+                    text: `\`\`\`bash\n$ ${cmd}\n${result.output}\n\`\`\``,
+                    timestamp: new Date(),
+                    actions: [{ type: 'thought', filename: cmd, status: 'done', timestamp: Date.now() }],
+                };
+                setMessages(prev => [...prev, outputMsg]);
+                return;
+            }
+        }
+
+        // TERMINAL COMMAND - Open/focus terminal
+        if (trimmedInput === '/terminal' || trimmedInput === '/term') {
+            if (onFocusPanel) {
+                onFocusPanel('terminal');
+                const userMsg: ChatMessage = {
+                    id: generateId(),
+                    role: 'user',
+                    text: trimmedInput,
+                    timestamp: new Date(),
+                };
+                setMessages(prev => [...prev, userMsg]);
+                setInput('');
+                const confirmMsg: ChatMessage = {
+                    id: generateId(),
+                    role: 'model',
+                    text: 'Terminal ouvert.',
+                    timestamp: new Date(),
+                };
+                setMessages(prev => [...prev, confirmMsg]);
+                return;
+            }
+        }
+
+        // EXPLORER COMMAND - Open/focus file explorer
+        if (trimmedInput === '/explorer' || trimmedInput === '/files') {
+            if (onFocusPanel) {
+                onFocusPanel('explorer');
+                const userMsg: ChatMessage = {
+                    id: generateId(),
+                    role: 'user',
+                    text: trimmedInput,
+                    timestamp: new Date(),
+                };
+                setMessages(prev => [...prev, userMsg]);
+                setInput('');
+                const confirmMsg: ChatMessage = {
+                    id: generateId(),
+                    role: 'model',
+                    text: 'Explorateur de fichiers ouvert.',
+                    timestamp: new Date(),
+                };
+                setMessages(prev => [...prev, confirmMsg]);
+                return;
+            }
+        }
+
+        // CLOSE COMMAND - Close a tab
+        if (trimmedInput.startsWith('/close ')) {
+            const filePath = trimmedInput.slice(7).trim();
+            if (filePath && onCloseTab) {
+                onCloseTab(filePath);
+                const userMsg: ChatMessage = {
+                    id: generateId(),
+                    role: 'user',
+                    text: trimmedInput,
+                    timestamp: new Date(),
+                };
+                setMessages(prev => [...prev, userMsg]);
+                setInput('');
+                const confirmMsg: ChatMessage = {
+                    id: generateId(),
+                    role: 'model',
+                    text: `Onglet "${filePath}" fermé.`,
+                    timestamp: new Date(),
+                };
+                setMessages(prev => [...prev, confirmMsg]);
+                return;
+            }
+        }
+
+        // Auto-detect panel focus commands
+        const terminalPattern = /(?:ouvre?|open|affiche?|show|focus)\s+(?:le\s+)?terminal/i;
+        const explorerPattern = /(?:ouvre?|open|affiche?|show|focus)\s+(?:l['']|le\s+)?(?:explorateur|explorer|files|fichiers)/i;
+        const closePattern = /(?:ferme?|close)\s+(?:l['']|le\s+)?onglet\s+(.+)/i;
+
+        if (terminalPattern.test(trimmedInput) && onFocusPanel) {
+            onFocusPanel('terminal');
+            const userMsg: ChatMessage = { id: generateId(), role: 'user', text: trimmedInput, timestamp: new Date() };
+            setMessages(prev => [...prev, userMsg]);
+            setInput('');
+            setMessages(prev => [...prev, { id: generateId(), role: 'model', text: 'Terminal ouvert.', timestamp: new Date() }]);
+            return;
+        }
+
+        if (explorerPattern.test(trimmedInput) && onFocusPanel) {
+            onFocusPanel('explorer');
+            const userMsg: ChatMessage = { id: generateId(), role: 'user', text: trimmedInput, timestamp: new Date() };
+            setMessages(prev => [...prev, userMsg]);
+            setInput('');
+            setMessages(prev => [...prev, { id: generateId(), role: 'model', text: 'Explorateur ouvert.', timestamp: new Date() }]);
+            return;
+        }
+
+        const closeMatch = trimmedInput.match(closePattern);
+        if (closeMatch && closeMatch[1] && onCloseTab) {
+            onCloseTab(closeMatch[1].trim());
+            const userMsg: ChatMessage = { id: generateId(), role: 'user', text: trimmedInput, timestamp: new Date() };
+            setMessages(prev => [...prev, userMsg]);
+            setInput('');
+            setMessages(prev => [...prev, { id: generateId(), role: 'model', text: `Onglet "${closeMatch[1].trim()}" fermé.`, timestamp: new Date() }]);
+            return;
+        }
+
+        // DOWNLOAD COMMAND - Download content as file
+        if (trimmedInput.startsWith('/download ')) {
+            const args = trimmedInput.slice(10).trim();
+            const [filename, ...contentParts] = args.split(' ');
+            const content = contentParts.join(' ') || '';
+
+            if (filename && onDownload) {
+                const success = onDownload({ filename, content });
+                const userMsg: ChatMessage = { id: generateId(), role: 'user', text: trimmedInput, timestamp: new Date() };
+                setMessages(prev => [...prev, userMsg]);
+                setInput('');
+                setMessages(prev => [...prev, {
+                    id: generateId(),
+                    role: 'model',
+                    text: success ? `Fichier "${filename}" téléchargé.` : 'Erreur lors du téléchargement.',
+                    timestamp: new Date()
+                }]);
+                return;
+            }
+        }
+
+        // RESUME COMMAND - Generate and download CV
+        if (trimmedInput === '/resume' || trimmedInput === '/cv') {
+            if (onDownload) {
+                const cvContent = `# Abdelbadie Khoubiza
+
+## Full Stack Developer & Designer
+
+**Location:** Morocco  
+**Email:** a.khoubiza.dev@gmail.com  
+**GitHub:** github.com/abdelbadie  
+**LinkedIn:** linkedin.com/in/abdelbadie
+
+---
+
+## Technical Skills
+
+| Category | Technologies |
+|----------|--------------|
+| Frontend | Next.js 16, React 19, TypeScript, Tailwind CSS v4 |
+| Backend | Node.js, Laravel 12, Python |
+| Database | MongoDB, MySQL, Redis |
+| DevOps | Docker, Vercel, VMware |
+| Design | Figma, Glassmorphism, Responsive UI |
+
+---
+
+## Projects
+
+### Portfolio IDE (2025)
+Interactive developer portfolio with VS Code simulation.  
+**Stack:** Next.js 16, TypeScript, Tailwind CSS v4, OpenRouter AI
+
+### USMBA Portal (2025)
+Academic management system for Université Sidi Mohamed Ben Abdellah.  
+**Stack:** Laravel 12, MySQL, Alpine.js, Tailwind CSS
+
+### AYJI E-learning (2025)
+Learning Management System with real-time features.  
+**Stack:** Angular 19, NgRx, Node.js, MongoDB, Redis, Socket.io
+
+### IT Infrastructure Audit (2024)
+15-day professional internship at Agence Urbaine de Taza.  
+**Focus:** Network audit, VMware virtualization, Security hardening
+
+---
+
+## Availability
+
+Open to freelance, full-time, and collaboration opportunities.
+`;
+                onDownload({ filename: 'CV_Abdelbadie_Khoubiza.md', content: cvContent, mimeType: 'text/markdown' });
+                const userMsg: ChatMessage = { id: generateId(), role: 'user', text: trimmedInput, timestamp: new Date() };
+                setMessages(prev => [...prev, userMsg]);
+                setInput('');
+                setMessages(prev => [...prev, {
+                    id: generateId(),
+                    role: 'model',
+                    text: 'CV généré et téléchargé au format Markdown.',
+                    timestamp: new Date()
+                }]);
+                return;
+            }
+        }
+
+        // Auto-detect download commands
+        const downloadPattern = /(?:télécharge?|download|export|sauvegarde?|save)\s+(?:le\s+)?(?:cv|resume)/i;
+        if (downloadPattern.test(trimmedInput) && onDownload) {
+            onDownload({
+                filename: 'CV_Abdelbadie_Khoubiza.md',
+                content: '# CV content would be generated here',
+                mimeType: 'text/markdown'
+            });
+            const userMsg: ChatMessage = { id: generateId(), role: 'user', text: trimmedInput, timestamp: new Date() };
+            setMessages(prev => [...prev, userMsg]);
+            setInput('');
+            setMessages(prev => [...prev, { id: generateId(), role: 'model', text: 'CV téléchargé.', timestamp: new Date() }]);
+            return;
+        }
+
+        // STATS COMMAND - Display portfolio statistics
+        if (trimmedInput === '/stats') {
+            const allFilesFromContext = contextFiles?.filter((f): f is FileData => 'content' in f) || [];
+            const stats = computePortfolioStats(allFilesFromContext);
+            const formattedStats = formatPortfolioStats(stats);
+            const userMsg: ChatMessage = { id: generateId(), role: 'user', text: trimmedInput, timestamp: new Date() };
+            setMessages(prev => [...prev, userMsg]);
+            setInput('');
+            setMessages(prev => [...prev, { id: generateId(), role: 'model', text: formattedStats, timestamp: new Date() }]);
+            return;
+        }
+
+        // Auto-detect stats commands
+        const statsPattern = /(?:statistiques?|stats|métriques?|combien\s+de\s+(?:fichiers?|lignes?|fiches?)|how\s+many\s+(?:files?|lines?))/i;
+        if (statsPattern.test(trimmedInput)) {
+            const allFilesFromContext = contextFiles?.filter((f): f is FileData => 'content' in f) || [];
+            const stats = computePortfolioStats(allFilesFromContext);
+            const formattedStats = formatPortfolioStats(stats);
+            const userMsg: ChatMessage = { id: generateId(), role: 'user', text: trimmedInput, timestamp: new Date() };
+            setMessages(prev => [...prev, userMsg]);
+            setInput('');
+            setMessages(prev => [...prev, { id: generateId(), role: 'model', text: formattedStats, timestamp: new Date() }]);
+            return;
+        }
+
+        // CODE INTELLIGENCE COMMANDS
+        // /tests - Generate unit tests for active file
+        if (trimmedInput === '/tests' || trimmedInput.startsWith('/tests ')) {
+            if (!activeFile) {
+                const userMsg: ChatMessage = { id: generateId(), role: 'user', text: trimmedInput, timestamp: new Date() };
+                setMessages(prev => [...prev, userMsg]);
+                setInput('');
+                setMessages(prev => [...prev, { id: generateId(), role: 'model', text: t('chat.codeIntel.testsDesc', { filename: '...' }) + '\n\nOuvrez d\'abord un fichier dans l\'éditeur.', timestamp: new Date() }]);
+                return;
+            }
+            // Continue to AI processing with tests prompt
+            const testPrompt = `Génère des tests unitaires complets pour le fichier "${activeFile.name}". Utilise un framework de test moderne (Vitest/Jest pour JS/TS, pytest pour Python, etc.). Inclus:\n1. Tests pour les cas nominaux\n2. Tests pour les cas limites\n3. Tests pour les erreurs\n4. Mocks si nécessaire\n\nCode du fichier:\n\`\`\`${activeFile.type}\n${activeFile.content}\n\`\`\``;
+            const userMsg: ChatMessage = { id: generateId(), role: 'user', text: trimmedInput, timestamp: new Date() };
+            setMessages(prev => [...prev, userMsg]);
+            setInput('');
+            setIsLoading(true);
+
+            try {
+                const conversationHistory = getConversationHistory();
+                const response = await geminiServiceRef.current?.sendMessage(testPrompt, conversationHistory);
+                if (response?.error) throw new Error(response.error);
+
+                const aiMsg: ChatMessage = {
+                    id: generateId(),
+                    role: 'model',
+                    text: response?.text || '',
+                    timestamp: new Date(),
+                    actions: [{ type: 'read', filename: activeFile.name, status: 'done', timestamp: Date.now() }],
+                };
+                setMessages(prev => [...prev, aiMsg].slice(-maxMessages));
+            } catch (err) {
+                const errorMessage = err instanceof Error ? err.message : 'Erreur inconnue';
+                setMessages(prev => [...prev, { id: generateId(), role: 'model', text: '', error: errorMessage, timestamp: new Date() }]);
+            } finally {
+                setIsLoading(false);
+            }
+            return;
+        }
+
+        // /review - Code review for active file
+        if (trimmedInput === '/review' || trimmedInput.startsWith('/review ')) {
+            if (!activeFile) {
+                const userMsg: ChatMessage = { id: generateId(), role: 'user', text: trimmedInput, timestamp: new Date() };
+                setMessages(prev => [...prev, userMsg]);
+                setInput('');
+                setMessages(prev => [...prev, { id: generateId(), role: 'model', text: 'Ouvrez d\'abord un fichier dans l\'éditeur.', timestamp: new Date() }]);
+                return;
+            }
+            const reviewPrompt = `Effectue une code review complète du fichier "${activeFile.name}". Analyse:\n\n1. **Qualité du code**: Lisibilité, nommage, structure\n2. **Performance**: Optimisations possibles\n3. **Sécurité**: Vulnérabilités potentielles\n4. **Bonnes pratiques**: Patterns, conventions\n5. **Maintenabilité**: Dette technique, suggestions\n\nCode:\n\`\`\`${activeFile.type}\n${activeFile.content}\n\`\`\`\n\nDonne des suggestions concrètes avec des exemples de code quand c'est pertinent.`;
+            const userMsg: ChatMessage = { id: generateId(), role: 'user', text: trimmedInput, timestamp: new Date() };
+            setMessages(prev => [...prev, userMsg]);
+            setInput('');
+            setIsLoading(true);
+
+            try {
+                const conversationHistory = getConversationHistory();
+                const response = await geminiServiceRef.current?.sendMessage(reviewPrompt, conversationHistory);
+                if (response?.error) throw new Error(response.error);
+
+                const aiMsg: ChatMessage = {
+                    id: generateId(),
+                    role: 'model',
+                    text: response?.text || '',
+                    timestamp: new Date(),
+                    actions: [{ type: 'read', filename: activeFile.name, status: 'done', timestamp: Date.now() }],
+                };
+                setMessages(prev => [...prev, aiMsg].slice(-maxMessages));
+            } catch (err) {
+                const errorMessage = err instanceof Error ? err.message : 'Erreur inconnue';
+                setMessages(prev => [...prev, { id: generateId(), role: 'model', text: '', error: errorMessage, timestamp: new Date() }]);
+            } finally {
+                setIsLoading(false);
+            }
+            return;
+        }
+
+        // /doc - Generate documentation for active file
+        if (trimmedInput === '/doc' || trimmedInput.startsWith('/doc ')) {
+            if (!activeFile) {
+                const userMsg: ChatMessage = { id: generateId(), role: 'user', text: trimmedInput, timestamp: new Date() };
+                setMessages(prev => [...prev, userMsg]);
+                setInput('');
+                setMessages(prev => [...prev, { id: generateId(), role: 'model', text: 'Ouvrez d\'abord un fichier dans l\'éditeur.', timestamp: new Date() }]);
+                return;
+            }
+            const docPrompt = `Génère une documentation complète pour le fichier "${activeFile.name}". Inclus:\n\n1. **Description générale**: Purpose du fichier\n2. **Exports**: Fonctions, classes, composants exportés\n3. **Types/Interfaces**: Documentation des types\n4. **Utilisation**: Exemples d'utilisation\n5. **Dépendances**: Imports et leurs usages\n\nCode:\n\`\`\`${activeFile.type}\n${activeFile.content}\n\`\`\`\n\nFormat: JSDoc/TSDoc pour JS/TS, docstrings pour Python, etc.`;
+            const userMsg: ChatMessage = { id: generateId(), role: 'user', text: trimmedInput, timestamp: new Date() };
+            setMessages(prev => [...prev, userMsg]);
+            setInput('');
+            setIsLoading(true);
+
+            try {
+                const conversationHistory = getConversationHistory();
+                const response = await geminiServiceRef.current?.sendMessage(docPrompt, conversationHistory);
+                if (response?.error) throw new Error(response.error);
+
+                const aiMsg: ChatMessage = {
+                    id: generateId(),
+                    role: 'model',
+                    text: response?.text || '',
+                    timestamp: new Date(),
+                    actions: [{ type: 'read', filename: activeFile.name, status: 'done', timestamp: Date.now() }],
+                };
+                setMessages(prev => [...prev, aiMsg].slice(-maxMessages));
+            } catch (err) {
+                const errorMessage = err instanceof Error ? err.message : 'Erreur inconnue';
+                setMessages(prev => [...prev, { id: generateId(), role: 'model', text: '', error: errorMessage, timestamp: new Date() }]);
+            } finally {
+                setIsLoading(false);
+            }
+            return;
+        }
+
+        // /clear - Clear conversation
+        if (trimmedInput === '/clear') {
+            abortControllerRef.current?.abort();
+            setMessages([]);
+            clearMessagesFromStorage();
+            setStreamingText('');
+            setError(null);
+            setIsLoading(false);
+            return;
+        }
+
+        // Auto-detect terminal commands (ls, pwd, cat, etc.)
+        const terminalCommands = ['ls', 'cd', 'pwd', 'cat', 'grep', 'find', 'npm', 'git', 'node', 'help', 'whoami', 'date', 'uptime', 'env', 'echo'];
+        const firstWord = trimmedInput.split(' ')[0].toLowerCase();
+        if (terminalCommands.includes(firstWord) && onExecuteCommand) {
+            const result = onExecuteCommand(trimmedInput);
+            const userMsg: ChatMessage = {
+                id: generateId(),
+                role: 'user',
+                text: trimmedInput,
+                timestamp: new Date(),
+            };
+            setMessages(prev => [...prev, userMsg]);
+            setInput('');
+
+            const outputMsg: ChatMessage = {
+                id: generateId(),
+                role: 'model',
+                text: `\`\`\`bash\n$ ${trimmedInput}\n${result.output}\n\`\`\``,
+                timestamp: new Date(),
+                actions: [{ type: 'thought', filename: trimmedInput, status: 'done', timestamp: Date.now() }],
+            };
+            setMessages(prev => [...prev, outputMsg]);
             return;
         }
 
@@ -1258,6 +1852,27 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                 ? t('chat.contextLabels.toModify')
                 : t('chat.contextLabels.content');
             contextMessage += `\n\n[${label} - ${filename}]:\n\`\`\`\n${content}\n\`\`\``;
+        }
+
+        // Execute search actions and inject results
+        const searchActions = executedActions.filter(a => a.type === 'search');
+        if (onSearchFiles && searchActions.length > 0) {
+            for (const searchAction of searchActions) {
+                if (searchAction.filename) {
+                    const results = onSearchFiles(searchAction.filename);
+                    if (results.length > 0) {
+                        contextMessage += `\n\n[Search Results for "${searchAction.filename}"]:\n`;
+                        results.slice(0, 20).forEach(r => {
+                            contextMessage += `${r.filePath}:${r.line}: ${r.content}\n`;
+                        });
+                        if (results.length > 20) {
+                            contextMessage += `... and ${results.length - 20} more results\n`;
+                        }
+                    } else {
+                        contextMessage += `\n\n[Search Results for "${searchAction.filename}"]: No matches found.\n`;
+                    }
+                }
+            }
         }
 
         // ALWAYS include active file context if available and not already included
@@ -1400,7 +2015,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
             setIsLoading(false);
             setStreamingText('');
         }
-    }, [input, isLoading, activeFile, enableStreaming, maxMessages, executeActions, getConversationHistory, onOpenFile, onCreateFile, onCreateFileWithPath, onDeleteFile, contextFiles, thinkingTime, t]);
+    }, [input, isLoading, activeFile, enableStreaming, maxMessages, executeActions, getConversationHistory, onOpenFile, onCreateFile, onCreateFileWithPath, onDeleteFile, contextFiles, thinkingTime, t, onSearchFiles, onExecuteCommand, onFocusPanel, onCloseTab, onDownload]);
 
     // Retry last message
     const handleRetry = useCallback(() => {
@@ -1425,13 +2040,91 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
         setIsLoading(false);
     }, []);
 
+    // Handle command selection from autocomplete
+    const handleCommandSelect = useCallback((cmd: typeof SLASH_COMMANDS[number]) => {
+        setInput(cmd.command + (cmd.hasArg ? ' ' : ''));
+        setShowAutocomplete(false);
+        setAutocompleteCommands([]);
+        textareaRef.current?.focus();
+    }, []);
+
     // Handle keyboard
     const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+        // Autocomplete navigation
+        if (showAutocomplete && autocompleteCommands.length > 0) {
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                setAutocompleteIndex(prev =>
+                    prev < autocompleteCommands.length - 1 ? prev + 1 : 0
+                );
+                return;
+            }
+            if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                setAutocompleteIndex(prev =>
+                    prev > 0 ? prev - 1 : autocompleteCommands.length - 1
+                );
+                return;
+            }
+            if (e.key === 'Tab' || e.key === 'Enter') {
+                e.preventDefault();
+                handleCommandSelect(autocompleteCommands[autocompleteIndex]);
+                return;
+            }
+            if (e.key === 'Escape') {
+                e.preventDefault();
+                setShowAutocomplete(false);
+                return;
+            }
+        }
+
+        // History navigation (only when not showing autocomplete)
+        if (!showAutocomplete && inputHistory.length > 0) {
+            if (e.key === 'ArrowUp' && !e.shiftKey) {
+                e.preventDefault();
+                if (historyIndex === -1) {
+                    const newIndex = 0;
+                    setHistoryIndex(newIndex);
+                    setInput(inputHistory[newIndex] || '');
+                } else if (historyIndex < inputHistory.length - 1) {
+                    const newIndex = historyIndex + 1;
+                    setHistoryIndex(newIndex);
+                    setInput(inputHistory[newIndex] || '');
+                }
+                return;
+            }
+            if (e.key === 'ArrowDown' && !e.shiftKey) {
+                e.preventDefault();
+                if (historyIndex > 0) {
+                    const newIndex = historyIndex - 1;
+                    setHistoryIndex(newIndex);
+                    setInput(inputHistory[newIndex] || '');
+                } else if (historyIndex === 0) {
+                    setHistoryIndex(-1);
+                    setInput('');
+                }
+                return;
+            }
+        }
+
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
             handleSend();
         }
-    }, [handleSend]);
+    }, [handleSend, showAutocomplete, autocompleteCommands, autocompleteIndex, handleCommandSelect, inputHistory, historyIndex]);
+
+    // Update autocomplete on input change
+    useEffect(() => {
+        if (input.startsWith('/')) {
+            const commands = filterCommands(input);
+            setAutocompleteCommands(commands);
+            setShowAutocomplete(commands.length > 0);
+            setAutocompleteIndex(0);
+        } else {
+            setShowAutocomplete(false);
+            setAutocompleteCommands([]);
+        }
+    }, [input]);
 
     // Handle suggestion click
     const handleSuggestionClick = useCallback((suggestion: string) => {
@@ -1603,10 +2296,17 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                         activeFile={activeFile}
                         disabled={isLoading || !isServiceReady}
                     />
-                    
+
                     <div className="p-3 pt-2">
                         <div className="mx-auto w-full max-w-[580px]">
                             <form onSubmit={(e) => { e.preventDefault(); handleSend(); }} className="relative bg-white/90 backdrop-blur-sm rounded-2xl border border-[#E8E5DE] shadow-[0_8px_32px_-12px_rgba(20,20,19,0.15)] overflow-hidden focus-within:border-[#D97757]/40 focus-within:shadow-lg transition-all">
+                                <CommandAutocomplete
+                                    input={input}
+                                    commands={autocompleteCommands}
+                                    selectedIndex={autocompleteIndex}
+                                    onSelect={handleCommandSelect}
+                                    visible={showAutocomplete}
+                                />
                                 <textarea
                                     ref={textareaRef}
                                     name="message"

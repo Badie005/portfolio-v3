@@ -4,7 +4,8 @@ import { motion, useDragControls, useMotionValue, animate, useMotionValueEvent }
 import { RotateCcw } from 'lucide-react';
 
 import { INITIAL_FILES } from './constants';
-import { FileData } from './types';
+import { FileData, SearchOptions, SearchResult, TerminalCommandResult, IdePanel, DownloadOptions, downloadFile } from './types';
+import { searchFiles, executeTerminalCommand } from '@/lib/fileSearch';
 import { FileIcon } from './components/FileIcon';
 
 // Hooks
@@ -117,7 +118,7 @@ export function CodeWindow() {
         }
     }, []);
 
-    const handleDownloadCV = useCallback(() => {
+const handleDownloadCV = useCallback(() => {
         // Create a fake link to trigger download
         const link = document.createElement('a');
         link.href = '/CV.pdf';
@@ -125,6 +126,40 @@ export function CodeWindow() {
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+    }, []);
+
+    const handleSearchFiles = useCallback((query: string, options?: SearchOptions): SearchResult[] => {
+        return searchFiles(allFiles, query, options);
+    }, [allFiles]);
+
+    const handleExecuteCommand = useCallback((command: string): TerminalCommandResult => {
+        return executeTerminalCommand(command, { 
+            files: allFiles, 
+            onOpenFile: handleOpenFileByName 
+        });
+    }, [allFiles, handleOpenFileByName]);
+
+    const handleFocusPanel = useCallback((panel: IdePanel) => {
+        switch (panel) {
+            case 'terminal':
+                setTerminalOpen(true);
+                break;
+            case 'explorer':
+                setSidebarOpen(true);
+                break;
+            case 'editor':
+                break;
+            case 'chat':
+                break;
+        }
+    }, [setTerminalOpen, setSidebarOpen]);
+
+    const handleCloseTab = useCallback((filePath: string) => {
+        closeFile(filePath);
+    }, [closeFile]);
+
+    const handleDownload = useCallback((options: DownloadOptions): boolean => {
+        return downloadFile(options);
     }, []);
 
     // Keyboard Shortcuts
@@ -305,7 +340,7 @@ export function CodeWindow() {
                                     maxWidth: `${layoutConfig.rightSidebar.maxWidth}px`,
                                 }}
                             >
-                                <ChatPanel
+<ChatPanel
                                     contextFiles={allFiles}
                                     onOpenFile={handleOpenFileByName}
                                     activeFile={currentFile}
@@ -317,6 +352,11 @@ export function CodeWindow() {
                                     onCreateFolder={createFolder}
                                     onDeleteFolder={deleteFolder}
                                     onListDirectory={listDirectory}
+                                    onSearchFiles={handleSearchFiles}
+                                    onExecuteCommand={handleExecuteCommand}
+                                    onFocusPanel={handleFocusPanel}
+                                    onCloseTab={handleCloseTab}
+                                    onDownload={handleDownload}
                                 />
                             </aside>
                         </>

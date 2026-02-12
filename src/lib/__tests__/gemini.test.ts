@@ -2,7 +2,7 @@
  * @vitest-environment node
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { GeminiService, GeminiErrorCode } from '../gemini';
+import { GeminiService, GeminiErrorCode, SYSTEM_PROMPT } from '../gemini';
 
 // Mock fetch globally
 const mockFetch = vi.fn();
@@ -176,5 +176,93 @@ describe('GeminiService', { timeout: 15000 }, () => {
 
         expect(result.error).toBeDefined();
         expect(result.errorCode).toBe(GeminiErrorCode.RATE_LIMIT_EXCEEDED);
+    });
+
+    describe('B.AI Agent Specific Logic', () => {
+        it('should include B.AI system prompt in Google AI calls', async () => {
+            // Setup for Google AI
+            process.env.GOOGLE_AI_API_KEY = 'test-google-key-valid-length';
+            service = new GeminiService({ apiKey: 'test-key-valid-length' });
+
+            mockFetch.mockResolvedValue(createMockResponse({
+                candidates: [{ content: { parts: [{ text: 'Response' }] } }]
+            }));
+
+            await service.sendMessage('Hello B.AI');
+
+            expect(mockFetch).toHaveBeenCalledWith(
+                expect.stringContaining('generativelanguage.googleapis.com'),
+                expect.objectContaining({
+                    body: expect.stringContaining(JSON.stringify(SYSTEM_PROMPT).slice(1, -1)) // Check for system prompt existence
+                })
+            );
+        });
+
+        it('should include B.AI system prompt in OpenRouter calls', async () => {
+            // Setup for OpenRouter (no Google Key)
+            process.env.GOOGLE_AI_API_KEY = '';
+            process.env.OPENROUTER_API_KEY = 'test-openrouter-key-valid';
+            service = new GeminiService({ apiKey: 'test-key-valid-length' });
+
+            mockFetch.mockResolvedValue(createMockResponse({
+                choices: [{ message: { content: 'Response' } }]
+            }));
+
+            await service.sendMessage('Hello B.AI');
+
+            expect(mockFetch).toHaveBeenCalledWith(
+                expect.stringContaining('openrouter.ai'),
+                expect.objectContaining({
+                    body: expect.stringContaining(JSON.stringify(SYSTEM_PROMPT).slice(1, -1))
+                })
+            );
+        });
+
+        it('should fallback to OpenRouter when Google AI fails', async () => {
+            process.env.GOOGLE_AI_API_KEY = 'test-google-key-valid-length';
+            process.env.OPENROUTER_API_KEY = 'test-openrouter-key-valid';
+            service = new GeminiService({ apiKey: 'test-key-valid-length' });
+
+            // Mock first call (Google AI) to fail
+            // Mock second call (OpenRouter) to succeed
+            mockFetch
+                .mockResolvedValueOnce(createMockResponse({ error: 'Internal Error' }, 500))
+                .mockResolvedValueOnce(createMockResponse({
+                    choices: [{ message: { content: 'Fallback Success' } }]
+                }));
+
+            const result = await service.sendMessage('Hello');
+
+            expect(result.text).toBe('Fallback Success');
+            expect(mockFetch).toHaveBeenCalledTimes(2);
+            expect(mockFetch).toHaveBeenNthCalledWith(1, expect.stringContaining('googleapis.com'), expect.any(Object));
+            expect(mockFetch).toHaveBeenNthCalledWith(2, expect.stringContaining('openrouter.ai'), expect.any(Object));
+        });
+
+        it('should correctly format conversation history for OpenRouter', async () => {
+            process.env.GOOGLE_AI_API_KEY = '';
+            service = new GeminiService({ apiKey: 'test-key-valid-length' });
+
+            const history = [
+                { role: 'user' as const, parts: [{ text: 'Prev User' }] },
+                { role: 'model' as const, parts: [{ text: 'Prev Model' }] }
+            ];
+
+            mockFetch.mockResolvedValue(createMockResponse({
+                choices: [{ message: { content: 'Response' } }]
+            }));
+
+            await service.sendMessage('New Message', history);
+
+            const lastCall = mockFetch.mock.calls[0];
+            const body = JSON.parse(lastCall[1].body as string);
+
+            // OpenRouter expects messages array: System -> History -> Current
+            expect(body.messages).toHaveLength(4); // System + 2 history + 1 new
+            expect(body.messages[0].role).toBe('system');
+            expect(body.messages[1].content).toBe('Prev User');
+            expect(body.messages[2].content).toBe('Prev Model');
+            expect(body.messages[3].content).toBe('New Message');
+        });
     });
 });

@@ -669,6 +669,18 @@
             "message": {
                 "analyzed": "Requête analysée"
             },
+            "autocomplete": {
+                "hint": "Tab ou Entrée pour sélectionner • Échap pour fermer"
+            },
+            "codeIntel": {
+                "testsTitle": "Tests générés",
+                "testsDesc": "Tests unitaires pour {filename}",
+                "reviewTitle": "Code Review",
+                "reviewDesc": "Analyse de {filename}",
+                "docTitle": "Documentation",
+                "docDesc": "Documentation pour {filename}",
+                "generating": "Génération en cours..."
+            },
             "quickActions": {
                 "explain": "Expliquer",
                 "refactor": "Refactoriser",

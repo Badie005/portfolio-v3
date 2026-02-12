@@ -669,6 +669,18 @@
             "message": {
                 "analyzed": "Analyzed request"
             },
+            "autocomplete": {
+                "hint": "Tab or Enter to select • Esc to close"
+            },
+            "codeIntel": {
+                "testsTitle": "Generated Tests",
+                "testsDesc": "Unit tests for {filename}",
+                "reviewTitle": "Code Review",
+                "reviewDesc": "Analysis of {filename}",
+                "docTitle": "Documentation",
+                "docDesc": "Documentation for {filename}",
+                "generating": "Generating..."
+            },
             "quickActions": {
                 "explain": "Explain",
                 "refactor": "Refactor",

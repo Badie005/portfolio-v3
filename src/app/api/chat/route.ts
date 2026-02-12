@@ -56,6 +56,82 @@ export async function POST(req: NextRequest) {
             );
         }
 
+
+        // ============================================================
+        // SIMULATION MODE (Testing & Design Verification)
+        // ============================================================
+        if (body.message === "test" || body.message === "test:error") {
+            // Simulate Error
+            if (body.message === "test:error") {
+                await new Promise(resolve => setTimeout(resolve, 1000)); // Fake latency
+                return new NextResponse(
+                    JSON.stringify({ error: "Simulated API Error (500)" }),
+                    { status: 500, headers: { "Content-Type": "application/json" } }
+                );
+            }
+
+            // Simulate Rich Markdown Stream
+            const SIMULATED_RESPONSE = `
+Simulation: An optional error message to test the new design.
+
+◉ Read
+src/app/page.tsx
+
++ Created
+components/Demo.tsx
+components/Demo.tsx
++21
+
+Generate unit tests for components/Demo.tsx using a modern testing framework.
+
+## Code Blocks
+
+\`\`\`typescript src/lib/demo.ts
+interface User {
+  id: string;
+  role: 'admin' | 'user';
+  preferences: {
+    theme: 'dark' | 'light';
+  };
+}
+
+function getUser(id: string): User {
+  return {
+    id,
+    role: 'admin',
+    preferences: { theme: 'dark' }
+  };
+}
+\`\`\`
+`;
+
+            const encoder = new TextEncoder();
+            const stream = new ReadableStream({
+                async start(controller) {
+                    const tokens = SIMULATED_RESPONSE.split("");
+                    for (const token of tokens) {
+                        const chunk = encoder.encode(token);
+                        controller.enqueue(chunk);
+                        // Random typing speed simulation (10-30ms per char)
+                        await new Promise(resolve => setTimeout(resolve, Math.random() * 20 + 10));
+                    }
+                    controller.close();
+                }
+            });
+
+            return new Response(stream, {
+                headers: {
+                    "Content-Type": "text/plain; charset=utf-8",
+                    "Transfer-Encoding": "chunked",
+                    "X-Content-Type-Options": "nosniff",
+                },
+            });
+        }
+
+        // ============================================================
+        // END SIMULATION MODE
+        // ============================================================
+
         // Get upstream response from OpenRouter
         const upstreamResponse = await gemini.getStreamResponse(body.message, body.history);
 
